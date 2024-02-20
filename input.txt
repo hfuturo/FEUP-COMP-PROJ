@@ -1,0 +1,5 @@
+class Factorial {
+    public int computeFactorial(int num){
+        int num_aux_t ;
+    }
+}
