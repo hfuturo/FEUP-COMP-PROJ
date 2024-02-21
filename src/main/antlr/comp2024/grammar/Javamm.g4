@@ -14,6 +14,9 @@ LSQUARE: '[' ;
 RSQUARE: ']' ;
 MUL : '*' ;
 ADD : '+' ;
+ELLIPSIS : '...';
+
+COMMA: ',' ;
 
 CLASS : 'class' ;
 INT : 'int' ;
@@ -25,8 +28,22 @@ IF : 'if' ;
 ELSE : 'else' ;
 WHILE: 'while' ;
 
-INTEGER : [0-9]+ ;
-ID : [a-zA-Z]+ ;
+STATIC: 'static';
+MAIN: 'main';
+VOID: 'void';
+STRING: 'String';
+EXTENDS : 'extends' ;
+
+ID : (LETTER)(LETTER | INTEGER)*;
+INTEGER : [0-9] ;
+LETTER: [a-zA-Z_$];
+
+MULTI_LINE_COMMENT_START_MARKER: '/*' ;
+MULTI_LINE_COMMENT_END_MARKER: '*/' ;
+SINGLE_LINE_COMMENT_MARKER: '//';
+
+SINGLE_LINE_COMMENT : SINGLE_LINE_COMMENT_MARKER ~[\n]* -> skip;
+MULTI_LINE_COMMENT: (MULTI_LINE_COMMENT_START_MARKER .*? MULTI_LINE_COMMENT_END_MARKER) -> skip ;
 
 WS : [ \t\n\r\f]+ -> skip ;
 
@@ -41,9 +58,10 @@ importDecl
 
 classDecl
     : importDecl*
-      CLASS name=ID
+        CLASS name=ID
+        (EXTENDS ID)?
         LCURLY
-        methodDecl*
+        varDecl* methodDecl*
         RCURLY
     ;
 
@@ -51,16 +69,33 @@ varDecl
     : type name=ID SEMI
     ;
 
-type
-    : name=( INT | BOOL | ID)
-    | name=INT (LSQUARE RSQUARE| '...' )
-    ;
+
 
 methodDecl locals[boolean isPublic=false]
     : (PUBLIC {$isPublic=true;})?
         type name=ID
-        LPAREN param RPAREN
-        LCURLY varDecl* stmt* RCURLY
+        LPAREN (params+=param (',' params+=param)*)? RPAREN
+        LCURLY varDecl* stmt* RCURLY # NormalMethod
+    | mainMethodDecl # MainMethod
+    ;
+
+mainMethodDecl
+    : (PUBLIC)? STATIC VOID name=MAIN LPAREN STRING '[]' name_of_param RPAREN
+              LCURLY varDecl* stmt* RCURLY
+    ;
+
+// É preciso ter atenção de que depois a visitar os nós temos de ver se quando encontrarmos um VarArgType, eles está no fim
+type
+    : name=INT '[]' #ArrayType
+    | name=INT ELLIPSIS #VarArgType
+    | name= INT #IntegerType
+    | name= BOOL #BoolType
+    | name= STRING #StringType
+    | name= ID #AbstractDataType
+    ;
+
+name_of_param
+    : name=ID
     ;
 
 param
@@ -84,6 +119,3 @@ expr
     | value=INTEGER #IntegerLiteral //
     | name=ID #VarRefExpr //
     ;
-
-
-
