@@ -48,7 +48,7 @@ STRING: 'String';
 EXTENDS : 'extends' ;
 
 ID : (LETTER)(LETTER | INTEGER)*;
-INTEGER : [1-9][0-9]* ;
+INTEGER : [0-9][0-9]* ;
 LETTER: [a-zA-Z_$];
 
 MULTI_LINE_COMMENT_START_MARKER: '/*' ;
