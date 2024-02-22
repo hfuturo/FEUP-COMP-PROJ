@@ -6,6 +6,8 @@ grammar Javamm;
 
 EQUALS : '=';
 SEMI : ';' ;
+COMMA : ',' ;
+STOP : '.' ;
 LCURLY : '{' ;
 RCURLY : '}' ;
 LPAREN : '(' ;
@@ -13,10 +15,21 @@ RPAREN : ')' ;
 LSQUARE: '[' ;
 RSQUARE: ']' ;
 MUL : '*' ;
+DIV : '/' ;
 ADD : '+' ;
 ELLIPSIS : '...';
-
-COMMA: ',' ;
+SUB : '-' ;
+AND : '&&' ;
+OR : '||' ;
+NEGATION : '!' ;
+LESS : '<' ;
+LESSEQ : '<=' ;
+GREATER : '>' ;
+GREATEREQ : '>=';
+FALSE : 'false' ;
+TRUE : 'true' ;
+THIS : 'this' ;
+NEW : 'new' ;
 
 CLASS : 'class' ;
 INT : 'int' ;
@@ -35,7 +48,7 @@ STRING: 'String';
 EXTENDS : 'extends' ;
 
 ID : (LETTER)(LETTER | INTEGER)*;
-INTEGER : [0-9] ;
+INTEGER : [1-9][0-9]* ;
 LETTER: [a-zA-Z_$];
 
 MULTI_LINE_COMMENT_START_MARKER: '/*' ;
@@ -114,8 +127,22 @@ stmt
     ;
 
 expr
-    : expr op= MUL expr #BinaryExpr //
-    | expr op= ADD expr #BinaryExpr //
-    | value=INTEGER #IntegerLiteral //
-    | name=ID #VarRefExpr //
+    : op=LPAREN expr op=RPAREN #Parenthesis                                     // ()
+    | expr op=LSQUARE expr op=RSQUARE #AccessArray                              // aceder a um array, i.e., a[2]
+    | expr op=STOP expr LPAREN (expr (COMMA expr)* )? RPAREN #VarMethod         // foo.bar(), foo.bar(...)
+    | expr op=STOP expr #VarVar                                                 // foo.bar
+    | op=LSQUARE expr (op=COMMA expr)* op=RSQUARE #InitArray                    // inicializar array, i.e., [1,2,3]
+    | op=NEGATION expr #Unary                                                   // !
+    // necessita de ('[]') senao nao reconhece "new int[]" (n sei pq)
+    | op=NEW INT ('[]' | LSQUARE expr? RSQUARE)   #NewInt                       // new int
+    | op=NEW expr LPAREN (expr (COMMA expr)* )? RPAREN  #NewClass               // new class
+    | expr (op=MUL | op=DIV) expr #BinaryExpr                                   // * ; /
+    | expr (op=ADD | op=SUB) expr #BinaryExpr                                   // + ; -
+    | expr (op=LESS | op=GREATER | op=LESSEQ | op=GREATEREQ) expr #Relational   // < ; > ; <= ; >=
+    | expr op=AND expr #BoolOperator                                            // &&
+    | expr op=OR expr #BoolOperator                                             // ||
+    | value=INTEGER #IntegerLiteral                                             // numeros
+    | value=THIS #This                                                          // keyword: "this"
+    | (value=TRUE | value=FALSE) #Bool                                          // keywords: "true" ; "false"
+    | name=ID #VarRefExpr                                                       // vars
     ;
