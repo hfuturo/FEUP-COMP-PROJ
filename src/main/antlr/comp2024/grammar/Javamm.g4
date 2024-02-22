@@ -30,6 +30,7 @@ FALSE : 'false' ;
 TRUE : 'true' ;
 THIS : 'this' ;
 NEW : 'new' ;
+LENGTH : 'length' ;
 
 CLASS : 'class' ;
 INT : 'int' ;
@@ -143,6 +144,7 @@ expr
     | expr op=OR expr #BoolOperator                                             // ||
     | value=INTEGER #IntegerLiteral                                             // numeros
     | value=THIS #This                                                          // keyword: "this"
+    | value=LENGTH #Length                                                      // keyword: "length"
     | (value=TRUE | value=FALSE) #Bool                                          // keywords: "true" ; "false"
     | name=ID #VarRefExpr                                                       // vars
     ;
