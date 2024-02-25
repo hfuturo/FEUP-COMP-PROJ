@@ -45,12 +45,7 @@ WHILE: 'while' ;
 STATIC: 'static';
 MAIN: 'main';
 VOID: 'void';
-STRING: 'String';
 EXTENDS : 'extends' ;
-
-ID : (LETTER)(LETTER | INTEGER)*;
-INTEGER : [0-9][0-9]* ;
-LETTER: [a-zA-Z_$];
 
 MULTI_LINE_COMMENT_START_MARKER: '/*' ;
 MULTI_LINE_COMMENT_END_MARKER: '*/' ;
@@ -59,10 +54,14 @@ SINGLE_LINE_COMMENT_MARKER: '//';
 SINGLE_LINE_COMMENT : SINGLE_LINE_COMMENT_MARKER ~[\n]* -> skip;
 MULTI_LINE_COMMENT: (MULTI_LINE_COMMENT_START_MARKER .*? MULTI_LINE_COMMENT_END_MARKER) -> skip ;
 
+ID : (LETTER)(LETTER | INTEGER)*;
+INTEGER : [0-9][0-9]* ;
+LETTER: [a-zA-Z_$];
+
 WS : [ \t\n\r\f]+ -> skip ;
 
 program
-    :  classDecl EOF
+    :  classDeclRule EOF
     ;
 
 importDecl
@@ -70,46 +69,40 @@ importDecl
     ;
 
 
-classDecl
+classDeclRule
     : importDecl*
         CLASS name=ID
         (EXTENDS ID)?
         LCURLY
-        varDecl* methodDecl*
-        RCURLY
+        varDecl* methodDeclRule*
+        RCURLY # ClassDecl
     ;
 
 varDecl
     : type name=ID SEMI
     ;
 
-
-
-methodDecl locals[boolean isPublic=false]
+methodDeclRule locals[boolean isPublic=false]
     : (PUBLIC {$isPublic=true;})?
         type name=ID
         LPAREN (params+=param (',' params+=param)*)? RPAREN
-        LCURLY varDecl* stmt* RCURLY # NormalMethod
+        LCURLY varDecl* stmt* RCURLY # MethodDecl
     | mainMethodDecl # MainMethod
     ;
 
 mainMethodDecl
-    : (PUBLIC)? STATIC VOID name=MAIN LPAREN STRING '[]' name_of_param RPAREN
+    : (PUBLIC)? STATIC VOID name=MAIN LPAREN 'String' '[]' ID RPAREN
               LCURLY varDecl* stmt* RCURLY
     ;
 
 // É preciso ter atenção de que depois a visitar os nós temos de ver se quando encontrarmos um VarArgType, eles está no fim
 type
-    : name=INT '[]' #ArrayType
+    : name= ID #AbstractDataType
+    | name=INT '[]' #ArrayType
     | name=INT ELLIPSIS #VarArgType
     | name= INT #IntegerType
     | name= BOOL #BoolType
-    | name= STRING #StringType
-    | name= ID #AbstractDataType
-    ;
-
-name_of_param
-    : name=ID
+    | name= 'String' #StringType
     ;
 
 param

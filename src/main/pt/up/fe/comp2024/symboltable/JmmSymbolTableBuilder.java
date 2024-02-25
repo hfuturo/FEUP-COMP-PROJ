@@ -21,6 +21,8 @@ public class JmmSymbolTableBuilder {
     public static JmmSymbolTable build(JmmNode root) {
 
         var classDecl = root.getJmmChild(0);
+        System.out.println(classDecl.getKind());
+        System.out.println(Kind.CLASS_DECL.getNodeName());
         SpecsCheck.checkArgument(Kind.CLASS_DECL.check(classDecl), () -> "Expected a class declaration: " + classDecl);
         String className = classDecl.get("name");
 
@@ -57,10 +59,11 @@ public class JmmSymbolTableBuilder {
     }
 
     private static Map<String, List<Symbol>> buildLocals(JmmNode classDecl) {
-        // TODO: Simple implementation that needs to be expanded
-
         Map<String, List<Symbol>> map = new HashMap<>();
 
+        map.put(classDecl.get("name"), classDecl.getChildren(VAR_DECL).stream()
+                .map(JmmSymbolTableBuilder::getSymbolBasedOnType)
+                .toList());
 
         classDecl.getChildren(METHOD_DECL).stream()
                 .forEach(method -> map.put(method.get("name"), getLocalsList(method)));
@@ -77,13 +80,32 @@ public class JmmSymbolTableBuilder {
 
 
     private static List<Symbol> getLocalsList(JmmNode methodDecl) {
-        // TODO: Simple implementation that needs to be expanded
-
-        var intType = new Type(TypeUtils.getIntTypeName(), false);
-
         return methodDecl.getChildren(VAR_DECL).stream()
-                .map(varDecl -> new Symbol(intType, varDecl.get("name")))
+                .map(JmmSymbolTableBuilder::getSymbolBasedOnType)
                 .toList();
     }
 
+    private static Symbol getSymbolBasedOnType(JmmNode varDecl) {
+        JmmNode type_node = varDecl.getJmmChild(0);
+        Type type;
+        switch (type_node.getKind()) {
+            case "IntegerType":
+                type = new Type(TypeUtils.getIntTypeName(), false);
+                break;
+            case "BoolType":
+                type = new Type(TypeUtils.getBoolTypeName(), false);
+                break;
+            case "ArrayType":
+                type = new Type(TypeUtils.getIntTypeName(), true);
+                break;
+            case "AbstractDataType":
+                type = new Type(type_node.get("name"), false);
+                break;
+            default:
+                type = new Type("unknown", false);
+                break;
+        }
+
+        return new Symbol(type, varDecl.get("name"));
+    }
 }
