@@ -35,12 +35,12 @@ public class JmmSymbolTableBuilder {
     }
 
     private static Map<String, Type> buildReturnTypes(JmmNode classDecl) {
-        // TODO: Simple implementation that needs to be expanded
-
         Map<String, Type> map = new HashMap<>();
 
+        map.put("main", new Type("void", false));
+
         classDecl.getChildren(METHOD_DECL).stream()
-                .forEach(method -> map.put(method.get("name"), new Type(TypeUtils.getIntTypeName(), false)));
+                .forEach(method -> map.put(method.get("name"), getType(method.getChild(0))));
 
         return map;
     }
@@ -72,10 +72,12 @@ public class JmmSymbolTableBuilder {
     }
 
     private static List<String> buildMethods(JmmNode classDecl) {
-
-        return classDecl.getChildren(METHOD_DECL).stream()
+        List<String> ret = new ArrayList<>();
+        ret.add("main");
+        ret.addAll(classDecl.getChildren(METHOD_DECL).stream()
                 .map(method -> method.get("name"))
-                .toList();
+                .toList());
+        return ret;
     }
 
 
@@ -107,5 +109,16 @@ public class JmmSymbolTableBuilder {
         }
 
         return new Symbol(type, varDecl.get("name"));
+    }
+
+    private static Type getType(JmmNode node) {
+        return switch (node.getKind()) {
+            case "IntegerType" -> new Type(TypeUtils.getIntTypeName(), false);
+            case "BoolType" -> new Type(TypeUtils.getBoolTypeName(), false);
+            case "ArrayType" -> new Type(TypeUtils.getIntTypeName(), true);
+            case "StringType" -> new Type(TypeUtils.getStringTypeName(), false);
+            case "AbstractDataType" -> new Type(node.get("name"), false);
+            default -> new Type("unknown", false);
+        };
     }
 }

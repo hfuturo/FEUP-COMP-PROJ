@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-class Factorial {
-    public int computeFactorial(int num){
-        int num_aux_t ;
-=======
-import io;
-
 class Factorial {
     public int computeFactorial(int num){
         int num_aux ;
@@ -13,11 +6,32 @@ class Factorial {
         else
             num_aux = num * (this.computeFactorial(num-1));
         return num_aux;
-}
+    }
+
+    public String teste(int x) {
+        int a;
+        return a;
+    }
+
+    public int[] all(int a, boolean b, MethodsAndFields maf){
+        int[] c;
+        return c;
+    }
+
+    public int getField1(int a){
+        return field1;
+    }
+
+    public boolean getField2(int a){
+        return field2;
+    }
+
+    public MethodsAndFields getField3(int a){
+        return field3;
+    }
 
     public static void main(String[] args){
         io.println(new Factorial().computeFactorial(10)); //assuming the existence
         // of the classfile io.class
->>>>>>> 625b8d3 (added expr grammar and more tests)
     }
 }
