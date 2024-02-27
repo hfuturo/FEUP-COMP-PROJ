@@ -20,12 +20,8 @@ ADD : '+' ;
 ELLIPSIS : '...';
 SUB : '-' ;
 AND : '&&' ;
-OR : '||' ;
 NEGATION : '!' ;
 LESS : '<' ;
-LESSEQ : '<=' ;
-GREATER : '>' ;
-GREATEREQ : '>=';
 FALSE : 'false' ;
 TRUE : 'true' ;
 THIS : 'this' ;
@@ -123,21 +119,18 @@ stmt
 expr
     : op=LPAREN expr op=RPAREN #Parenthesis                                     // ()
     | expr op=LSQUARE expr op=RSQUARE #AccessArray                              // aceder a um array, i.e., a[2]
-    | expr op=STOP expr LPAREN (expr (COMMA expr)* )? RPAREN #VarMethod         // foo.bar(), foo.bar(...)
-    | expr op=STOP expr #VarVar                                                 // foo.bar
-    | op=LSQUARE expr (op=COMMA expr)* op=RSQUARE #InitArray                    // inicializar array, i.e., [1,2,3]
+    | expr op=STOP name=ID LPAREN (expr (COMMA expr)* )? RPAREN #VarMethod         // foo.bar(), foo.bar(...)
+    | expr op=STOP LENGTH #VarVar                                               // foo.length
+    | op=LSQUARE (expr (op=COMMA expr)* )? op=RSQUARE #InitArray                // inicializar array, i.e., [1,2,3]
     | op=NEGATION expr #Unary                                                   // !
-    // necessita de ('[]') senao nao reconhece "new int[]" (n sei pq)
-    | op=NEW INT ('[]' | LSQUARE expr? RSQUARE)   #NewInt                       // new int
-    | op=NEW expr LPAREN (expr (COMMA expr)* )? RPAREN  #NewClass               // new class
+    | op=NEW INT LSQUARE expr RSQUARE   #NewInt                                 // new int
+    | op=NEW name=ID LPAREN RPAREN  #NewClass                                   // new class
     | expr (op=MUL | op=DIV) expr #BinaryExpr                                   // * ; /
     | expr (op=ADD | op=SUB) expr #BinaryExpr                                   // + ; -
-    | expr (op=LESS | op=GREATER | op=LESSEQ | op=GREATEREQ) expr #Relational   // < ; > ; <= ; >=
+    | expr op=LESS expr #Relational                                             // <
     | expr op=AND expr #BoolOperator                                            // &&
-    | expr op=OR expr #BoolOperator                                             // ||
     | value=INTEGER #IntegerLiteral                                             // numeros
     | value=THIS #This                                                          // keyword: "this"
-    | value=LENGTH #Length                                                      // keyword: "length"
     | (value=TRUE | value=FALSE) #Bool                                          // keywords: "true" ; "false"
     | name=ID #VarRefExpr                                                       // vars
     ;

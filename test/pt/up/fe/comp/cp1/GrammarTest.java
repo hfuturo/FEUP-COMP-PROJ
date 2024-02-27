@@ -186,7 +186,7 @@ public class GrammarTest {
 
     @Test
     public void testExprNewArray() {
-        TestUtils.parseVerbose("new int[]", EXPRESSION);
+        TestUtils.parseVerbose("new int[!a]", EXPRESSION);
     }
 
     @Test
@@ -266,20 +266,7 @@ public class GrammarTest {
     }
 
     @Test
-    public void testExprNewClassWithExpr() {
-        TestUtils.parseVerbose("new Foo(a+b)", EXPRESSION);
-    }
-
-    @Test
-    public void testExprNewClassWithMultipleExpr() {
-        TestUtils.parseVerbose("new Foo(!a, false, this.x)", EXPRESSION);
-    }
-
-    @Test
     public void testExprEmptyMemberCall() { TestUtils.parseVerbose("foo.bar()", EXPRESSION); }
-
-    @Test
-    public void testExprVariableCall() { TestUtils.parseVerbose("foo.x", EXPRESSION); }
 
     @Test
     public void testExprWithUnary() {
