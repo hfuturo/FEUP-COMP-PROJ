@@ -37,7 +37,13 @@ public class JmmSymbolTableBuilder {
     private static Map<String, Type> buildReturnTypes(JmmNode classDecl) {
         Map<String, Type> map = new HashMap<>();
 
-        map.put("main", new Type("void", false));
+        if (!classDecl.getChildren(MAIN_METHOD).isEmpty()) {
+            map.put("main", new Type("void", false));
+        }
+
+        /*for(var m: classDecl.getChildren(MAIN_METHOD_DECL)) {
+            map.put("main", new Type("void", false));
+        }*/
 
         classDecl.getChildren(METHOD_DECL).stream()
                 .forEach(method -> map.put(method.get("name"), getType(method.getChild(0))));
@@ -47,6 +53,18 @@ public class JmmSymbolTableBuilder {
 
     private static Map<String, List<Symbol>> buildParams(JmmNode classDecl) {
         Map<String, List<Symbol>> map = new HashMap<>();
+
+        var mainMethod = classDecl.getChildren(MAIN_METHOD);
+        if (!mainMethod.isEmpty()) {
+            var c = mainMethod.get(0).getChildren(MAIN_METHOD_TEST);
+            map.put("main", new ArrayList<>(List.of(new Symbol(new Type(TypeUtils.getStringTypeName(), true), c.get(0).get("name")))));
+        }
+
+        classDecl.getChildren(MAIN_METHOD)
+                .forEach(method -> method.getChildren(PARAM)
+                        .forEach(param -> {
+                            map.put("main", new ArrayList<>(List.of(getSymbolBasedOnType((param)))));
+                        }));
 
         classDecl.getChildren(METHOD_DECL)
                 .forEach(method -> method.getChildren(PARAM)
@@ -70,15 +88,23 @@ public class JmmSymbolTableBuilder {
         classDecl.getChildren(METHOD_DECL).stream()
                 .forEach(method -> map.put(method.get("name"), getLocalsList(method)));
 
+        classDecl.getChildren(MAIN_METHOD).stream()
+                .forEach(method -> map.put("main", getLocalsList(method)));
+
         return map;
     }
 
     private static List<String> buildMethods(JmmNode classDecl) {
         List<String> ret = new ArrayList<>();
-        ret.add("main");
+
+        if (!classDecl.getChildren(MAIN_METHOD).isEmpty()) {
+            ret.add("main");
+        }
+
         ret.addAll(classDecl.getChildren(METHOD_DECL).stream()
                 .map(method -> method.get("name"))
                 .toList());
+        System.out.println("Return list: " + ret.toString());
         return ret;
     }
 

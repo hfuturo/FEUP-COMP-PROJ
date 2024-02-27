@@ -86,7 +86,10 @@ public class SymbolTableTest {
         System.out.println("METHODS: " + methods);
         for (var m : methods) {
             var ret = st.getReturnType(m);
+            System.out.println("m: " + m);
+            System.out.println("ret: " + ret);
             var numParameters = st.getParameters(m).size();
+            System.out.println("numParameters: " + numParameters);
             switch (ret.getName()) {
                 case "MethodsAndFields":
                     checkObj++;

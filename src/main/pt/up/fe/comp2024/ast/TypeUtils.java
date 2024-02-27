@@ -8,7 +8,6 @@ public class TypeUtils {
 
     private static final String INT_TYPE_NAME = "int";
     private static final String BOOL_TYPE_NAME = "boolean";
-    private static final String INT_ARRAY_TIME_NAME = "int_array";
     private static final String STRING_TYPE_NAME = "String";
 
 
@@ -18,10 +17,6 @@ public class TypeUtils {
 
     public static String getBoolTypeName() {
         return BOOL_TYPE_NAME;
-    }
-
-    public static String getIntArrayTimeName() {
-        return INT_ARRAY_TIME_NAME;
     }
 
     public static String getStringTypeName() {

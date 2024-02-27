@@ -1,22 +1,7 @@
-class Factorial {
-    public int computeFactorial(int num){
-        int num_aux ;
-        if (num < 1)
-            num_aux = 1;
-        else
-            num_aux = num * (this.computeFactorial(num-1));
-        return num_aux;
-    }
-
-    public String teste(int x) {
-        int a;
-        return a;
-    }
-
-    public int[] all(int a, boolean b, MethodsAndFields maf){
-        int[] c;
-        return c;
-    }
+class MethodsAndFields{
+    int field1;
+    boolean field2;
+    MethodsAndFields field3;
 
     public int getField1(int a){
         return field1;
@@ -30,8 +15,12 @@ class Factorial {
         return field3;
     }
 
+    public int[] all(int a, boolean b, MethodsAndFields maf){
+        int[] c;
+        return c;
+    }
+
     public static void main(String[] args){
-        io.println(new Factorial().computeFactorial(10)); //assuming the existence
-        // of the classfile io.class
+
     }
 }
