@@ -61,7 +61,7 @@ program
     ;
 
 importDecl
-    : IMPORT ID ('.' ID)* SEMI
+    : IMPORT names+=ID ('.' names+=ID)* SEMI # Import
     ;
 
 
