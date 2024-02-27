@@ -67,14 +67,11 @@ public class JmmSymbolTableBuilder {
                         }));
 
         classDecl.getChildren(METHOD_DECL)
-                .forEach(method -> method.getChildren(PARAM)
-                        .forEach(param -> {
-                            if(map.containsKey(method.get("name")))
-                                map.get(method.get("name")).add(getSymbolBasedOnType(param));
-                            else
-                                map.put(method.get("name"), new ArrayList<>(List.of(getSymbolBasedOnType(param))));
-
-                        }));
+                .forEach(method -> {
+                        map.put(method.get("name"), new ArrayList<>());
+                        method.getChildren(PARAM)
+                            .forEach(param -> map.get(method.get("name")).add(getSymbolBasedOnType(param)));
+                });
         return map;
     }
 
