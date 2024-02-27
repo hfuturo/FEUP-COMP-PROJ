@@ -68,7 +68,7 @@ importDecl
 classDeclRule
     : importDecl*
         CLASS name=ID
-        (EXTENDS ID)?
+        (EXTENDS ultraSuper=ID)?
         LCURLY
         varDecl* methodDeclRule*
         RCURLY # ClassDecl

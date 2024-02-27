@@ -52,7 +52,6 @@ public class SymbolTableTest {
         var checkInt = 0;
         var checkBool = 0;
         var checkObj = 0;
-        System.out.println("FIELDS: " + fields);
         for (var f : fields) {
             switch (f.getType().getName()) {
                 case "MethodsAndFields":
@@ -83,13 +82,9 @@ public class SymbolTableTest {
         var checkBool = 0;
         var checkObj = 0;
         var checkAll = 0;
-        System.out.println("METHODS: " + methods);
         for (var m : methods) {
             var ret = st.getReturnType(m);
-            System.out.println("m: " + m);
-            System.out.println("ret: " + ret);
             var numParameters = st.getParameters(m).size();
-            System.out.println("numParameters: " + numParameters);
             switch (ret.getName()) {
                 case "MethodsAndFields":
                     checkObj++;

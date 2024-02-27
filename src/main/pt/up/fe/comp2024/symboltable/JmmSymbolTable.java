@@ -18,22 +18,28 @@ public class JmmSymbolTable implements SymbolTable {
     private final Map<String, Type> returnTypes;
     private final Map<String, List<Symbol>> params;
     private final Map<String, List<Symbol>> locals;
+    private final List<String> imports;
+    private final String superSymbol;
 
     public JmmSymbolTable(String className,
                           List<String> methods,
                           Map<String, Type> returnTypes,
                           Map<String, List<Symbol>> params,
-                          Map<String, List<Symbol>> locals) {
+                          Map<String, List<Symbol>> locals,
+                          List<String> imports,
+                          String superSymbol) {
         this.className = className;
         this.methods = methods;
         this.returnTypes = returnTypes;
         this.params = params;
         this.locals = locals;
+        this.imports = imports;
+        this.superSymbol = superSymbol;
     }
 
     @Override
     public List<String> getImports() {
-        throw new NotImplementedException();
+        return this.imports;
     }
 
     @Override
@@ -43,7 +49,7 @@ public class JmmSymbolTable implements SymbolTable {
 
     @Override
     public String getSuper() {
-        throw new NotImplementedException();
+        return this.superSymbol;
     }
 
     @Override
@@ -68,8 +74,6 @@ public class JmmSymbolTable implements SymbolTable {
 
     @Override
     public List<Symbol> getLocalVariables(String methodSignature) {
-        System.out.println("Method signature is: " + methodSignature);
-
         return this.locals.get(methodSignature);
     }
 

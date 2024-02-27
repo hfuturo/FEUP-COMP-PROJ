@@ -7,11 +7,7 @@ import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.TypeUtils;
 import pt.up.fe.specs.util.SpecsCheck;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static pt.up.fe.comp2024.ast.Kind.*;
 
@@ -19,10 +15,7 @@ public class JmmSymbolTableBuilder {
 
 
     public static JmmSymbolTable build(JmmNode root) {
-
         var classDecl = root.getJmmChild(0);
-        System.out.println(classDecl.getKind());
-        System.out.println(Kind.CLASS_DECL.getNodeName());
         SpecsCheck.checkArgument(Kind.CLASS_DECL.check(classDecl), () -> "Expected a class declaration: " + classDecl);
         String className = classDecl.get("name");
 
@@ -30,8 +23,26 @@ public class JmmSymbolTableBuilder {
         var returnTypes = buildReturnTypes(classDecl);
         var params = buildParams(classDecl);
         var locals = buildLocals(classDecl);
+        var imports = buildImports(classDecl);
+        var superSymbol = buildSuperSymbol(classDecl);
 
-        return new JmmSymbolTable(className, methods, returnTypes, params, locals);
+        return new JmmSymbolTable(className, methods, returnTypes, params, locals, imports, superSymbol);
+    }
+
+    private static List<String> buildImports(JmmNode classDecl) {
+        List<String> imports = new ArrayList<>();
+
+        classDecl.getChildren("Import").forEach(imp -> {
+            var import_path =  imp.getObjectAsList("names", String.class);
+            imports.add(import_path.get(import_path.size()-1));
+        });
+
+        return imports;
+    }
+    private static String buildSuperSymbol(JmmNode classDecl) {
+        Optional<String> result = classDecl.getOptional("ultraSuper");
+
+        return result.orElse("");
     }
 
     private static Map<String, Type> buildReturnTypes(JmmNode classDecl) {
@@ -40,10 +51,6 @@ public class JmmSymbolTableBuilder {
         if (!classDecl.getChildren(MAIN_METHOD).isEmpty()) {
             map.put("main", new Type("void", false));
         }
-
-        /*for(var m: classDecl.getChildren(MAIN_METHOD_DECL)) {
-            map.put("main", new Type("void", false));
-        }*/
 
         classDecl.getChildren(METHOD_DECL).stream()
                 .forEach(method -> map.put(method.get("name"), getType(method.getChild(0))));
@@ -101,7 +108,6 @@ public class JmmSymbolTableBuilder {
         ret.addAll(classDecl.getChildren(METHOD_DECL).stream()
                 .map(method -> method.get("name"))
                 .toList());
-        System.out.println("Return list: " + ret.toString());
         return ret;
     }
 
