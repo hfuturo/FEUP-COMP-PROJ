@@ -87,7 +87,7 @@ methodDeclRule locals[boolean isPublic=false]
     ;
 
 mainMethodDecl
-    : (PUBLIC)? STATIC VOID MAIN LPAREN 'String' '[]' name=ID RPAREN
+    : (PUBLIC)? STATIC VOID MAIN LPAREN 'String' ('[' ']'  | '[]') name=ID RPAREN
               LCURLY varDecl* stmt* RCURLY #InnerMainMethod
     ;
 
