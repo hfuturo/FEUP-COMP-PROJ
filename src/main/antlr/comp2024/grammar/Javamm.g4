@@ -94,7 +94,7 @@ mainMethodDecl
 // É preciso ter atenção de que depois a visitar os nós temos de ver se quando encontrarmos um VarArgType, eles está no fim
 type
     : name= ID #AbstractDataType
-    | name=INT LSQUARE RSQUARE #ArrayType
+    | name=INT ('[]' | '[' ']') #ArrayType
     | name=INT ELLIPSIS #VarArgType
     | name= INT #IntegerType
     | name= BOOL #BoolType
