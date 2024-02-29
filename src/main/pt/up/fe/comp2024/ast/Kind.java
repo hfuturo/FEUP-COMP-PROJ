@@ -14,7 +14,7 @@ public enum Kind {
     TYPE,
     METHOD_DECL,
     MAIN_METHOD,
-    MAIN_METHOD_TEST,
+    INNER_MAIN_METHOD,
     PARAM,
     ASSIGN_STMT,
     RETURN_STMT,

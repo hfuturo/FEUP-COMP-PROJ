@@ -88,7 +88,7 @@ methodDeclRule locals[boolean isPublic=false]
 
 mainMethodDecl
     : (PUBLIC)? STATIC VOID MAIN LPAREN 'String' '[]' name=ID RPAREN
-              LCURLY varDecl* stmt* RCURLY #MainMethodTest
+              LCURLY varDecl* stmt* RCURLY #InnerMainMethod
     ;
 
 // É preciso ter atenção de que depois a visitar os nós temos de ver se quando encontrarmos um VarArgType, eles está no fim

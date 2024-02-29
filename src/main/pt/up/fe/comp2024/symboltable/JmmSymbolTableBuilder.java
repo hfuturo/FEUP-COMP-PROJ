@@ -63,7 +63,7 @@ public class JmmSymbolTableBuilder {
 
         var mainMethod = classDecl.getChildren(MAIN_METHOD);
         if (!mainMethod.isEmpty()) {
-            var c = mainMethod.get(0).getChildren(MAIN_METHOD_TEST);
+            var c = mainMethod.get(0).getChildren(INNER_MAIN_METHOD);
             map.put("main", new ArrayList<>(List.of(new Symbol(new Type(TypeUtils.getStringTypeName(), true), c.get(0).get("name")))));
         }
 
@@ -93,7 +93,10 @@ public class JmmSymbolTableBuilder {
                 .forEach(method -> map.put(method.get("name"), getLocalsList(method)));
 
         classDecl.getChildren(MAIN_METHOD).stream()
-                .forEach(method -> map.put("main", getLocalsList(method)));
+                .forEach(method -> method.getChildren(INNER_MAIN_METHOD).stream()
+                        .forEach(main_method -> map.put("main", getLocalsList(main_method))));
+
+        System.out.println("Map is: " + map);
 
         return map;
     }
@@ -113,6 +116,7 @@ public class JmmSymbolTableBuilder {
 
 
     private static List<Symbol> getLocalsList(JmmNode methodDecl) {
+        System.out.println("Children: " + methodDecl.getChildren(VAR_DECL));
         return methodDecl.getChildren(VAR_DECL).stream()
                 .map(JmmSymbolTableBuilder::getSymbolBasedOnType)
                 .toList();
