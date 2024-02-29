@@ -75,7 +75,7 @@ classDeclRule
     ;
 
 varDecl
-    : type name=ID SEMI
+    : type name=('main' | ID) SEMI
     ;
 
 methodDeclRule locals[boolean isPublic=false]

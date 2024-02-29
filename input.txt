@@ -1,26 +1,23 @@
 class MethodsAndFields{
-    int field1;
-    boolean field2;
-    MethodsAndFields field3;
+    int main;
 
-    public int getField1(int a){
-        return field1;
-    }
+	public int getField1(){
+		return field1;
+	}
 
-    public boolean getField2(int a){
-        return field2;
-    }
+	public boolean getField2(){
+		return field2;
+	}
 
-    public MethodsAndFields getField3(int a){
-        return field3;
-    }
+	public MethodsAndFields getField3(){
+		return field3;
+	}
 
-    public int[] all(int a, boolean b, MethodsAndFields maf){
-        int[] c;
-        return c;
-    }
+	public int[] all(int a, boolean b, MethodsAndFields maf){
+		int[] c;
+		return c;
+	}
 
-    public static void main(String[] args){
-
-    }
+	public static void main(String[] args){
+	}
 }
