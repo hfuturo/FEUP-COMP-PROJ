@@ -20,6 +20,7 @@ class MethodsAndFields{
 		return c;
 	}
 	
-	public static void main(String[] args){
+	static void main( String[] smt ){
+	    return;
 	}
 }
