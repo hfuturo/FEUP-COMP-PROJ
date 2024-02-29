@@ -18,7 +18,6 @@ public class TypeUtils {
     public static String getBoolTypeName() {
         return BOOL_TYPE_NAME;
     }
-
     public static String getStringTypeName() {
         return STRING_TYPE_NAME;
     }

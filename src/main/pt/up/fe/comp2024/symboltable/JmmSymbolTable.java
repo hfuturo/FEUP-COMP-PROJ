@@ -54,12 +54,7 @@ public class JmmSymbolTable implements SymbolTable {
 
     @Override
     public List<Symbol> getFields() {
-        List<Symbol> result = new ArrayList<>();
-        for (List<Symbol> v: this.locals.values()) {
-            result.addAll(v);
-        }
-
-        return result;
+        return this.locals.get(this.className);
     }
 
     @Override

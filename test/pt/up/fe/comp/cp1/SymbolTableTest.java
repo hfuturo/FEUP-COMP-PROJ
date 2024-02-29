@@ -49,7 +49,7 @@ public class SymbolTableTest {
         var semantics = test("symboltable/MethodsAndFields.jmm", false);
         var fields = semantics.getSymbolTable().getFields();
         System.out.println("Fields: " + fields);
-        assertEquals(5, fields.size());
+        assertEquals(3, fields.size());
         var checkInt = 0;
         var checkBool = 0;
         var checkObj = 0;
@@ -67,7 +67,7 @@ public class SymbolTableTest {
             }
         }
         ;
-        assertEquals("Field of type int", 3, checkInt);
+        assertEquals("Field of type int", 1, checkInt);
         assertEquals("Field of type boolean", 1, checkBool);
         assertEquals("Field of type object", 1, checkObj);
 
