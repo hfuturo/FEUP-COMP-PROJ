@@ -75,7 +75,7 @@ classDeclRule
     ;
 
 varDecl
-    : type name=('main' | ID) SEMI
+    : type name=('main' | LENGTH | ID) SEMI
     ;
 
 methodDeclRule locals[boolean isPublic=false]
@@ -102,7 +102,7 @@ type
     ;
 
 param
-    : type name=ID
+    : type name=('main' | LENGTH | ID)
     ;
 
 stmt
