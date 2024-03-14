@@ -118,17 +118,17 @@ stmt
 
 expr
     : op=LPAREN expr op=RPAREN #Parenthesis                                     // ()
-    | expr op=LSQUARE expr op=RSQUARE #AccessArray                              // aceder a um array, i.e., a[2]
+    | expr op=LSQUARE index=expr op=RSQUARE #AccessArray                              // aceder a um array, i.e., a[2]
     | expr op=STOP name=ID LPAREN (expr (COMMA expr)* )? RPAREN #VarMethod         // foo.bar(), foo.bar(...)
     | expr op=STOP LENGTH #VarVar                                               // foo.length
     | op=LSQUARE (expr (op=COMMA expr)* )? op=RSQUARE #InitArray                // inicializar array, i.e., [1,2,3]
     | op=NEGATION expr #Unary                                                   // !
-    | op=NEW INT LSQUARE expr RSQUARE   #NewInt                                 // new int
+    | op=NEW INT LSQUARE size=expr RSQUARE   #NewInt                                 // new int
     | op=NEW name=ID LPAREN RPAREN  #NewClass                                   // new class
-    | expr (op=MUL | op=DIV) expr #BinaryExpr                                   // * ; /
-    | expr (op=ADD | op=SUB) expr #BinaryExpr                                   // + ; -
-    | expr op=LESS expr #Relational                                             // <
-    | expr op=AND expr #BoolOperator                                            // &&
+    | left=expr (op=MUL | op=DIV) right=expr #BinaryExpr                                   // * ; /
+    | left=expr (op=ADD | op=SUB) right=expr #BinaryExpr                                   // + ; -
+    | left=expr op=LESS right=expr #Relational                                             // <
+    | left=expr op=AND right=expr #BoolOperator                                            // &&
     | value=INTEGER #IntegerLiteral                                             // numeros
     | value=THIS #This                                                          // keyword: "this"
     | (value=TRUE | value=FALSE) #Bool                                          // keywords: "true" ; "false"
