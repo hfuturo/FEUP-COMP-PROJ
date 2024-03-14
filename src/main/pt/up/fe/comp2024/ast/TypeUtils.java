@@ -6,35 +6,28 @@ import pt.up.fe.comp.jmm.ast.JmmNode;
 
 public class TypeUtils {
 
-    private static final String INT_TYPE_NAME = "int";
-    private static final String BOOL_TYPE_NAME = "boolean";
-    private static final String STRING_TYPE_NAME = "String";
+  private static final String INT_TYPE_NAME = "int";
+  private static final String BOOL_TYPE_NAME = "boolean";
+  private static final String STRING_TYPE_NAME = "String";
 
+  public static String getIntTypeName() { return INT_TYPE_NAME; }
 
-    public static String getIntTypeName() {
-        return INT_TYPE_NAME;
-    }
+  public static String getBoolTypeName() { return BOOL_TYPE_NAME; }
+  public static String getStringTypeName() { return STRING_TYPE_NAME; }
 
-    public static String getBoolTypeName() {
-        return BOOL_TYPE_NAME;
-    }
-    public static String getStringTypeName() {
-        return STRING_TYPE_NAME;
-    }
+  /**
+   * Gets the {@link Type} of an arbitrary expression.
+   *
+   * @param expr
+   * @param table
+   * @return
+   */
+  public static Type getExprType(JmmNode expr, SymbolTable table) {
+    // TODO: Simple implementation that needs to be expanded
 
-    /**
-     * Gets the {@link Type} of an arbitrary expression.
-     *
-     * @param expr
-     * @param table
-     * @return
-     */
-    public static Type getExprType(JmmNode expr, SymbolTable table) {
-        // TODO: Simple implementation that needs to be expanded
+    var kind = Kind.fromString(expr.getKind());
 
-        var kind = Kind.fromString(expr.getKind());
-
-        Type type = switch (kind) {
+    Type type = switch (kind) {
             case BINARY_EXPR -> getBinExprType(expr);
             case VAR_REF_EXPR -> getVarExprType(expr, table);
             case INTEGER_LITERAL -> new Type(INT_TYPE_NAME, false);
