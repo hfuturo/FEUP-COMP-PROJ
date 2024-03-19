@@ -45,8 +45,9 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                         e)
                 );
             }
-
         }
+
+        System.out.println(reports.toString());
 
         return new JmmSemanticsResult(parserResult, table, reports);
     }

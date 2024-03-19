@@ -6,7 +6,6 @@ import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import java.util.Optional;
 
 public class AnalysisUtils {
-
     public static Optional<Symbol> validateSymbolFromSymbolTable(String currentMethod, SymbolTable table, String symbolName) {
         for (Symbol symbol: table.getFields()) {
             if (symbol.getName().equals(symbolName)) {
