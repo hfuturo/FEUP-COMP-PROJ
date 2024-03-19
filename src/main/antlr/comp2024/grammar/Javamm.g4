@@ -70,25 +70,25 @@ classDeclRule
         CLASS name=ID
         (EXTENDS ultraSuper=ID)?
         LCURLY
-        varDecl* methodDeclRule*
+        varDeclRule* methodDeclRule*
         RCURLY # ClassDecl
     ;
 
-varDecl
-    : type name=('main' | LENGTH | ID) SEMI
+varDeclRule
+    : type name=('main' | LENGTH | ID) SEMI # VarDecl
     ;
 
 methodDeclRule locals[boolean isPublic=false]
     : (PUBLIC {$isPublic=true;})?
         type name=ID
         LPAREN (param (',' param)*)? RPAREN
-        LCURLY varDecl* stmt* RCURLY # MethodDecl
+        LCURLY varDeclRule* stmt* RCURLY # MethodDecl
     | mainMethodDecl # MainMethod
     ;
 
 mainMethodDecl
     : (PUBLIC)? STATIC VOID MAIN LPAREN 'String' ('[' ']'  | '[]') name=ID RPAREN
-              LCURLY varDecl* stmt* RCURLY #InnerMainMethod
+              LCURLY varDeclRule* stmt* RCURLY #InnerMainMethod
     ;
 
 // É preciso ter atenção de que depois a visitar os nós temos de ver se quando encontrarmos um VarArgType, eles está no fim
