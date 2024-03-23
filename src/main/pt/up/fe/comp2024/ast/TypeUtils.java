@@ -1,8 +1,12 @@
 package pt.up.fe.comp2024.ast;
 
+import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp2024.analysis.AnalysisUtils;
+
+import java.util.Optional;
 
 public class TypeUtils {
 
@@ -38,12 +42,11 @@ public class TypeUtils {
     }
 
     private static Type getBinExprType(JmmNode binaryExpr) {
-        // TODO: Simple implementation that needs to be expanded
-
         String operator = binaryExpr.get("op");
 
         return switch (operator) {
-            case "+", "*" -> new Type(INT_TYPE_NAME, false);
+            case "+", "*", "<" -> new Type(INT_TYPE_NAME, false);
+            case "&&" -> new Type(BOOL_TYPE_NAME, false);
             default ->
                     throw new RuntimeException("Unknown operator '" + operator + "' of expression '" + binaryExpr + "'");
         };
@@ -51,8 +54,15 @@ public class TypeUtils {
 
 
     private static Type getVarExprType(JmmNode varRefExpr, SymbolTable table) {
-        // TODO: Simple implementation that needs to be expanded
-        return new Type(INT_TYPE_NAME, false);
+        String name = varRefExpr.get("name");
+
+        Optional<Symbol> varRefSymbol = AnalysisUtils.validateSymbolFromSymbolTable(table, name);
+
+        if(varRefSymbol.isEmpty()) {
+            throw new RuntimeException("Undeclared variable semantic analysis pass has failed!");
+        }
+
+        return varRefSymbol.get().getType();
     }
 
 
