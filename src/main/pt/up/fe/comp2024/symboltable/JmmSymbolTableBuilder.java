@@ -138,6 +138,9 @@ public class JmmSymbolTableBuilder {
             case "AbstractDataType":
                 type = new Type(type_node.get("name"), false);
                 break;
+            case "VarArgType":
+                type = new Type(TypeUtils.getVarArgTypeName(), false);
+                break;
             default:
                 type = new Type("unknown", false);
                 break;
