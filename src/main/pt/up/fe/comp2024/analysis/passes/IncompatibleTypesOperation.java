@@ -4,6 +4,7 @@ import static pt.up.fe.comp2024.ast.Kind.VAR_DECL;
 
 import java.util.List;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
+import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp.jmm.report.Stage;
@@ -23,24 +24,18 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
 
   @Override
   public void buildVisitor() {
-    // addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
     addVisit(Kind.BINARY_EXPR, this::visitBinaryExpr);
-    //addVisit(Kind.BOOL, this::visitBool);
-    // addVisit(Kind.INTEGER_LITERAL, this::visitIntegerLiteral);
   }
 
-  // private Void visitMethodDecl(JmmNode method, SymbolTable table) {
-  //   this.currentMethod = method.get("name");
-  //   return null;
-  // }
-
-  private Void visitBinaryExpr(JmmNode method, SymbolTable table) {
-    List<JmmNode> children = method.getChildren();
+  private Void visitBinaryExpr(JmmNode binaryExpr, SymbolTable table) {
+    List<JmmNode> children = binaryExpr.getChildren();
     JmmNode leftExpr = children.get(0);
-    JmmNode rightExpr = children.get(2);
+    JmmNode rightExpr = children.get(1);
 
-    String leftType = visit(leftExpr).toString();
-    String rightType = visit(rightExpr).toString();
+    Type operationType = TypeUtils.getExprType(binaryExpr, table);
+
+    Type leftType = TypeUtils.getExprType(leftExpr, table);
+    Type rightType = TypeUtils.getExprType(rightExpr, table);
 
     /* Valid cases:
      *  1 + 1 // two integer literals
@@ -48,12 +43,15 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
      *  1 + pos.getX() // one integer literal and one integer returning function
      */
 
-    if (!leftType.equals(rightType)) {
+    boolean leftTypeIncompatibleWithOpType = !leftType.equals(operationType);
+    boolean rightTypeIncompatibleWithOpType = !rightType.equals(operationType);
+    if (leftTypeIncompatibleWithOpType || rightTypeIncompatibleWithOpType) {
+      var message = String.format("Incompatible types (%s, %s) in operation: %s", leftType.toString(), rightType.toString(), binaryExpr.get("op"));
       addReport(Report.newError(Stage.SEMANTIC,
                                 0 /*NodeUtils.getLine(varRefExpr)*/,
                                 0
                                 /*NodeUtils.getColumn(varRefExpr)*/,
-                                "", null));
+                                message, null));
     }
 
     return null;
