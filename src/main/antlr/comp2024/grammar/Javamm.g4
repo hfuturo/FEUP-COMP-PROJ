@@ -117,7 +117,7 @@ stmt
     ;
 
 expr
-    : op=LPAREN expr op=RPAREN #Parenthesis                                     // ()
+    : openingParentheses=LPAREN expr closingParentheses=RPAREN #Parenthesis                                     // ()
     | var=expr op=LSQUARE index=expr op=RSQUARE #AccessArray                              // aceder a um array, i.e., a[2]
     | expr op=STOP name=ID LPAREN (expr (COMMA expr)* )? RPAREN #VarMethod         // foo.bar(), foo.bar(...)
     | expr op=STOP LENGTH #VarVar                                               // foo.length

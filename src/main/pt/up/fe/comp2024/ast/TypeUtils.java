@@ -35,6 +35,8 @@ public class TypeUtils {
             case BINARY_EXPR -> getBinExprType(expr);
             case VAR_REF_EXPR -> getVarExprType(expr, table);
             case INTEGER_LITERAL -> new Type(INT_TYPE_NAME, false);
+            case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
+            case VAR_METHOD -> table.getReturnType(expr.get("name"));
             default -> throw new UnsupportedOperationException("Can't compute type for expression kind '" + kind + "'");
         };
 
@@ -45,13 +47,12 @@ public class TypeUtils {
         String operator = binaryExpr.get("op");
 
         return switch (operator) {
-            case "+", "*", "<" -> new Type(INT_TYPE_NAME, false);
+            case "+", "-", "/", "*", "<" -> new Type(INT_TYPE_NAME, false);
             case "&&" -> new Type(BOOL_TYPE_NAME, false);
             default ->
                     throw new RuntimeException("Unknown operator '" + operator + "' of expression '" + binaryExpr + "'");
         };
     }
-
 
     private static Type getVarExprType(JmmNode varRefExpr, SymbolTable table) {
         String name = varRefExpr.get("name");
