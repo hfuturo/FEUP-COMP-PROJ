@@ -127,8 +127,8 @@ expr
     | op=NEW name=ID LPAREN RPAREN  #NewClass                                   // new class
     | left=expr (op=MUL | op=DIV) right=expr #BinaryExpr                                   // * ; /
     | left=expr (op=ADD | op=SUB) right=expr #BinaryExpr                                   // + ; -
-    | left=expr op=LESS right=expr #Relational                                             // <
-    | left=expr op=AND right=expr #BoolOperator                                            // &&
+    | left=expr op=LESS right=expr #BinaryExpr                                             // <
+    | left=expr op=AND right=expr #BinaryExpr                                            // &&
     | value=INTEGER #IntegerLiteral                                             // numeros
     | value=THIS #This                                                          // keyword: "this"
     | (value=TRUE | value=FALSE) #Bool                                          // keywords: "true" ; "false"
