@@ -36,6 +36,7 @@ public class UndeclaredVariable extends AnalysisVisitor {
   }
 
   private Void visitVarRefExpr(JmmNode varRefExpr, SymbolTable table) {
+
     SpecsCheck.checkNotNull(currentMethod,
                             () -> "Expected current method to be set");
 

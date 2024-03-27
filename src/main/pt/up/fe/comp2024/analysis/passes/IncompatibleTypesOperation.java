@@ -32,7 +32,7 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
     JmmNode leftExpr = children.get(0);
     JmmNode rightExpr = children.get(1);
 
-    Type operationType = TypeUtils.getExprType(binaryExpr, table);
+    Type operationType = TypeUtils.getOperatorOperandsType(binaryExpr);
 
     Type leftType = TypeUtils.getExprType(leftExpr, table);
     Type rightType = TypeUtils.getExprType(rightExpr, table);
@@ -48,9 +48,8 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
     if (leftTypeIncompatibleWithOpType || rightTypeIncompatibleWithOpType) {
       var message = String.format("Incompatible types (%s, %s) in operation: %s", leftType.toString(), rightType.toString(), binaryExpr.get("op"));
       addReport(Report.newError(Stage.SEMANTIC,
-                                0 /*NodeUtils.getLine(varRefExpr)*/,
-                                0
-                                /*NodeUtils.getColumn(varRefExpr)*/,
+                                NodeUtils.getLine(binaryExpr),
+                                NodeUtils.getColumn(binaryExpr),
                                 message, null));
     }
 
