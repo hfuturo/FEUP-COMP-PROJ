@@ -2,6 +2,8 @@ class ThisInStaticMethod {
 
     public static void main(String[] args) {
         ThisInStaticMethod a;
+        ThisInStaticMethod b;
         a = this;
+        b = a;
     }
 }

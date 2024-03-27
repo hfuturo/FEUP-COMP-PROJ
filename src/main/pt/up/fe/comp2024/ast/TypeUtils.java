@@ -40,6 +40,7 @@ public class TypeUtils {
             case VAR_METHOD -> table.getReturnType(expr.get("name"));
             case NEW_CLASS -> getNewClassType(expr, table);
             case BOOL -> new Type(BOOL_TYPE_NAME, false);
+            case THIS -> new Type(table.getClassName(), false);
 
             default -> throw new UnsupportedOperationException("Can't compute type for expression kind '" + kind + "'");
         };

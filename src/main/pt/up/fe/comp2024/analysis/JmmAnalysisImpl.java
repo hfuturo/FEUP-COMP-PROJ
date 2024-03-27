@@ -23,7 +23,8 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                 new VerifyArrayAccess(),
                 new IncompatibleTypesOperation(),
                 new CompatibleAssignTypes(),
-                new ValidConditionExpression());
+                new ValidConditionExpression(),
+                new ChecksThisInStaticMethods());
     }
 
     @Override
