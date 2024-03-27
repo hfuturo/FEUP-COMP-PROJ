@@ -47,16 +47,16 @@ public class TypeUtils {
         return type;
     }
 
-    public static Type getBinExprFinalType(JmmNode binaryExpr, SymbolTable table) {
-        String operator = binaryExpr.get("op");
-
-        return switch (operator) {
-            case "+", "-", "/", "*" -> new Type(INT_TYPE_NAME, false);
-            case "&&", "<" -> new Type(BOOL_TYPE_NAME, false);
-            default ->
-                    throw new RuntimeException("Unknown operator '" + operator + "' of expression '" + binaryExpr + "'");
-        };
-    }
+//    public static Type getBinExprFinalType(JmmNode binaryExpr, SymbolTable table) {
+//        String operator = binaryExpr.get("op");
+//
+//        return switch (operator) {
+//            case "+", "-", "/", "*" -> new Type(INT_TYPE_NAME, false);
+//            case "&&", "<" -> new Type(BOOL_TYPE_NAME, false);
+//            default ->
+//                    throw new RuntimeException("Unknown operator '" + operator + "' of expression '" + binaryExpr + "'");
+//        };
+//    }
 
     private static Type getBinExprType(JmmNode binaryExpr) {
         String operator = binaryExpr.get("op");
@@ -129,6 +129,7 @@ public class TypeUtils {
     public static boolean areTypesAssignable(Type sourceType, Type destinationType, SymbolTable table) {
         String sourceName = sourceType.getName();
         String destName = destinationType.getName();
+        List<String> imports = table.getImports();
         boolean checkArrayConsistency = (sourceType.isArray() && destinationType.isArray()) || (!sourceType.isArray() && !destinationType.isArray());
 
         if (sourceName.equals(destName)) {
@@ -139,6 +140,16 @@ public class TypeUtils {
             return checkArrayConsistency;
         }
 
-        return false;
+        boolean foundSource = false;
+        boolean foundDest = false;
+
+        for (String imp : imports) {
+            if (imp.equals(sourceName))
+                foundSource = true;
+            if (imp.equals(destName))
+                foundDest = true;
+        }
+
+        return foundSource && foundDest;
     }
 }

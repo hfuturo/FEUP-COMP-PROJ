@@ -21,14 +21,7 @@ public class ValidConditionExpression extends AnalysisVisitor {
     private Void visitIfElseStmt(JmmNode ifStmt, SymbolTable table) {
         JmmNode expr = ifStmt.getChild(0);
 
-        Type exprType;
-
-        if (!Kind.fromString(expr.getKind()).equals(Kind.BINARY_EXPR)) {
-            exprType = TypeUtils.getExprType(expr, table);
-        }
-        else {
-            exprType = TypeUtils.getBinExprFinalType(expr, null);
-        }
+        Type exprType = TypeUtils.getExprType(expr, table);
 
         if (!exprType.getName().equals(TypeUtils.getBoolTypeName())) {
             addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(ifStmt),
