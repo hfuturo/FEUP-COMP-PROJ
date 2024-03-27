@@ -87,6 +87,12 @@ public class SemanticAnalysisTest {
     }
 
     @Test
+    public void boolInIfCondition() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/BoolInIfCondition.jmm"));
+        TestUtils.noErrors(result);
+    }
+
+    @Test
     public void arrayInWhileCondition() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/ArrayInWhileCondition.jmm"));
         TestUtils.mustFail(result);

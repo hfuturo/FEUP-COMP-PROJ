@@ -39,11 +39,23 @@ public class TypeUtils {
             case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
             case VAR_METHOD -> table.getReturnType(expr.get("name"));
             case NEW_CLASS -> getNewClassType(expr, table);
+            case BOOL -> new Type(BOOL_TYPE_NAME, false);
 
             default -> throw new UnsupportedOperationException("Can't compute type for expression kind '" + kind + "'");
         };
 
         return type;
+    }
+
+    public static Type getBinExprFinalType(JmmNode binaryExpr, SymbolTable table) {
+        String operator = binaryExpr.get("op");
+
+        return switch (operator) {
+            case "+", "-", "/", "*" -> new Type(INT_TYPE_NAME, false);
+            case "&&", "<" -> new Type(BOOL_TYPE_NAME, false);
+            default ->
+                    throw new RuntimeException("Unknown operator '" + operator + "' of expression '" + binaryExpr + "'");
+        };
     }
 
     private static Type getBinExprType(JmmNode binaryExpr) {

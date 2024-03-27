@@ -24,6 +24,7 @@ public enum Kind {
   PARENTHESIS,
   VAR_METHOD,
   NEW_CLASS,
+  IF_ELSE_STMT,
   VAR_REF_EXPR;
 
   private static final Set<Kind> STATEMENTS = Set.of(ASSIGN_STMT, RETURN_STMT);
