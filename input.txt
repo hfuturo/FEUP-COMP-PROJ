@@ -1,23 +1,22 @@
-class MethodsAndFields{
-    int main;
+import B;
 
-	public int getField1(){
-		return field1;
-	}
+class ObjectAssignmentFail {
 
-	public boolean getField2(){
-		return field2;
-	}
+    public static void main(String[] args) {
 
-	public MethodsAndFields getField3(){
-		return field3;
-	}
+    }
 
-	public int[] all(int a, boolean b, MethodsAndFields maf){
-		int[] c;
-		return c;
-	}
+    public ObjectAssignmentFail foo() {
+        ObjectAssignmentFail a;
+        B b;
 
-	public static void main(String[] args){
-	}
+        a = new ObjectAssignmentFail();
+        b = new B();
+
+        // direita precisa de extender esquerda
+        // ObjectAssignmentFail does not extend B
+        b = a;
+
+        return a;
+    }
 }

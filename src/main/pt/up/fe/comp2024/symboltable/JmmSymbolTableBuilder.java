@@ -34,7 +34,7 @@ public class JmmSymbolTableBuilder {
 
         classDecl.getChildren("Import").forEach(imp -> {
             var import_path =  imp.getObjectAsList("names", String.class);
-            imports.add(String.join(".", import_path));
+            imports.add(import_path.get(import_path.size()-1));
         });
 
         return imports;

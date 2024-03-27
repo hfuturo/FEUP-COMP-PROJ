@@ -106,13 +106,12 @@ param
     ;
 
 stmt
-    : expr EQUALS expr SEMI #AssignStmt //
-    | RETURN expr? SEMI #ReturnStmt
+    : RETURN expr? SEMI #ReturnStmt
     | LCURLY stmt* RCURLY #ScopeStmt
     | IF LPAREN expr RPAREN stmt ELSE stmt #IfElseStmt
     | WHILE LPAREN expr RPAREN stmt #WhileStmt
     | expr SEMI #ExprStmt
-    | ID EQUALS expr SEMI #VarAssignStmt
+    | left=ID EQUALS expr SEMI #AssignStmt
     | ID LSQUARE expr RSQUARE EQUALS expr SEMI #VarListAssignStmt
     ;
 
