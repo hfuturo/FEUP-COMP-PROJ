@@ -37,6 +37,9 @@ public class TypeUtils {
             case INTEGER_LITERAL -> new Type(INT_TYPE_NAME, false);
             case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
             case VAR_METHOD -> table.getReturnType(expr.get("name"));
+            case BOOL -> new Type(BOOL_TYPE_NAME, false);
+            case THIS -> new Type(table.getClassName(), false);
+            case ACCESS_ARRAY -> new Type(getExprType(expr.getChildren().get(0), table).getName(), false);
             default -> throw new UnsupportedOperationException("Can't compute type for expression kind '" + kind + "'");
         };
 

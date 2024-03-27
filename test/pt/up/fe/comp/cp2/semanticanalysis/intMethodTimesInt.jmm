@@ -1,0 +1,17 @@
+class IntMethodTimesInt {
+
+    public static void main(String[] args) {
+
+    }
+
+    public int five() {
+        return 5;
+    }
+
+    public int foo() {
+        int a;
+
+        a = 10;
+        return this.five() * a;
+    }
+}

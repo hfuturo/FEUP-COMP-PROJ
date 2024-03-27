@@ -2,13 +2,13 @@ package pt.up.fe.comp.cp2;
 
 import org.junit.Test;
 import pt.up.fe.comp.TestUtils;
+import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.specs.util.SpecsIo;
 
 public class SemanticAnalysisTest {
 
     @Test
     public void symbolTable() {
-
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/SymbolTable.jmm"));
         System.out.println("Symbol Table:\n" + result.getSymbolTable().print());
     }
@@ -35,6 +35,24 @@ public class SemanticAnalysisTest {
     @Test
     public void boolTimesInt() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/BoolTimesInt.jmm"));
+        TestUtils.mustFail(result);
+    }
+
+    @Test
+    public void intMethodTimesInt() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/intMethodTimesInt.jmm"));
+        TestUtils.noErrors(result.getReports());
+    }
+
+    @Test
+    public void intArrayAccessTimesInt() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/intArrayAccessTimesInt.jmm"));
+        TestUtils.noErrors(result.getReports());
+    }
+
+    @Test
+    public void boolLessThanInt() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/BoolLessThanInt.jmm"));
         TestUtils.mustFail(result);
     }
 

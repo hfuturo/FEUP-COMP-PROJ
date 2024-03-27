@@ -25,23 +25,28 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
   @Override
   public void buildVisitor() {
     addVisit(Kind.BINARY_EXPR, this::visitBinaryExpr);
+    addVisit(Kind.INTEGER_LITERAL, this::visitDefault);
+    addVisit(Kind.VAR_REF_EXPR, this::visitDefault);
+    addVisit(Kind.THIS, this::visitDefault);
+    addVisit(Kind.VAR_METHOD, this::visitDefault);
+    addVisit(Kind.ACCESS_ARRAY, this::visitDefault);
+    addVisit(Kind.VAR_VAR, this::visitDefault);
+    addVisit(Kind.BOOL, this::visitDefault);
   }
 
-  private Void visitBinaryExpr(JmmNode binaryExpr, SymbolTable table) {
+  private Type visitDefault(JmmNode node, SymbolTable table) {
+    return TypeUtils.getExprType(node, table);
+  }
+
+  private Type visitBinaryExpr(JmmNode binaryExpr, SymbolTable table) {
     List<JmmNode> children = binaryExpr.getChildren();
     JmmNode leftExpr = children.get(0);
     JmmNode rightExpr = children.get(1);
 
     Type operationType = TypeUtils.getOperatorOperandsType(binaryExpr);
 
-    Type leftType = TypeUtils.getExprType(leftExpr, table);
-    Type rightType = TypeUtils.getExprType(rightExpr, table);
-
-    /* Valid cases:
-     *  1 + 1 // two integer literals
-     *  pos.getX() + pos.getY() // two integer returning functions
-     *  1 + pos.getX() // one integer literal and one integer returning function
-     */
+    Type leftType = (Type) visit(leftExpr, table);
+    Type rightType = (Type) visit(rightExpr, table);
 
     boolean leftTypeIncompatibleWithOpType = !leftType.equals(operationType);
     boolean rightTypeIncompatibleWithOpType = !rightType.equals(operationType);
@@ -53,6 +58,6 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
                                 message, null));
     }
 
-    return null;
+    return TypeUtils.getExprType(binaryExpr, table);
   }
 }

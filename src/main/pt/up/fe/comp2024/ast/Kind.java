@@ -23,6 +23,8 @@ public enum Kind {
   INTEGER_LITERAL,
   PARENTHESIS,
   VAR_METHOD,
+  VAR_VAR,
+  THIS,
   VAR_REF_EXPR;
 
   private static final Set<Kind> STATEMENTS = Set.of(ASSIGN_STMT, RETURN_STMT);
