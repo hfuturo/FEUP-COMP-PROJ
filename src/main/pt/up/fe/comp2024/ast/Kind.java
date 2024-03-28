@@ -27,6 +27,7 @@ public enum Kind {
   NEW_INT,
   IF_ELSE_STMT,
   THIS,
+  INIT_ARRAY,
   VAR_REF_EXPR;
 
   private static final Set<Kind> STATEMENTS = Set.of(ASSIGN_STMT, RETURN_STMT);

@@ -30,6 +30,16 @@ public class CompatibleAssignTypes extends AnalysisVisitor {
         Type leftType = TypeUtils.getTypeByString(leftVar, table);
         Type rightType = TypeUtils.getExprType(rightExpr, table);
 
+        if (rightType.isArray()) {
+            if (!TypeUtils.checkValuesInArrayInit(leftType, rightExpr.getChildren(), table)) {
+                String message = SemanticErrorUtils.incompatibleType(leftType.toString(), rightType.toString(), "ArrayInit");
+                addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(rightExpr),
+                        NodeUtils.getColumn(rightExpr), message, null));
+
+                return null;
+            }
+        }
+
         if (!TypeUtils.areTypesAssignable(leftType, rightType, table)) {
             String message = SemanticErrorUtils.incompatibleType(leftType.toString(), rightType.toString(), "=");
             addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(assignStmt),

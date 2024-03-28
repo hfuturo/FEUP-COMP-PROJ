@@ -41,7 +41,7 @@ public class TypeUtils {
             case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
             case VAR_METHOD -> table.getReturnType(expr.get("name"));
             case NEW_CLASS -> getNewClassType(expr, table);
-            case NEW_INT -> new Type(INT_TYPE_NAME, true);
+            case NEW_INT, INIT_ARRAY -> new Type(INT_TYPE_NAME, true);
             case BOOL -> new Type(BOOL_TYPE_NAME, false);
             case THIS -> new Type(table.getClassName(), false);
 
@@ -144,5 +144,15 @@ public class TypeUtils {
         }
 
         return foundSource && foundDest;
+    }
+
+    public static boolean checkValuesInArrayInit(Type leftType, List<JmmNode> valuesNodes, SymbolTable table) {
+        for (JmmNode node : valuesNodes) {
+            Type nodeType = getExprType(node, table);
+
+            if (nodeType.isArray() || !nodeType.getName().equals(leftType.getName()))
+                return false;
+        }
+        return true;
     }
 }

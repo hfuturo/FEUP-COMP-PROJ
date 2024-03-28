@@ -1,12 +1,9 @@
-class Varargs {
+class ArrayInitWrong1 {
 
-    public int foo() {
-        int a;
-        a = this.varargs(10, 20, 30);
+    public int[] foo() {
+        int[] a;
+        a = [10, false];
         return a;
     }
 
-    public int varargs(int... a, int b, int c) {
-        return a[0];
-    }
 }
