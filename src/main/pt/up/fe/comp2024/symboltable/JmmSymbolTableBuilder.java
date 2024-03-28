@@ -139,7 +139,7 @@ public class JmmSymbolTableBuilder {
                 type = new Type(type_node.get("name"), false);
                 break;
             case "VarArgType":
-                type = new Type("vararg", true);
+                type = new Type(TypeUtils.getVarargTypeName(), true);
                 break;
             default:
                 type = new Type("unknown", false);

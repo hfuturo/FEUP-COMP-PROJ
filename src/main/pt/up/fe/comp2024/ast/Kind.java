@@ -24,6 +24,7 @@ public enum Kind {
   PARENTHESIS,
   VAR_METHOD,
   NEW_CLASS,
+  NEW_INT,
   IF_ELSE_STMT,
   THIS,
   VAR_REF_EXPR;

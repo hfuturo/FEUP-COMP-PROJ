@@ -24,7 +24,8 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                 new IncompatibleTypesOperation(),
                 new CompatibleAssignTypes(),
                 new ValidConditionExpression(),
-                new ChecksThisInStaticMethods());
+                new ChecksThisInStaticMethods(),
+                new CheckVarArg());
     }
 
     @Override

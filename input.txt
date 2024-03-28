@@ -1,7 +1,12 @@
-class ThisInStaticMethod {
+class Varargs {
 
-    public static void main(String[] args) {
-        ThisInStaticMethod a;
-        a = this;
+    public int foo() {
+        int a;
+        a = this.varargs(10, 20, 30);
+        return a;
+    }
+
+    public int varargs(int... a, int b, int c) {
+        return a[0];
     }
 }
