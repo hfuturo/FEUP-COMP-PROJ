@@ -6,6 +6,7 @@ import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp2024.analysis.AnalysisUtils;
 
+import java.util.List;
 import java.util.Optional;
 
 public class TypeUtils {
@@ -37,11 +38,26 @@ public class TypeUtils {
             case INTEGER_LITERAL -> new Type(INT_TYPE_NAME, false);
             case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
             case VAR_METHOD -> table.getReturnType(expr.get("name"));
+            case NEW_CLASS -> getNewClassType(expr, table);
+            case BOOL -> new Type(BOOL_TYPE_NAME, false);
+            case THIS -> new Type(table.getClassName(), false);
+
             default -> throw new UnsupportedOperationException("Can't compute type for expression kind '" + kind + "'");
         };
 
         return type;
     }
+
+//    public static Type getBinExprFinalType(JmmNode binaryExpr, SymbolTable table) {
+//        String operator = binaryExpr.get("op");
+//
+//        return switch (operator) {
+//            case "+", "-", "/", "*" -> new Type(INT_TYPE_NAME, false);
+//            case "&&", "<" -> new Type(BOOL_TYPE_NAME, false);
+//            default ->
+//                    throw new RuntimeException("Unknown operator '" + operator + "' of expression '" + binaryExpr + "'");
+//        };
+//    }
 
     private static Type getBinExprType(JmmNode binaryExpr) {
         String operator = binaryExpr.get("op");
@@ -77,14 +93,64 @@ public class TypeUtils {
         return varRefSymbol.get().getType();
     }
 
+    public static Type getTypeByString(String string, SymbolTable table) {
+        Optional<Symbol> symbol = AnalysisUtils.validateSymbolFromSymbolTable(table, string);
+
+        if (symbol.isEmpty()) {
+            throw new RuntimeException("Undeclared variable semantic analysis pass has failed!");
+        }
+
+        return symbol.get().getType();
+    }
+
+    private static Type getNewClassType(JmmNode newClass, SymbolTable table) {
+        String newClassName = newClass.get("name");
+        List<String> imports = table.getImports();
+        String currentClassName = table.getClassName();
+
+        if (currentClassName.equals(newClassName)) {
+            return new Type(newClassName, false);
+        }
+
+        for (String imp : imports) {
+            if (imp.equals(newClassName)) {
+                return new Type(newClassName, false);
+            }
+        }
+
+        throw new RuntimeException("Undeclared variable semantic analysis pass has failed!");
+    }
+
 
     /**
      * @param sourceType
      * @param destinationType
      * @return true if sourceType can be assigned to destinationType
      */
-    public static boolean areTypesAssignable(Type sourceType, Type destinationType) {
-        // TODO: Simple implementation that needs to be expanded
-        return sourceType.getName().equals(destinationType.getName());
+    public static boolean areTypesAssignable(Type sourceType, Type destinationType, SymbolTable table) {
+        String sourceName = sourceType.getName();
+        String destName = destinationType.getName();
+        List<String> imports = table.getImports();
+        boolean checkArrayConsistency = (sourceType.isArray() && destinationType.isArray()) || (!sourceType.isArray() && !destinationType.isArray());
+
+        if (sourceName.equals(destName)) {
+            return checkArrayConsistency;
+        }
+
+        if (destName.equals(table.getClassName()) && sourceName.equals(table.getSuper())) {
+            return checkArrayConsistency;
+        }
+
+        boolean foundSource = false;
+        boolean foundDest = false;
+
+        for (String imp : imports) {
+            if (imp.equals(sourceName))
+                foundSource = true;
+            if (imp.equals(destName))
+                foundDest = true;
+        }
+
+        return foundSource && foundDest;
     }
 }

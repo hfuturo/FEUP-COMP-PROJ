@@ -7,9 +7,7 @@ import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.parser.JmmParserResult;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp.jmm.report.Stage;
-import pt.up.fe.comp2024.analysis.passes.IncompatibleTypesOperation;
-import pt.up.fe.comp2024.analysis.passes.UndeclaredVariable;
-import pt.up.fe.comp2024.analysis.passes.VerifyArrayAccess;
+import pt.up.fe.comp2024.analysis.passes.*;
 import pt.up.fe.comp2024.symboltable.JmmSymbolTableBuilder;
 
 import java.util.ArrayList;
@@ -21,7 +19,12 @@ public class JmmAnalysisImpl implements JmmAnalysis {
     private final List<AnalysisPass> analysisPasses;
 
     public JmmAnalysisImpl() {
-        this.analysisPasses = List.of(new UndeclaredVariable(), new VerifyArrayAccess(), new IncompatibleTypesOperation());
+        this.analysisPasses = List.of(new UndeclaredVariable(),
+                new VerifyArrayAccess(),
+                new IncompatibleTypesOperation(),
+                new CompatibleAssignTypes(),
+                new ValidConditionExpression(),
+                new ChecksThisInStaticMethods());
     }
 
     @Override
@@ -48,7 +51,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
             }
         }
 
-        System.out.println(reports.toString());
+        System.out.println(reports);
 
         return new JmmSemanticsResult(parserResult, table, reports);
     }

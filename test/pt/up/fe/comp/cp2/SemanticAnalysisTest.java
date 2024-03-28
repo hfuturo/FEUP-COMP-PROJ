@@ -65,7 +65,6 @@ public class SemanticAnalysisTest {
     @Test
     public void objectAssignmentFail() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/ObjectAssignmentFail.jmm"));
-        System.out.println(result.getReports());
         TestUtils.mustFail(result);
     }
 
@@ -85,6 +84,12 @@ public class SemanticAnalysisTest {
     public void intInIfCondition() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/IntInIfCondition.jmm"));
         TestUtils.mustFail(result);
+    }
+
+    @Test
+    public void boolInIfCondition() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/BoolInIfCondition.jmm"));
+        TestUtils.noErrors(result);
     }
 
     @Test
@@ -172,5 +177,26 @@ public class SemanticAnalysisTest {
                 .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/ArrayInitWrong2.jmm"));
         TestUtils.mustFail(result);
         System.out.println(result.getReports());
+    }
+
+    @Test
+    public void thisInStaticMethod() {
+        var result = TestUtils
+                .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/ThisInStaticMethod.jmm"));
+        TestUtils.mustFail(result);
+    }
+
+    @Test
+    public void assignThisToVar() {
+        var result = TestUtils
+                .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/AssignThisToVar.jmm"));
+        TestUtils.noErrors(result);
+    }
+
+    @Test
+    public void assignThisToVarError() {
+        var result = TestUtils
+                .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/AssignThisToVarError.jmm"));
+        TestUtils.mustFail(result);
     }
 }

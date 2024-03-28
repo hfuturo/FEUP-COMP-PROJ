@@ -1,0 +1,16 @@
+import B;
+
+class AssignThisToVar extends B {
+    public static void main(String[] args) {
+
+    }
+
+    public AssignThisToVar bar() {
+        B a;
+        AssignThisToVar c;
+        a = this;
+        c = this;
+
+        return a;
+    }
+}
