@@ -13,19 +13,25 @@ import pt.up.fe.comp2024.ast.NodeUtils;
 import java.util.Optional;
 
 public class UndeclaredMethod extends AnalysisVisitor {
+    private String currentMethod;
     @Override
     protected void buildVisitor() {
+        addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
         addVisit(Kind.VAR_METHOD, this::visitMethodCall);
     }
 
+    private Void visitMethodDecl(JmmNode method, SymbolTable table) {
+        this.currentMethod = method.get("name");
+        return null;
+    }
     private Void visitMethodCall(JmmNode methodCall, SymbolTable symbolTable) {
         String methodName = methodCall.get("name");
         JmmNode methodClass = methodCall.getChild(0);
 
-        if(methodCall.getKind().equals("VarRefExpr")) {
+        if(methodClass.getKind().equals("VarRefExpr")) {
             String varName = methodClass.get("name");
             // TODO maybe should create function to check if is a class import
-            Optional<Symbol> optSymbol = AnalysisUtils.validateSymbolFromSymbolTable(symbolTable, varName);
+            Optional<Symbol> optSymbol = AnalysisUtils.validateSymbolFromSymbolTable(currentMethod, symbolTable, varName);
 
             if(optSymbol.isEmpty()) {
                 var message = String.format("Variable %s is not declared", varName);
@@ -43,7 +49,7 @@ public class UndeclaredMethod extends AnalysisVisitor {
             } else if(symbolTable.getImports().contains(type)) {
                     return null; // assumed as a function of imported class
             }
-        } else if(methodCall.getKind().equals("This")) {
+        } else if(methodClass.getKind().equals("This")) {
             if(symbolTable.getMethods().contains(methodName) || !symbolTable.getSuper().isEmpty()) {
                 return null; // its either a function of this class or assumed is a function of super
             }
