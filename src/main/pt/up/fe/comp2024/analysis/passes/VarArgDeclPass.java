@@ -38,7 +38,7 @@ public class VarArgDeclPass extends AnalysisVisitor {
 
         Type type = table.getReturnType(currentMethod);
 
-        if(type.getName().equals(TypeUtils.getVarArgTypeName())) {
+        if(type.getName().equals(TypeUtils.getVarargTypeName())) {
             var message = String.format("Return type of '%s' declared as vararg", currentMethod);
             addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(method),
                     NodeUtils.getColumn(method), message, null));
@@ -65,7 +65,7 @@ public class VarArgDeclPass extends AnalysisVisitor {
             Symbol realSymbol = symbol.get();
             Type type = realSymbol.getType();
 
-            if(type.getName().equals(TypeUtils.getVarArgTypeName())) {
+            if(type.getName().equals(TypeUtils.getVarargTypeName())) {
                 var message = String.format("Variable '%s' declared as vararg", varDeclName);
                 addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(varDecl),
                         NodeUtils.getColumn(varDecl), message, null));
