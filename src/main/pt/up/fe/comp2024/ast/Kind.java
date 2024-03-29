@@ -25,6 +25,10 @@ public enum Kind {
   VAR_METHOD,
   VAR_VAR,
   THIS,
+  NEW_CLASS,
+  NEW_INT,
+  IF_ELSE_STMT,
+  INIT_ARRAY,
   VAR_REF_EXPR;
 
   private static final Set<Kind> STATEMENTS = Set.of(ASSIGN_STMT, RETURN_STMT);
