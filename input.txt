@@ -1,9 +1,21 @@
-class ArrayInitWrong1 {
+import foo.bar;
 
-    public int[] foo() {
-        int[] a;
-        a = [10, false];
-        return a;
+class BoolTimesInt {
+
+    public static void main(String[] args) {
+
     }
 
+    public boolean five() {
+        return 5;
+    }
+
+    public int foo() {
+        int a;
+        boolean b;
+
+        a = 10;
+        b = true;
+        return a + a * foo.bar();
+    }
 }

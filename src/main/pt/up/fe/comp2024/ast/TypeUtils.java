@@ -14,6 +14,7 @@ public class TypeUtils {
   private static final String INT_TYPE_NAME = "int";
   private static final String BOOL_TYPE_NAME = "boolean";
   private static final String STRING_TYPE_NAME = "String";
+  private static final String IMPORT_TYPE_NAME = "import";
 
   private static final String VARARG_TYPE_NAME = "vararg";
 
@@ -21,6 +22,12 @@ public class TypeUtils {
   public static String getBoolTypeName() { return BOOL_TYPE_NAME; }
   public static String getStringTypeName() { return STRING_TYPE_NAME; }
   public static String getVarargTypeName() {return VARARG_TYPE_NAME; }
+
+    public static String getImportTypeName() { return IMPORT_TYPE_NAME; }
+
+    public static boolean isImportType(Type type) {
+      return type.getName().equals(TypeUtils.getImportTypeName());
+    }
 
   /**
    * Gets the {@link Type} of an arbitrary expression.
@@ -37,7 +44,16 @@ public class TypeUtils {
             case VAR_REF_EXPR -> getVarExprType(expr, table);
             case INTEGER_LITERAL -> new Type(INT_TYPE_NAME, false);
             case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
-            case VAR_METHOD -> table.getReturnType(expr.get("name"));
+            case VAR_METHOD -> {
+                Type returnType = table.getReturnType(expr.get("name"));
+
+                boolean isImported = returnType == null;
+                if(isImported) {
+                    yield new Type(IMPORT_TYPE_NAME, false);
+                }
+
+                yield returnType;
+            }
             case ACCESS_ARRAY -> new Type(getExprType(expr.getChildren().get(0), table).getName(), false);
             case NEW_CLASS -> getNewClassType(expr, table);
             case NEW_INT, INIT_ARRAY -> new Type(INT_TYPE_NAME, true);
@@ -77,6 +93,12 @@ public class TypeUtils {
         Optional<Symbol> varRefSymbol = AnalysisUtils.validateSymbolFromSymbolTable(table, name);
 
         if(varRefSymbol.isEmpty()) {
+            boolean isImport = AnalysisUtils.validateIsImported(name, table);
+
+            if(isImport) {
+                return new Type(TypeUtils.getImportTypeName(), false);
+            }
+
             throw new RuntimeException("Undeclared variable semantic analysis pass has failed!");
         }
 

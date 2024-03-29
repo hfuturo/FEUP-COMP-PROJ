@@ -11,6 +11,7 @@ public enum Kind {
   BOOL,
   ACCESS_ARRAY,
   CLASS_DECL,
+  VAR_ARG_TYPE,
   VAR_DECL,
   TYPE,
   METHOD_DECL,

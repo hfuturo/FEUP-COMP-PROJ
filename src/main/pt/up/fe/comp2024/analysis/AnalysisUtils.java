@@ -59,9 +59,7 @@ public class AnalysisUtils {
     }
 
     public static boolean validateIsImported(String name, SymbolTable table) {
-        return table.getImports().stream().anyMatch(curr_import -> {
-            List<String> curr_import_params = List.of(curr_import.split("\\."));
-            return curr_import_params.get(curr_import_params.size() - 1).equals(name);
-        });
+        List<String> imports = table.getImports();
+        return imports.stream().anyMatch(currImport -> currImport.equals(name));
     }
 }

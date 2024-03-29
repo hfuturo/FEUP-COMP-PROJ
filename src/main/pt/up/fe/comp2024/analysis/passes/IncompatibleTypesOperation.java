@@ -35,7 +35,8 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
   }
 
   private Type visitDefault(JmmNode node, SymbolTable table) {
-    return TypeUtils.getExprType(node, table);
+    Type type = TypeUtils.getExprType(node, table);
+    return type;
   }
 
   private Type visitBinaryExpr(JmmNode binaryExpr, SymbolTable table) {
@@ -48,14 +49,17 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
     Type leftType = (Type) visit(leftExpr, table);
     Type rightType = (Type) visit(rightExpr, table);
 
-    boolean leftTypeIncompatibleWithOpType = !leftType.equals(operationType);
-    boolean rightTypeIncompatibleWithOpType = !rightType.equals(operationType);
-    if (leftTypeIncompatibleWithOpType || rightTypeIncompatibleWithOpType) {
-      var message = String.format("Incompatible types (%s, %s) in operation: %s", leftType.toString(), rightType.toString(), binaryExpr.get("op"));
-      addReport(Report.newError(Stage.SEMANTIC,
-                                NodeUtils.getLine(binaryExpr),
-                                NodeUtils.getColumn(binaryExpr),
-                                message, null));
+    boolean neitherTypeIsImport = !(TypeUtils.isImportType(leftType) || TypeUtils.isImportType(rightType));
+    if(neitherTypeIsImport) {
+      boolean leftTypeIncompatibleWithOpType = !leftType.equals(operationType);
+      boolean rightTypeIncompatibleWithOpType = !rightType.equals(operationType);
+      if (leftTypeIncompatibleWithOpType || rightTypeIncompatibleWithOpType) {
+        var message = String.format("Incompatible types (%s, %s) in operation: %s", leftType.toString(), rightType.toString(), binaryExpr.get("op"));
+        addReport(Report.newError(Stage.SEMANTIC,
+                NodeUtils.getLine(binaryExpr),
+                NodeUtils.getColumn(binaryExpr),
+                message, null));
+      }
     }
 
     return TypeUtils.getExprType(binaryExpr, table);
