@@ -1,21 +1,17 @@
-import foo.bar;
-
-class BoolTimesInt {
+class IntMethodTimesInt {
 
     public static void main(String[] args) {
 
     }
 
-    public boolean five() {
+    public int five() {
         return 5;
     }
 
     public int foo() {
         int a;
-        boolean b;
 
         a = 10;
-        b = true;
-        return a + a * foo.bar();
+        return this.five() * a;
     }
 }

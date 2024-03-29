@@ -2,13 +2,13 @@ package pt.up.fe.comp.cp2;
 
 import org.junit.Test;
 import pt.up.fe.comp.TestUtils;
+import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.specs.util.SpecsIo;
 
 public class SemanticAnalysisTest {
 
     @Test
     public void symbolTable() {
-
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/SymbolTable.jmm"));
         System.out.println("Symbol Table:\n" + result.getSymbolTable().print());
     }
@@ -39,6 +39,24 @@ public class SemanticAnalysisTest {
     }
 
     @Test
+    public void intMethodTimesInt() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/intMethodTimesInt.jmm"));
+        TestUtils.noErrors(result.getReports());
+    }
+
+    @Test
+    public void intArrayAccessTimesInt() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/intArrayAccessTimesInt.jmm"));
+        TestUtils.noErrors(result.getReports());
+    }
+
+    @Test
+    public void boolLessThanInt() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/BoolLessThanInt.jmm"));
+        TestUtils.mustFail(result);
+    }
+
+    @Test
     public void arrayPlusInt() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/ArrayPlusInt.jmm"));
         TestUtils.mustFail(result);
@@ -65,7 +83,6 @@ public class SemanticAnalysisTest {
     @Test
     public void objectAssignmentFail() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/ObjectAssignmentFail.jmm"));
-        System.out.println(result.getReports());
         TestUtils.mustFail(result);
     }
 
@@ -85,6 +102,12 @@ public class SemanticAnalysisTest {
     public void intInIfCondition() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/IntInIfCondition.jmm"));
         TestUtils.mustFail(result);
+    }
+
+    @Test
+    public void boolInIfCondition() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/BoolInIfCondition.jmm"));
+        TestUtils.noErrors(result);
     }
 
     @Test
@@ -148,7 +171,13 @@ public class SemanticAnalysisTest {
         var result = TestUtils
                 .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/VarargsWrong.jmm"));
         TestUtils.mustFail(result);
-        System.out.println(result.getReports());
+    }
+
+    @Test
+    public void varargsDuplicate() {
+        var result = TestUtils
+                .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/VarargsDuplicate.jmm"));
+        TestUtils.mustFail(result);
     }
 
     @Test
@@ -172,5 +201,26 @@ public class SemanticAnalysisTest {
                 .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/ArrayInitWrong2.jmm"));
         TestUtils.mustFail(result);
         System.out.println(result.getReports());
+    }
+
+    @Test
+    public void thisInStaticMethod() {
+        var result = TestUtils
+                .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/ThisInStaticMethod.jmm"));
+        TestUtils.mustFail(result);
+    }
+
+    @Test
+    public void assignThisToVar() {
+        var result = TestUtils
+                .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/AssignThisToVar.jmm"));
+        TestUtils.noErrors(result);
+    }
+
+    @Test
+    public void assignThisToVarError() {
+        var result = TestUtils
+                .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/AssignThisToVarError.jmm"));
+        TestUtils.mustFail(result);
     }
 }

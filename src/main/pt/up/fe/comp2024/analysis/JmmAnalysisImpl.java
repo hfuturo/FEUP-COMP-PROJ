@@ -19,7 +19,13 @@ public class JmmAnalysisImpl implements JmmAnalysis {
     private final List<AnalysisPass> analysisPasses;
 
     public JmmAnalysisImpl() {
-        this.analysisPasses = List.of(new UndeclaredVariable(), new VerifyArrayAccess(), new IncompatibleTypesOperation(), new VarArgDeclPass(), new IncompatibleMethodTypes());
+        this.analysisPasses = List.of(new UndeclaredVariable(),
+                new VerifyArrayAccess(),
+                new IncompatibleTypesOperation(),
+                new CompatibleAssignTypes(),
+                new ValidConditionExpression(),
+                new ChecksThisInStaticMethods(),
+                new CheckVarArg());
     }
 
     @Override
@@ -46,7 +52,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
             }
         }
 
-        System.out.println(reports.toString());
+        System.out.println(reports);
 
         return new JmmSemanticsResult(parserResult, table, reports);
     }

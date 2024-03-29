@@ -34,7 +34,7 @@ public class JmmSymbolTableBuilder {
 
         classDecl.getChildren("Import").forEach(imp -> {
             var import_path =  imp.getObjectAsList("names", String.class);
-            imports.add(String.join(".", import_path));
+            imports.add(import_path.get(import_path.size()-1));
         });
 
         return imports;
@@ -139,7 +139,7 @@ public class JmmSymbolTableBuilder {
                 type = new Type(type_node.get("name"), false);
                 break;
             case "VarArgType":
-                type = new Type(TypeUtils.getVarArgTypeName(), false);
+                type = new Type(TypeUtils.getVarargTypeName(), true);
                 break;
             default:
                 type = new Type("unknown", false);

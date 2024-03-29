@@ -1,13 +1,7 @@
-import foo.bar;
-
 class BoolTimesInt {
 
     public static void main(String[] args) {
 
-    }
-
-    public boolean five() {
-        return 5;
     }
 
     public int foo() {
@@ -16,6 +10,6 @@ class BoolTimesInt {
 
         a = 10;
         b = true;
-        return a + a * foo.bar();
+        return b < a;
     }
 }

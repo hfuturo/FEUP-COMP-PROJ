@@ -25,35 +25,43 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
   @Override
   public void buildVisitor() {
     addVisit(Kind.BINARY_EXPR, this::visitBinaryExpr);
+    addVisit(Kind.INTEGER_LITERAL, this::visitDefault);
+    addVisit(Kind.VAR_REF_EXPR, this::visitDefault);
+    addVisit(Kind.THIS, this::visitDefault);
+    addVisit(Kind.VAR_METHOD, this::visitDefault);
+    addVisit(Kind.ACCESS_ARRAY, this::visitDefault);
+    addVisit(Kind.VAR_VAR, this::visitDefault);
+    addVisit(Kind.BOOL, this::visitDefault);
   }
 
-  private Void visitBinaryExpr(JmmNode binaryExpr, SymbolTable table) {
+  private Type visitDefault(JmmNode node, SymbolTable table) {
+    Type type = TypeUtils.getExprType(node, table);
+    return type;
+  }
+
+  private Type visitBinaryExpr(JmmNode binaryExpr, SymbolTable table) {
     List<JmmNode> children = binaryExpr.getChildren();
     JmmNode leftExpr = children.get(0);
     JmmNode rightExpr = children.get(1);
 
-    Type operationType = TypeUtils.getExprType(binaryExpr, table);
+    Type operationType = TypeUtils.getOperatorOperandsType(binaryExpr);
 
-    Type leftType = TypeUtils.getExprType(leftExpr, table);
-    Type rightType = TypeUtils.getExprType(rightExpr, table);
+    Type leftType = (Type) visit(leftExpr, table);
+    Type rightType = (Type) visit(rightExpr, table);
 
-    /* Valid cases:
-     *  1 + 1 // two integer literals
-     *  pos.getX() + pos.getY() // two integer returning functions
-     *  1 + pos.getX() // one integer literal and one integer returning function
-     */
-
-    boolean leftTypeIncompatibleWithOpType = !leftType.equals(operationType);
-    boolean rightTypeIncompatibleWithOpType = !rightType.equals(operationType);
-    if (leftTypeIncompatibleWithOpType || rightTypeIncompatibleWithOpType) {
-      var message = String.format("Incompatible types (%s, %s) in operation: %s", leftType.toString(), rightType.toString(), binaryExpr.get("op"));
-      addReport(Report.newError(Stage.SEMANTIC,
-                                0 /*NodeUtils.getLine(varRefExpr)*/,
-                                0
-                                /*NodeUtils.getColumn(varRefExpr)*/,
-                                message, null));
+    boolean neitherTypeIsImport = !(TypeUtils.isImportType(leftType) || TypeUtils.isImportType(rightType));
+    if(neitherTypeIsImport) {
+      boolean leftTypeIncompatibleWithOpType = !leftType.equals(operationType);
+      boolean rightTypeIncompatibleWithOpType = !rightType.equals(operationType);
+      if (leftTypeIncompatibleWithOpType || rightTypeIncompatibleWithOpType) {
+        var message = String.format("Incompatible types (%s, %s) in operation: %s", leftType.toString(), rightType.toString(), binaryExpr.get("op"));
+        addReport(Report.newError(Stage.SEMANTIC,
+                NodeUtils.getLine(binaryExpr),
+                NodeUtils.getColumn(binaryExpr),
+                message, null));
+      }
     }
 
-    return null;
+    return TypeUtils.getExprType(binaryExpr, table);
   }
 }

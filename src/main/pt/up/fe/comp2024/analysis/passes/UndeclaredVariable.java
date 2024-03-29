@@ -27,6 +27,7 @@ public class UndeclaredVariable extends AnalysisVisitor {
   @Override
   public void buildVisitor() {
     addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
+    addVisit(Kind.INNER_MAIN_METHOD, this::visitInnerMainMethod);
     addVisit(Kind.VAR_REF_EXPR, this::visitVarRefExpr);
   }
 
@@ -35,7 +36,13 @@ public class UndeclaredVariable extends AnalysisVisitor {
     return null;
   }
 
+  private Void visitInnerMainMethod(JmmNode method, SymbolTable table) {
+    this.currentMethod = "main";
+    return null;
+  }
+
   private Void visitVarRefExpr(JmmNode varRefExpr, SymbolTable table) {
+
     SpecsCheck.checkNotNull(currentMethod,
                             () -> "Expected current method to be set");
 

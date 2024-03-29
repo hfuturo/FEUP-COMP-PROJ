@@ -11,7 +11,7 @@ import java.util.List;
 /**
  *
  */
-public abstract class AnalysisVisitor extends PreorderJmmVisitor<SymbolTable, Void> implements AnalysisPass {
+public abstract class AnalysisVisitor extends PreorderJmmVisitor<SymbolTable, Object> implements AnalysisPass {
 
     private List<Report> reports;
 

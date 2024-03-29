@@ -1,0 +1,15 @@
+class IntMethodTimesInt {
+
+    public static void main(String[] args) {
+
+    }
+
+    public int foo() {
+        int[] a;
+        int c;
+
+        a = [1,4,9];
+        c = 5;
+        return a[0] * c;
+    }
+}
