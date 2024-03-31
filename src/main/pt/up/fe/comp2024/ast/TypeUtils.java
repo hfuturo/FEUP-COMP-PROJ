@@ -99,7 +99,7 @@ public class TypeUtils {
                 return new Type(TypeUtils.getImportTypeName(), false);
             }
 
-            throw new RuntimeException("Undeclared variable semantic analysis pass has failed!");
+            return null;
         }
 
         return varRefSymbol.get().getType();
