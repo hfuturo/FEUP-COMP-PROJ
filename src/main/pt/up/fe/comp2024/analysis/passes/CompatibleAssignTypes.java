@@ -15,20 +15,29 @@ import pt.up.fe.comp2024.ast.TypeUtils;
 import java.util.List;
 
 public class CompatibleAssignTypes extends AnalysisVisitor {
+    private String methodName;
 
     @Override
     public void buildVisitor() {
+        addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
         addVisit(Kind.ASSIGN_STMT, this::visitAssignStmt);
+    }
+
+    private Void visitMethodDecl(JmmNode method, SymbolTable table) {
+        this.methodName = method.get("name");
+        return null;
     }
 
     private Void visitAssignStmt(JmmNode assignStmt, SymbolTable table) {
         List<JmmNode> children = assignStmt.getChildren();
-
         String leftVar = assignStmt.get("left");
         JmmNode rightExpr = children.get(0);
 
-        Type leftType = TypeUtils.getTypeByString(leftVar, table);
+        Type leftType = TypeUtils.getTypeByString(leftVar, table, this.methodName);
         Type rightType = TypeUtils.getExprType(rightExpr, table);
+
+        System.out.println("left:\n" + leftType.toString());
+        System.out.println("right:\n" + rightType.toString());
 
         if (rightType.isArray()) {
             if (!TypeUtils.checkValuesInArrayInit(leftType, rightExpr.getChildren(), table)) {

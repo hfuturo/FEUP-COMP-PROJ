@@ -1,21 +1,20 @@
-import foo.bar;
-
-class BoolTimesInt {
+class IncompatibleArguments {
 
     public static void main(String[] args) {
 
     }
 
-    public boolean five() {
-        return 5;
+    public int foo(int a) {
+        return a + 1;
     }
 
-    public int foo() {
-        int a;
+    public int bar() {
+        IncompatibleArguments a;
         boolean b;
 
-        a = 10;
+        a = new IncompatibleArguments();
         b = true;
-        return a + a * foo.bar();
+
+        return a.foo(b);
     }
 }

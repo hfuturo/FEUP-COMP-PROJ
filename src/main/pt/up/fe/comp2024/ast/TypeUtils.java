@@ -105,8 +105,8 @@ public class TypeUtils {
         return varRefSymbol.get().getType();
     }
 
-    public static Type getTypeByString(String string, SymbolTable table) {
-        Optional<Symbol> symbol = AnalysisUtils.validateSymbolFromSymbolTable(table, string);
+    public static Type getTypeByString(String string, SymbolTable table, String currentMethod) {
+        Optional<Symbol> symbol = AnalysisUtils.validateSymbolFromSymbolTable(currentMethod, table, string);
 
         if (symbol.isEmpty()) {
             throw new RuntimeException("Undeclared variable semantic analysis pass has failed!");
