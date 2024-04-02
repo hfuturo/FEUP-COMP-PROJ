@@ -1,3 +1,5 @@
+import C;
+
 class IncompatibleArguments {
 
     public static void main(String[] args) {
@@ -7,9 +9,11 @@ class IncompatibleArguments {
     public int foo(int a) {
         int a;
         int[] b;
+        C c;
+        c = new C();
         b = [1, 2, 3];
         a = b.length;
-        boolean c;
+        a = c;
         return a;
     }
 }

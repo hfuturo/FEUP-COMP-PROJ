@@ -1,0 +1,17 @@
+class AssignLength {
+    public static void main(String[] args) {
+    }
+
+    public int foo() {
+        int a;
+        int[] array;
+
+        a = array.length;
+        a = this.bar().length;
+        return a;
+    }
+
+    public int[] bar() {
+        return [1, 2, 3];
+    }
+}

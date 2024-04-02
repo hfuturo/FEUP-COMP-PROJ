@@ -223,4 +223,11 @@ public class SemanticAnalysisTest {
                 .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/AssignThisToVarError.jmm"));
         TestUtils.mustFail(result);
     }
+
+    @Test
+    public void assignLength() {
+        var result = TestUtils
+                .analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/AssignLength.jmm"));
+        TestUtils.noErrors(result);
+    }
 }

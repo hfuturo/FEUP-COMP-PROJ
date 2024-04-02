@@ -153,17 +153,12 @@ public class TypeUtils {
             return checkArrayConsistency;
         }
 
-        boolean foundSource = false;
-        boolean foundDest = false;
-
         for (String imp : imports) {
-            if (imp.equals(sourceName))
-                foundSource = true;
             if (imp.equals(destName))
-                foundDest = true;
+                return true;
         }
 
-        return foundSource && foundDest;
+        return false;
     }
 
     public static boolean checkValuesInArrayInit(Type leftType, List<JmmNode> valuesNodes, SymbolTable table) {

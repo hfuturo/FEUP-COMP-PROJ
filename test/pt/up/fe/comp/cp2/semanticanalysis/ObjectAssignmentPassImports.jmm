@@ -1,5 +1,6 @@
 import A;
 import B;
+import C;
 
 class ObjectAssignmentPassImports {
 
@@ -10,12 +11,16 @@ class ObjectAssignmentPassImports {
     public A foo() {
         A a;
         B b;
+        C c;
+        int d;
 
         a = new A();
         b = new B();
+        c = new C();
 
         // A and B imported, assume it is correct
         a = b;
+        d = c;
 
         return a;
     }
