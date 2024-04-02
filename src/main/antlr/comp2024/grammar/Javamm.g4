@@ -119,7 +119,7 @@ expr
     : openingParentheses=LPAREN expr closingParentheses=RPAREN #Parenthesis                                     // ()
     | var=expr op=LSQUARE index=expr op=RSQUARE #AccessArray                              // aceder a um array, i.e., a[2]
     | expr op=STOP name=ID LPAREN (expr (COMMA expr)* )? RPAREN #VarMethod         // foo.bar(), foo.bar(...)
-    | expr op=STOP LENGTH #VarVar                                               // foo.length
+    | expr op=STOP LENGTH #Length                                               // foo.length
     | op=LSQUARE (expr (op=COMMA expr)* )? op=RSQUARE #InitArray                // inicializar array, i.e., [1,2,3]
     | op=NEGATION expr #Unary                                                   // !
     | op=NEW INT LSQUARE size=expr RSQUARE   #NewInt                                 // new int

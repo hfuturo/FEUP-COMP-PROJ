@@ -5,16 +5,11 @@ class IncompatibleArguments {
     }
 
     public int foo(int a) {
-        return a + 1;
-    }
-
-    public int bar() {
-        IncompatibleArguments a;
-        boolean b;
-
-        a = new IncompatibleArguments();
-        b = true;
-
-        return a.foo(b);
+        int a;
+        int[] b;
+        b = [1, 2, 3];
+        a = b.length;
+        boolean c;
+        return a;
     }
 }

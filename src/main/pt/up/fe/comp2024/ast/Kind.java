@@ -23,7 +23,7 @@ public enum Kind {
   RETURN_STMT,
   INTEGER_LITERAL,
   PARENTHESIS,
-  VAR_VAR,
+  LENGTH,
   THIS,
   NEW_CLASS,
   NEW_INT,

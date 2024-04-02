@@ -30,7 +30,7 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
     addVisit(Kind.THIS, this::visitDefault);
     addVisit(Kind.VAR_METHOD, this::visitDefault);
     addVisit(Kind.ACCESS_ARRAY, this::visitDefault);
-    addVisit(Kind.VAR_VAR, this::visitDefault);
+    addVisit(Kind.LENGTH, this::visitDefault);
     addVisit(Kind.BOOL, this::visitDefault);
   }
 

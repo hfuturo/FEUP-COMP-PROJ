@@ -42,7 +42,7 @@ public class TypeUtils {
     Type type = switch (kind) {
             case BINARY_EXPR -> getBinExprType(expr);
             case VAR_REF_EXPR -> getVarExprType(expr, table);
-            case INTEGER_LITERAL -> new Type(INT_TYPE_NAME, false);
+            case INTEGER_LITERAL, LENGTH -> new Type(INT_TYPE_NAME, false);
             case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
             case VAR_METHOD -> {
                 Type returnType = table.getReturnType(expr.get("name"));
