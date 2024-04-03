@@ -20,17 +20,6 @@ public class ValidConditionExpression extends AnalysisVisitor {
     }
 
     private Void visitIfElseStmt(JmmNode ifStmt, SymbolTable table) {
-//        JmmNode expr = ifStmt.getChild(0);
-//
-//        Type exprType = TypeUtils.getExprType(expr, table);
-//
-//        if (!checkExpr(ifStmt, table)) {
-//            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(ifStmt),
-//                    NodeUtils.getColumn(ifStmt),
-//                    SemanticErrorUtils.incompatibleType(exprType.toString(), "IF statement"),
-//                    null));
-//        }
-
         return checkExpr(ifStmt, table, true);
     }
 
