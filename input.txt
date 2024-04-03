@@ -1,19 +1,19 @@
-import C;
-
-class IncompatibleArguments {
+class ArrayInWhileCondition {
 
     public static void main(String[] args) {
 
     }
 
-    public int foo(int a) {
-        int a;
-        int[] b;
-        C c;
-        c = new C();
-        b = [1, 2, 3];
-        a = b.length;
-        a = c;
-        return a;
+    public boolean foo() {
+        boolean t;
+        t = true;
+
+        while (!false) {
+        }
+
+        while (!t) {
+        }
+
+        return t;
     }
 }

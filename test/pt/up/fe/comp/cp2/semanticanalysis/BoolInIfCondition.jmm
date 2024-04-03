@@ -6,9 +6,16 @@ class IntInIfCondition {
 
     public int foo() {
         boolean a;
+        boolean b;
+
         a = true;
+        b = true;
 
         if (a) {
+        } else {
+        }
+
+        if (a && b) {
         } else {
         }
 
@@ -17,6 +24,18 @@ class IntInIfCondition {
         }
 
         if (1 < 2){
+        } else {
+        }
+
+        if (true && true) {
+        } else {
+        }
+
+        if (!true) {
+        } else {
+        }
+
+       if (!a) {
         } else {
         }
 

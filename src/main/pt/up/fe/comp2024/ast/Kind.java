@@ -28,6 +28,8 @@ public enum Kind {
   NEW_CLASS,
   NEW_INT,
   IF_ELSE_STMT,
+  WHILE_STMT,
+  UNARY,
   INIT_ARRAY,
   VAR_REF_EXPR,
   VAR_METHOD;

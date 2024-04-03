@@ -57,7 +57,7 @@ public class TypeUtils {
             case ACCESS_ARRAY -> new Type(getExprType(expr.getChildren().get(0), table).getName(), false);
             case NEW_CLASS -> getNewClassType(expr, table);
             case NEW_INT, INIT_ARRAY -> new Type(INT_TYPE_NAME, true);
-            case BOOL -> new Type(BOOL_TYPE_NAME, false);
+            case BOOL, UNARY -> new Type(BOOL_TYPE_NAME, false);
             case THIS -> new Type(table.getClassName(), false);
             default -> throw new UnsupportedOperationException("Can't compute type for expression kind '" + kind + "'");
         };

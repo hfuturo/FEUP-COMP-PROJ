@@ -16,18 +16,39 @@ public class ValidConditionExpression extends AnalysisVisitor {
     @Override
     public void buildVisitor() {
         addVisit(Kind.IF_ELSE_STMT, this::visitIfElseStmt);
+        addVisit(Kind.WHILE_STMT, this::visitWhileStmt);
     }
 
     private Void visitIfElseStmt(JmmNode ifStmt, SymbolTable table) {
-        JmmNode expr = ifStmt.getChild(0);
+//        JmmNode expr = ifStmt.getChild(0);
+//
+//        Type exprType = TypeUtils.getExprType(expr, table);
+//
+//        if (!checkExpr(ifStmt, table)) {
+//            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(ifStmt),
+//                    NodeUtils.getColumn(ifStmt),
+//                    SemanticErrorUtils.incompatibleType(exprType.toString(), "IF statement"),
+//                    null));
+//        }
 
+        return checkExpr(ifStmt, table, true);
+    }
+
+    private Void visitWhileStmt(JmmNode whileStmt, SymbolTable table) {
+        return checkExpr(whileStmt, table, false);
+    }
+
+    private Void checkExpr(JmmNode node, SymbolTable table, boolean isIfStmt) {
+        JmmNode expr = node.getChild(0);
         Type exprType = TypeUtils.getExprType(expr, table);
 
         if (!exprType.getName().equals(TypeUtils.getBoolTypeName())) {
-            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(ifStmt),
-                    NodeUtils.getColumn(ifStmt),
-                    SemanticErrorUtils.incompatibleType(exprType.toString(), "IF statement"),
-                    null));
+            var message = isIfStmt ? "IF statement" : "WHILE statement";
+            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(node),
+                NodeUtils.getColumn(node), SemanticErrorUtils.incompatibleType(
+                        exprType.toString(),
+                            message
+                    ), null));
         }
 
         return null;
