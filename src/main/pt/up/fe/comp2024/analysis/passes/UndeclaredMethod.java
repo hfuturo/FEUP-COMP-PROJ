@@ -26,6 +26,9 @@ public class UndeclaredMethod extends AnalysisVisitor {
     }
     private Void visitMethodCall(JmmNode methodCall, SymbolTable symbolTable) {
         String methodName = methodCall.get("name");
+
+        methodCall.put("isDeclared", "False");
+
         JmmNode methodClass = methodCall.getChild(0);
 
         if(methodClass.getKind().equals("VarRefExpr")) {
@@ -34,23 +37,24 @@ public class UndeclaredMethod extends AnalysisVisitor {
             Optional<Symbol> optSymbol = AnalysisUtils.validateSymbolFromSymbolTable(currentMethod, symbolTable, varName);
 
             if(optSymbol.isEmpty()) {
-                var message = String.format("Variable %s is not declared", varName);
-                addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodClass),
-                        NodeUtils.getColumn(methodClass), message, null));
-
+                // var does not exist
                 return null;
             }
 
             String type = optSymbol.get().getType().getName();
             if(type.equals(symbolTable.getClassName())) {
-                if(symbolTable.getMethods().contains(methodName) || !symbolTable.getSuper().isEmpty()) {
+                boolean isDeclared = symbolTable.getMethods().contains(methodName);
+                if(isDeclared) methodCall.put("isDeclared", "True");
+                if(isDeclared || !symbolTable.getSuper().isEmpty()) {
                     return null; // its either a function of this class or assumed is a function of super
                 }
             } else if(symbolTable.getImports().contains(type)) {
-                    return null; // assumed as a function of imported class
+                return null; // assumed as a function of imported class
             }
         } else if(methodClass.getKind().equals("This")) {
-            if(symbolTable.getMethods().contains(methodName) || !symbolTable.getSuper().isEmpty()) {
+            boolean isDeclared = symbolTable.getMethods().contains(methodName);
+            if(isDeclared) methodCall.put("isDeclared", "True");
+            if(isDeclared || !symbolTable.getSuper().isEmpty()) {
                 return null; // its either a function of this class or assumed is a function of super
             }
         }

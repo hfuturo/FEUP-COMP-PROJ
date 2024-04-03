@@ -4,9 +4,13 @@ import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp.jmm.report.Report;
+import pt.up.fe.comp.jmm.report.Stage;
 import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.comp2024.analysis.AnalysisVisitor;
 import pt.up.fe.comp2024.ast.Kind;
+import pt.up.fe.comp2024.ast.NodeUtils;
+import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,20 +32,63 @@ public class IncompatibleMethodTypes extends AnalysisVisitor {
 
     private Void visitMethodCall(JmmNode methodCall, SymbolTable symbolTable) {
         String methodName = methodCall.get("name");
-        List<JmmNode> methodExpr = methodCall.getChildren();
-        JmmNode methodClass = methodExpr.remove(0);
+        String isDeclared = methodCall.get("isDeclared");
 
-        if(methodClass.getKind().equals("VarRefExpr")) {
-            String varName = methodClass.get("name");
-            Optional<Symbol> optSymbol = AnalysisUtils.validateSymbolFromSymbolTable(symbolTable, varName);
-            if(optSymbol.isEmpty())
-                return null;
-            String type = optSymbol.get().getType().getName();
-            if(!type.equals(symbolTable.getClassName()))
-                return null;
+        if(isDeclared.equals("False"))
+            return null; // Method does not have signature
+
+        List<Type> methodParamsTypes = symbolTable.getParameters(methodName).stream().map(Symbol::getType).toList();
+
+        List<JmmNode> callParamsNodes = methodCall.getChildren();
+        callParamsNodes.remove(0); // remove scope
+
+        int length =  Math.min(callParamsNodes.size(), methodParamsTypes.size());
+        for(int i = 0; i < length; i++) {
+            Type methodParamType = methodParamsTypes.get(i);
+            JmmNode paramNode = callParamsNodes.get(i);
+            Type paramType = TypeUtils.getExprType(paramNode, symbolTable);
+
+            if(!methodParamType.getName().equals(TypeUtils.getVarargTypeName())) {
+                if(!methodParamType.equals(paramType)) {
+                    var message = String.format("Unexpected type %s at call to %s. Expected %s", paramType.getName(), methodCall.get("name"), methodParamType.getName());
+                    addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(paramNode),
+                            NodeUtils.getColumn(paramNode), message, null));
+
+                    return null;
+                }
+            } else {
+                if(!paramType.getName().equals(TypeUtils.getIntTypeName())) {
+                    var message = String.format("Unexpected type %s at call to %s. Expected %s", paramType.getName(), methodCall.get("name"), TypeUtils.getIntTypeName());
+                    addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(paramNode),
+                            NodeUtils.getColumn(paramNode), message, null));
+                    return null;
+                }
+            }
         }
 
-        List<Symbol> methodParams = symbolTable.getParameters(methodName);
+        if(callParamsNodes.size() < methodParamsTypes.size()) {
+            var message = String.format("Missing parameters on call of %s. Expected %d, found %d", methodCall.get("name"), methodParamsTypes.size(), callParamsNodes.size());
+            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
+                    NodeUtils.getColumn(methodCall), message, null));
+            return null;
+        } else if(callParamsNodes.size() > methodParamsTypes.size()) {
+            if(!methodParamsTypes.get(methodParamsTypes.size()-1).getName().equals(TypeUtils.getVarargTypeName())) {
+                var message = String.format("Received more parameters than expected on call of %s. Expected %d, found %d", methodCall.get("name"), methodParamsTypes.size(), callParamsNodes.size());
+                addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
+                        NodeUtils.getColumn(methodCall), message, null));
+                return null;
+            }
+
+            for(int i = methodParamsTypes.size(); i < callParamsNodes.size(); i++) {
+                String nodeType = TypeUtils.getExprType(callParamsNodes.get(i), symbolTable).getName();
+                if(!nodeType.equals(TypeUtils.getIntTypeName())) {
+                    var message = String.format("Unexpected type %s at call to %s. Expected %s", nodeType, methodCall.get("name"), TypeUtils.getIntTypeName());
+                    addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
+                            NodeUtils.getColumn(methodCall), message, null));
+                    return null;
+                }
+            }
+        }
 
         return null;
     }
