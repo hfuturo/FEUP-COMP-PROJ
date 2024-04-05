@@ -111,8 +111,8 @@ stmt
     | IF LPAREN expr RPAREN stmt ELSE stmt #IfElseStmt
     | WHILE LPAREN expr RPAREN stmt #WhileStmt
     | expr SEMI #ExprStmt
-    | left=ID EQUALS expr SEMI #AssignStmt
-    | ID LSQUARE expr RSQUARE EQUALS expr SEMI #VarListAssignStmt
+    | left=expr EQUALS value=expr SEMI #AssignStmt
+    | ID LSQUARE left=expr RSQUARE EQUALS right=expr SEMI #VarListAssignStmt
     ;
 
 expr

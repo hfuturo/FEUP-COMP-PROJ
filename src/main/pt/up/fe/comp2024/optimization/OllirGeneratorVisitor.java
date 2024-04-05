@@ -4,8 +4,12 @@ import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.AJmmVisitor;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.NodeUtils;
 import pt.up.fe.comp2024.ast.TypeUtils;
+
+import java.util.List;
+import java.util.function.Function;
 
 import static pt.up.fe.comp2024.ast.Kind.*;
 
@@ -41,10 +45,15 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit(PARAM, this::visitParam);
         addVisit(RETURN_STMT, this::visitReturn);
         addVisit(ASSIGN_STMT, this::visitAssignStmt);
+        addVisit(INIT_ARRAY, this::visitInitArray);
 
         setDefaultVisit(this::defaultVisit);
     }
 
+    private String visitInitArray(JmmNode node, Void unused) {
+        StringBuilder code = new StringBuilder();
+        return "h";
+    }
 
     private String visitAssignStmt(JmmNode node, Void unused) {
 
@@ -62,7 +71,6 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         Type thisType = TypeUtils.getExprType(node.getJmmChild(0), table);
         String typeString = OptUtils.toOllirType(thisType);
 
-
         code.append(lhs.getCode());
         code.append(SPACE);
 
@@ -79,7 +87,6 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
 
     private String visitReturn(JmmNode node, Void unused) {
-
         String methodName = node.getAncestor(METHOD_DECL).map(method -> method.get("name")).orElseThrow();
         Type retType = table.getReturnType(methodName);
 
@@ -116,7 +123,6 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
 
     private String visitMethodDecl(JmmNode node, Void unused) {
-
         StringBuilder code = new StringBuilder(".method ");
 
         boolean isPublic = NodeUtils.getBooleanAttribute(node, "isPublic", "false");
@@ -130,11 +136,19 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         code.append(name);
 
         // param
-        var paramCode = visit(node.getJmmChild(1));
-        code.append("(" + paramCode + ")");
+        List<JmmNode> params = node.getChildren(PARAM);
+        code.append("(");
+        for(int i = 0; i < params.size(); i++) {
+            JmmNode param = params.get(i);
+            code.append(visit(param));
+
+            if(i < (params.size() - 1)) code.append(", ");
+        }
+        code.append(")");
 
         // type
-        var retType = OptUtils.toOllirType(node.getJmmChild(0));
+        JmmNode returnTypeNode = node.getJmmChild(0);
+        var retType = OptUtils.toOllirType(returnTypeNode);
         code.append(retType);
         code.append(L_BRACKET);
 
@@ -143,6 +157,9 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         var afterParam = 2;
         for (int i = afterParam; i < node.getNumChildren(); i++) {
             var child = node.getJmmChild(i);
+            if(Kind.fromString(child.getKind()).equals(PARAM)) {
+                continue;
+            }
             var childCode = visit(child);
             code.append(childCode);
         }
