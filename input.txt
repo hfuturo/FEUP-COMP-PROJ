@@ -6,13 +6,13 @@ class ArrayInWhileCondition {
 
     public boolean foo() {
         boolean t;
-        t = true;
+        /*t = true;
 
         while (!false) {
         }
 
         while (!t) {
-        }
+        }*/
 
         return t;
     }

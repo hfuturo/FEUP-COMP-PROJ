@@ -32,11 +32,17 @@ public enum Kind {
   UNARY,
   INIT_ARRAY,
   VAR_REF_EXPR,
-  VAR_METHOD;
+  VAR_METHOD,
+  BOOL_TYPE,
+  INTEGER_TYPE,
+  ARRAY_TYPE,
+  ABSTRACT_DATA_TYPE;
 
   private static final Set<Kind> STATEMENTS = Set.of(ASSIGN_STMT, RETURN_STMT);
   private static final Set<Kind> EXPRESSIONS =
       Set.of(BINARY_EXPR, INTEGER_LITERAL, VAR_REF_EXPR);
+
+  private static final Set<Kind> TYPES = Set.of(TYPE, INTEGER_TYPE, BOOL_TYPE, VAR_ARG_TYPE, ABSTRACT_DATA_TYPE, ARRAY_TYPE);
 
   private final String name;
 
@@ -72,6 +78,8 @@ public enum Kind {
    */
   public boolean isExpr() { return EXPRESSIONS.contains(this); }
 
+  public boolean isType() { return TYPES.contains(this);}
+
   /**
    * Tests if the given JmmNode has the same kind as this type.
    *
@@ -80,6 +88,16 @@ public enum Kind {
    */
   public boolean check(JmmNode node) {
     return node.getKind().equals(getNodeName());
+  }
+
+  public boolean checkIsType(JmmNode node) {
+    return TYPES.contains(this);
+  }
+
+  public void checkIsTypeOrThrow(JmmNode node) {
+    if(!this.checkIsType(node)) {
+      throw new RuntimeException("Node '" + node + "' is not a type");
+    }
   }
 
   /**
