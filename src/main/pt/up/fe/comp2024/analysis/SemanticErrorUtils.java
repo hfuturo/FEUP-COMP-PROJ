@@ -12,4 +12,8 @@ public class SemanticErrorUtils {
     public static String incompatibleType(String type, String operator) {
         return String.format("Incompatible type (%s) in operation: %s", type, operator);
     }
+
+    public static String lengthOnSomethingNotArray(String name) {
+        return String.format("You cannot call length on a variable (%s) which is not an array", name);
+    }
 }

@@ -9,6 +9,7 @@ import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp.jmm.report.Stage;
 import pt.up.fe.comp2024.analysis.AnalysisVisitor;
+import pt.up.fe.comp2024.analysis.SemanticErrorUtils;
 import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.NodeUtils;
 import pt.up.fe.comp2024.ast.TypeUtils;
@@ -32,11 +33,34 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
     addVisit(Kind.ACCESS_ARRAY, this::visitDefault);
     addVisit(Kind.LENGTH, this::visitDefault);
     addVisit(Kind.BOOL, this::visitDefault);
+    addVisit(Kind.LENGTH, this::visitLength);
+  }
+
+  public Type visitLength(JmmNode node, SymbolTable table) {
+    JmmNode leftExprNode = node.getChildren().get(0);
+
+    String leftExprNodeKind = leftExprNode.getKind();
+    boolean exprNodeHasValidKind = leftExprNodeKind.equals(Kind.VAR_METHOD.toString())
+            || leftExprNodeKind.equals(Kind.VAR_REF_EXPR.toString()) || leftExprNodeKind.equals(Kind.THIS.toString());
+
+    if(!exprNodeHasValidKind) {
+
+    }
+
+    Type leftExprType = TypeUtils.getExprType(leftExprNode, table);
+
+    if(!leftExprType.isArray()) {
+      addReport(Report.newError(Stage.SEMANTIC,
+              NodeUtils.getLine(leftExprNode),
+              NodeUtils.getColumn(leftExprNode),
+              SemanticErrorUtils.lengthOnSomethingNotArray("something"), null));
+    }
+
+    return leftExprType;
   }
 
   private Type visitDefault(JmmNode node, SymbolTable table) {
-    Type type = TypeUtils.getExprType(node, table);
-    return type;
+    return TypeUtils.getExprType(node, table);
   }
 
   private Type visitBinaryExpr(JmmNode binaryExpr, SymbolTable table) {
@@ -56,8 +80,8 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
       if (leftTypeIncompatibleWithOpType || rightTypeIncompatibleWithOpType) {
         var message = String.format("Incompatible types (%s, %s) in operation: %s", leftType.toString(), rightType.toString(), binaryExpr.get("op"));
         addReport(Report.newError(Stage.SEMANTIC,
-                NodeUtils.getLine(binaryExpr),
-                NodeUtils.getColumn(binaryExpr),
+                NodeUtils.getLine(leftExpr),
+                NodeUtils.getColumn(leftExpr),
                 message, null));
       }
     }
