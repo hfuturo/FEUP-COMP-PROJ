@@ -81,6 +81,7 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         code.append(methodName);
         code.append("\")");
         code.append(methodReturnType);
+        code.append(";");
         code.append(NL);
 
         System.out.println("code:\n\t" + code.toString());
@@ -262,11 +263,11 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
      * @return
      */
     private String defaultVisit(JmmNode node, Void unused) {
-
+        StringBuilder code = new StringBuilder();
         for (var child : node.getChildren()) {
-            visit(child);
+            code.append(visit(child));
         }
 
-        return "";
+        return code.toString();
     }
 }
