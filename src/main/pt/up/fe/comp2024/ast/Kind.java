@@ -36,6 +36,7 @@ public enum Kind {
   BOOL_TYPE,
   INTEGER_TYPE,
   ARRAY_TYPE,
+  EXPR_STMT,
   ABSTRACT_DATA_TYPE;
 
   private static final Set<Kind> STATEMENTS = Set.of(ASSIGN_STMT, RETURN_STMT);

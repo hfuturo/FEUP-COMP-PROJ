@@ -38,16 +38,53 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     @Override
     protected void buildVisitor() {
-
         addVisit(PROGRAM, this::visitProgram);
+        addVisit(IMPORT, this::visitImport);
         addVisit(CLASS_DECL, this::visitClass);
         addVisit(METHOD_DECL, this::visitMethodDecl);
         addVisit(PARAM, this::visitParam);
         addVisit(RETURN_STMT, this::visitReturn);
         addVisit(ASSIGN_STMT, this::visitAssignStmt);
         addVisit(INIT_ARRAY, this::visitInitArray);
-
+        addVisit(VAR_METHOD, this::visitVarMethod);
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private String visitImport(JmmNode node, Void unused) {
+        String imports = node.get("names").replaceAll("[\\[\\]\\s]", "").replaceAll(",",".");
+        System.out.println(imports);
+        return "import " + String.join(".", imports) + END_STMT;
+    }
+
+    private String visitVarMethod(JmmNode node, Void unused) {
+        System.out.println("AQUI:\n" + node.toString());
+        String methodName = node.get("name");
+        JmmNode methodClassNode = node.getJmmChild(0);
+
+        StringBuilder code = new StringBuilder();
+        String className, methodReturnType;
+
+        // this.foo()
+        if (node.get("isDeclared").equals("True")) {
+            code.append("invokevirtual");
+            className = "this." + table.getClassName();
+            methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
+        } else { // import.foo()
+            code.append("invokestatic");
+            className = methodClassNode.get("name");
+            methodReturnType = ".i32";
+        }
+
+        code.append("(");
+        code.append(className);
+        code.append(", \"");
+        code.append(methodName);
+        code.append("\")");
+        code.append(methodReturnType);
+        code.append(NL);
+
+        System.out.println("code:\n\t" + code.toString());
+        return code.toString();
     }
 
     private String visitInitArray(JmmNode node, Void unused) {

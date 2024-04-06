@@ -57,7 +57,7 @@ LETTER: [a-zA-Z_$];
 WS : [ \t\n\r\f]+ -> skip ;
 
 program
-    :  classDeclRule EOF
+    :  importDecl* classDeclRule EOF
     ;
 
 importDecl
@@ -66,8 +66,7 @@ importDecl
 
 
 classDeclRule
-    : importDecl*
-        CLASS name=ID
+    :   CLASS name=ID
         (EXTENDS ultraSuper=ID)?
         LCURLY
         varDeclRule* methodDeclRule*

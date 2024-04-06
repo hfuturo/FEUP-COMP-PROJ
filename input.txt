@@ -1,19 +1,18 @@
-class ArrayInWhileCondition {
+import io;
+
+class CompileMethodInvocation {
 
     public static void main(String[] args) {
 
     }
 
-    public boolean foo() {
-        boolean t;
-        /*t = true;
+    public int foo() {
+        int a;
 
-        while (!false) {
-        }
+        a = 1;
 
-        while (!t) {
-        }*/
+        io.println(a);
 
-        return t;
+        return 0;
     }
 }
