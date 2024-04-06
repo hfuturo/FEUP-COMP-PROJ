@@ -1,18 +1,21 @@
-import io;
+import A;
 
-class CompileMethodInvocation {
+class x {
+  public boolean foo() {
+    return 1;
+  }
 
-    public static void main(String[] args) {
+  public int bar() {
+    return 1;
+  }
 
-    }
+  public int fun() {
+    A a;
+    a.fun();
+    A.fun();
+    this.foo();
+    this.bar();
 
-    public int foo() {
-        int a;
-
-        a = 1;
-
-        io.println(a);
-
-        return 0;
-    }
+    return 1;
+  }
 }

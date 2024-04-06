@@ -30,10 +30,10 @@ public class CompatibleAssignTypes extends AnalysisVisitor {
 
     private Void visitAssignStmt(JmmNode assignStmt, SymbolTable table) {
         List<JmmNode> children = assignStmt.getChildren();
-        JmmNode leftVar = children.get(0);
+        JmmNode leftExpr = children.get(0);
         JmmNode rightExpr = children.get(1);
 
-        Type leftType = TypeUtils.getTypeByString(leftVar.get("name"), table, methodName);
+        Type leftType = TypeUtils.getExprType(leftExpr, table);
         Type rightType = TypeUtils.getExprType(rightExpr, table);
 
         System.out.println("left:\n" + leftType.toString());

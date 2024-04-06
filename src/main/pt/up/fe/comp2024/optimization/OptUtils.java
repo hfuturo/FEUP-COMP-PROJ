@@ -41,6 +41,7 @@ public class OptUtils {
     }
 
     public static String toOllirType(Type type) {
+        System.out.println("type:\n\t" + type.toString());
         return toOllirType(type.getName());
     }
 
@@ -48,7 +49,7 @@ public class OptUtils {
         String type = "." + switch (typeName) {
             case "int" -> "i32";
             case "boolean" -> "bool";
-            default -> throw new NotImplementedException(typeName);
+            default -> typeName; // main class ou import
         };
 
         return type;

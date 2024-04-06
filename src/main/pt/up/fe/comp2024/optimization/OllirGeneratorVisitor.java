@@ -1,5 +1,6 @@
 package pt.up.fe.comp2024.optimization;
 
+import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.AJmmVisitor;
@@ -9,6 +10,7 @@ import pt.up.fe.comp2024.ast.NodeUtils;
 import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static pt.up.fe.comp2024.ast.Kind.*;
@@ -35,7 +37,6 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         exprVisitor = new OllirExprGeneratorVisitor(table);
     }
 
-
     @Override
     protected void buildVisitor() {
         addVisit(PROGRAM, this::visitProgram);
@@ -57,26 +58,33 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
     }
 
     private String visitVarMethod(JmmNode node, Void unused) {
-        System.out.println("AQUI:\n" + node.toString());
         String methodName = node.get("name");
-        JmmNode methodClassNode = node.getJmmChild(0);
-
+        JmmNode callerNode = node.getJmmChild(0);
+        List<String> imports = table.getImports();
         StringBuilder code = new StringBuilder();
-        String className, methodReturnType;
+
+        String callerType = OptUtils.toOllirType(TypeUtils.getExprType(callerNode, table));
+        String callerName, methodReturnType;
 
         // this.foo()
-        if (node.get("isDeclared").equals("True")) {
+        if (callerNode.isInstance(THIS)) {
             code.append("invokevirtual");
-            className = "this." + table.getClassName();
+            callerName = "this" + callerType;
             methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
-        } else { // import.foo()
+        }
+        else if(imports.contains(callerNode.get("name"))) { // A.foo()
             code.append("invokestatic");
-            className = methodClassNode.get("name");
-            methodReturnType = ".i32";
+            callerName = callerNode.get("name");
+            methodReturnType = "." + callerNode.get("name");
+        }
+        else { // A a; a.foo();
+            code.append("invokevirtual");
+            callerName = callerNode.get("name") + callerType;
+            methodReturnType = callerType;
         }
 
         code.append("(");
-        code.append(className);
+        code.append(callerName);
         code.append(", \"");
         code.append(methodName);
         code.append("\")");
@@ -84,7 +92,6 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         code.append(";");
         code.append(NL);
 
-        System.out.println("code:\n\t" + code.toString());
         return code.toString();
     }
 
@@ -192,7 +199,7 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
 
         // rest of its children stmts
-        var afterParam = 2;
+        var afterParam = params.size();
         for (int i = afterParam; i < node.getNumChildren(); i++) {
             var child = node.getJmmChild(i);
             if(Kind.fromString(child.getKind()).equals(PARAM)) {
