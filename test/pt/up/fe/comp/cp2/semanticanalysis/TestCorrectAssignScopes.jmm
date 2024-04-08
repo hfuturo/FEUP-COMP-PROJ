@@ -1,0 +1,45 @@
+class TestCorrectAssignScopes {
+    int a;
+    boolean b;
+    int c;
+    int d;
+
+    public static void main(String[] args) {
+        boolean a;
+        int b;
+
+        a = true;
+        b = 5;
+
+        return 0;
+    }
+
+    public int methodVarsAndFields(boolean d) {
+        boolean a;
+        int b;
+
+        a = true;
+        b = 5;
+
+        return 0;
+    }
+
+    public int paramsAndFields(boolean a, int b) {
+        boolean c;
+
+        c = false;
+        a = true;
+        b = 5;
+
+        return 0;
+    }
+
+    public int foo() {
+
+        a = 0;
+        b = true;
+        a = c + d;
+
+        return 0;
+    }
+}

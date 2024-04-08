@@ -9,27 +9,20 @@ import java.util.Optional;
 
 public class AnalysisUtils {
     public static Optional<Symbol> validateSymbolFromSymbolTable(String currentMethod, SymbolTable table, String symbolName) {
-        Optional<Symbol> classFieldSymbol = AnalysisUtils.tryToGetSymbolFromClassFields(symbolName, table);
-        if(classFieldSymbol.isPresent()) return classFieldSymbol;
-
         Optional<Symbol> methodSymbol = AnalysisUtils.tryToGetSymbolFromMethod(symbolName, currentMethod, table) ;
         if(methodSymbol.isPresent()) return methodSymbol;
 
-        return Optional.empty();
+        return AnalysisUtils.tryToGetSymbolFromClassFields(symbolName, table);
     }
 
     public static Optional<Symbol> validateSymbolFromSymbolTable(SymbolTable table, String symbolName) {
-        Optional<Symbol> classFieldSymbol = AnalysisUtils.tryToGetSymbolFromClassFields(symbolName, table);
-        if(classFieldSymbol.isPresent()) return classFieldSymbol;
-
         for (String method: table.getMethods()) {
             Optional<Symbol> symbol = tryToGetSymbolFromMethod(symbolName, method, table);
 
             if(symbol.isPresent()) return symbol;
         }
 
-
-        return Optional.empty();
+        return AnalysisUtils.tryToGetSymbolFromClassFields(symbolName, table);
     }
 
     private static Optional<Symbol> tryToGetSymbolFromClassFields(String symbolName, SymbolTable table) {
