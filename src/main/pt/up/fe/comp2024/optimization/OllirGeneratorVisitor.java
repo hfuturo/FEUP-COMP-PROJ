@@ -53,8 +53,7 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private String visitImport(JmmNode node, Void unused) {
         String imports = node.get("names").replaceAll("[\\[\\]\\s]", "").replaceAll(",",".");
-        System.out.println(imports);
-        return "import " + String.join(".", imports) + END_STMT;
+        return "import " + imports + END_STMT;
     }
 
     private String visitVarMethod(JmmNode node, Void unused) {

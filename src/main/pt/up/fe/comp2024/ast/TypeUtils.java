@@ -9,6 +9,8 @@ import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import java.util.List;
 import java.util.Optional;
 
+import static pt.up.fe.comp2024.ast.Kind.METHOD_DECL;
+
 public class TypeUtils {
 
   private static final String INT_TYPE_NAME = "int";
@@ -22,8 +24,7 @@ public class TypeUtils {
   public static String getBoolTypeName() { return BOOL_TYPE_NAME; }
   public static String getStringTypeName() { return STRING_TYPE_NAME; }
   public static String getVarargTypeName() {return VARARG_TYPE_NAME; }
-
-    public static String getImportTypeName() { return IMPORT_TYPE_NAME; }
+  public static String getImportTypeName() { return IMPORT_TYPE_NAME; }
 
     public static boolean isImportType(Type type) {
       return type.getName().equals(TypeUtils.getImportTypeName());
@@ -42,7 +43,7 @@ public class TypeUtils {
     Type type = switch (kind) {
             case BINARY_EXPR -> getBinExprType(expr);
             case VAR_REF_EXPR -> getVarExprType(expr, table);
-            case INTEGER_LITERAL, LENGTH -> new Type(INT_TYPE_NAME, false);
+            case INTEGER_LITERAL, LENGTH, ACCESS_ARRAY -> new Type(INT_TYPE_NAME, false);
             case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
             case VAR_METHOD -> {
                 Type returnType = table.getReturnType(expr.get("name"));
@@ -54,7 +55,6 @@ public class TypeUtils {
 
                 yield returnType;
             }
-            case ACCESS_ARRAY -> new Type(getExprType(expr.getChildren().get(0), table).getName(), false);
             case NEW_CLASS -> getNewClassType(expr, table);
             case NEW_INT, INIT_ARRAY -> new Type(INT_TYPE_NAME, true);
             case BOOL, UNARY -> new Type(BOOL_TYPE_NAME, false);
@@ -90,19 +90,27 @@ public class TypeUtils {
     private static Type getVarExprType(JmmNode varRefExpr, SymbolTable table) {
         String name = varRefExpr.get("name");
 
-        Optional<Symbol> varRefSymbol = AnalysisUtils.validateSymbolFromSymbolTable(table, name);
+         Optional<JmmNode> method = varRefExpr.getAncestor(METHOD_DECL);
+         Optional<Symbol> varRefSymbol;
 
-        if(varRefSymbol.isEmpty()) {
-            boolean isImport = AnalysisUtils.validateIsImported(name, table);
+         if (method.isPresent()) {
+             varRefSymbol = AnalysisUtils.validateSymbolFromSymbolTable(method.get().get("name"), table, name);
+         }
+         else {
+             varRefSymbol = AnalysisUtils.validateSymbolFromSymbolTable(table, name);
+         }
 
-            if(isImport) {
-                return new Type(TypeUtils.getImportTypeName(), false);
-            }
+         if (varRefSymbol.isEmpty()) {
+             boolean isImport = AnalysisUtils.validateIsImported(name, table);
 
-            return null;
-        }
+             if (isImport) {
+                 return new Type(TypeUtils.getImportTypeName(), false);
+             }
 
-        return varRefSymbol.get().getType();
+             return null;
+         }
+
+         return varRefSymbol.get().getType();
     }
 
     public static Type getTypeByString(String string, SymbolTable table, String currentMethod) {

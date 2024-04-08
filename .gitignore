@@ -15,3 +15,6 @@ gradle*
 output.ollir
 output.jasmin
 output.j
+
+# test files
+input.txt

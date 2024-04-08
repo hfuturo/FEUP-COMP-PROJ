@@ -1,21 +1,12 @@
-import A;
+class Varargs {
 
-class x {
-  public boolean foo() {
-    return 1;
-  }
+    public int foo() {
+        int a;
+        a = this.varargs(10, 20, 30);
+        return a;
+    }
 
-  public int bar() {
-    return 1;
-  }
-
-  public int fun() {
-    A a;
-    a.fun();
-    A.fun();
-    this.foo();
-    this.bar();
-
-    return 1;
-  }
+    public int varargs(int... a) {
+        return a[0];
+    }
 }
