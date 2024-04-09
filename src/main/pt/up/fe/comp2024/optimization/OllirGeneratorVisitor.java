@@ -239,13 +239,23 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
 
     private String visitClass(JmmNode node, Void unused) {
-
         StringBuilder code = new StringBuilder();
 
         code.append(table.getClassName());
-        code.append(L_BRACKET);
 
+        if(!table.getSuper().isEmpty()) {
+            code.append(SPACE).append("extends").append(SPACE).append(table.getSuper()).append(SPACE);
+        }
+        code.append(L_BRACKET);
         code.append(NL);
+
+        for(JmmNode varDecl : node.getChildren(VAR_DECL)) {
+            String name = varDecl.get("name");
+            String type = OptUtils.toOllirType(varDecl.getChild(0));
+
+            code.append(".field").append(SPACE).append("public").append(SPACE).append(name).append(type).append(";").append(NL);
+        }
+
         var needNl = true;
 
         for (var child : node.getChildren()) {
