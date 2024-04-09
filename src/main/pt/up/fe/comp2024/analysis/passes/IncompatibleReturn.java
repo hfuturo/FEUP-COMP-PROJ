@@ -23,11 +23,19 @@ public class IncompatibleReturn extends AnalysisVisitor {
         Type returnType = symbolTable.getReturnType(methodName);
         List<JmmNode> returns = methodDecl.getDescendants(Kind.RETURN_STMT);
 
+        if(returns.size() == 0 && !returnType.getName().equals("VOID")) {
+            var message = String.format("Method %s expected a return of type %s, but no return was found", methodName, returnType.getName());
+            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodDecl),
+                    NodeUtils.getColumn(methodDecl), message, null));
+        }
+
         for(JmmNode returnNode : returns) {
             if(returnNode.getChildren().isEmpty())
                 continue;
+
             JmmNode child = returnNode.getChild(0);
             Type childType = TypeUtils.getExprType(child, symbolTable);
+
             if(childType == null) continue; // var does not exist
             if(!childType.getName().equals("import") && !TypeUtils.areTypesAssignable(childType, returnType, symbolTable)) {
                 var message = String.format("Incompatible return in function %s. Expected %s, found %s", methodName, returnType.getName(), childType.getName());
