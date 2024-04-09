@@ -56,4 +56,13 @@ public class AnalysisUtils {
         List<String> imports = table.getImports();
         return imports.stream().anyMatch(currImport -> currImport.equals(name));
     }
+
+    public static boolean validateIsField(String name, String currentMethod, SymbolTable table) {
+        Optional<Symbol> methodSymbol = AnalysisUtils.tryToGetSymbolFromMethod(name, currentMethod, table) ;
+        if(methodSymbol.isPresent()) return false;
+
+        Optional<Symbol> classField = AnalysisUtils.tryToGetSymbolFromClassFields(name, table);
+
+        return classField.isPresent();
+    }
 }
