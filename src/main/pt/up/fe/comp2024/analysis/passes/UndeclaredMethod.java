@@ -28,7 +28,6 @@ public class UndeclaredMethod extends AnalysisVisitor {
         String methodName = methodCall.get("name");
 
         methodCall.put("isDeclared", "False");
-
         JmmNode methodClass = methodCall.getChild(0);
 
         if(methodClass.getKind().equals("VarRefExpr")) {
@@ -36,12 +35,15 @@ public class UndeclaredMethod extends AnalysisVisitor {
             // TODO maybe should create function to check if is a class import
             Optional<Symbol> optSymbol = AnalysisUtils.validateSymbolFromSymbolTable(currentMethod, symbolTable, varName);
 
+
             if(optSymbol.isEmpty()) {
                 // var does not exist
                 return null;
             }
 
+
             String type = optSymbol.get().getType().getName();
+
             if(type.equals(symbolTable.getClassName())) {
                 boolean isDeclared = symbolTable.getMethods().contains(methodName);
                 if(isDeclared) methodCall.put("isDeclared", "True");

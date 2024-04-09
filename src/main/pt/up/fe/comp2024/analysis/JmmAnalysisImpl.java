@@ -28,7 +28,8 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                 new CompatibleAssignTypes(),
                 new ValidConditionExpression(),
                 new ChecksThisInStaticMethods(),
-                new CheckVarArg());
+                new CheckVarArg(),
+                new AddMethodReturnTypePass());
     }
 
     @Override

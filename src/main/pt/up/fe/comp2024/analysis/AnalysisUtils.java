@@ -17,6 +17,7 @@ public class AnalysisUtils {
 
     public static Optional<Symbol> validateSymbolFromSymbolTable(SymbolTable table, String symbolName) {
         for (String method: table.getMethods()) {
+
             Optional<Symbol> symbol = tryToGetSymbolFromMethod(symbolName, method, table);
 
             if(symbol.isPresent()) return symbol;

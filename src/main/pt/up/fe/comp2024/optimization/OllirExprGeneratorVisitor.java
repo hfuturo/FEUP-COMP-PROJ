@@ -1,13 +1,17 @@
 package pt.up.fe.comp2024.optimization;
 
 import org.specs.comp.ollir.Ollir;
+import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PreorderJmmVisitor;
+import pt.up.fe.comp.jmm.ollir.OllirUtils;
+import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 import static pt.up.fe.comp2024.ast.Kind.*;
 
@@ -34,46 +38,56 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
         addVisit(BOOL, this::visitBoolLiteral);
         addVisit(NEW_CLASS, this::visitClassInstantiation);
         addVisit(VAR_METHOD, this::visitVarMethod);
+        addVisit(PARENTHESIS, this::visitParenthesis);
+
 
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private OllirExprResult visitParenthesis(JmmNode node, Void unused) {
+        return visit(node.getJmmChild(0));
     }
 
     private OllirExprResult visitVarMethod(JmmNode node, Void unused) {
         String methodName = node.get("name");
         JmmNode callerNode = node.getJmmChild(0);
         List<String> imports = table.getImports();
-        StringBuilder code = new StringBuilder();
+        StringBuilder computation = new StringBuilder();
+
+        String tempVar = OptUtils.getTemp();
+        String varMethodType = OptUtils.toOllirType(table.getReturnType(node.get("name")));
+        computation.append(String.format("%s%s :=%s ", tempVar, varMethodType, varMethodType, varMethodType));
 
         String callerType = OptUtils.toOllirType(TypeUtils.getExprType(callerNode, table));
         String callerName, methodReturnType;
 
         // this.foo()
         if (callerNode.isInstance(THIS)) {
-            code.append("invokevirtual");
+            computation.append("invokevirtual");
             callerName = "this" + callerType;
             methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
         }
         else if(imports.contains(callerNode.get("name"))) { // A.foo()
-            code.append("invokestatic");
+            computation.append("invokestatic");
             callerName = callerNode.get("name");
             methodReturnType = "." + callerNode.get("name");
         }
         else { // A a; a.foo();
-            code.append("invokevirtual");
+            computation.append("invokevirtual");
             callerName = callerNode.get("name") + callerType;
             methodReturnType = callerType;
         }
 
-        code.append("(");
-        code.append(callerName);
-        code.append(", \"");
-        code.append(methodName);
-        code.append("\")");
-        code.append(methodReturnType);
-        //code.append(";");
-        code.append("\n");
+        computation.append("(");
+        computation.append(callerName);
+        computation.append(", \"");
+        computation.append(methodName);
+        computation.append("\")");
+        computation.append(methodReturnType);
+        computation.append(";");
+        computation.append("\n");
 
-        return new OllirExprResult(code.toString());
+        return new OllirExprResult(String.format("%s%s", tempVar, varMethodType), computation.toString());
     }
 
     private OllirExprResult visitClassInstantiation(JmmNode node, Void unused) {

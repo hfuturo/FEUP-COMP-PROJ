@@ -48,10 +48,32 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit(ASSIGN_STMT, this::visitAssignStmt);
         addVisit(INIT_ARRAY, this::visitInitArray);
         addVisit(VAR_METHOD, this::visitVarMethod);
+        addVisit(INNER_MAIN_METHOD, this::visitMainMethod);
         setDefaultVisit(this::defaultVisit);
     }
 
+    private String visitMainMethod(JmmNode node, Void unused) {
+        StringBuilder code = new StringBuilder(".method ");
 
+        code.append("public static main(args.array.String).V {\n");
+
+        // rest of its children stmts
+        var afterParam = 1;
+        for (int i = afterParam; i < node.getNumChildren(); i++) {
+            var child = node.getJmmChild(i);
+            if(Kind.fromString(child.getKind()).equals(PARAM)) {
+                continue;
+            }
+            var childCode = visit(child);
+            code.append(childCode);
+        }
+
+        code.append("ret.V;\n");
+        code.append(R_BRACKET);
+        code.append(NL);
+
+        return code.toString();
+    }
 
     private String visitImport(JmmNode node, Void unused) {
         String imports = node.get("names").replaceAll("[\\[\\]\\s]", "").replaceAll(",",".");
