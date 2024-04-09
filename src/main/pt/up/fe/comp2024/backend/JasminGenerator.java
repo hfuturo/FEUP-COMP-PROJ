@@ -103,9 +103,7 @@ public class JasminGenerator {
         return code.toString();
     }
 
-
     private String generateMethod(Method method) {
-
         // set method
         currentMethod = method;
 
@@ -119,7 +117,7 @@ public class JasminGenerator {
         var methodName = method.getMethodName();
 
         // TODO: Hardcoded param types and return type, needs to be expanded
-        code.append("\n.method ").append(modifier).append(methodName).append("(I)I").append(NL);
+        code.append("\n.method ").append(modifier).append(methodName).append("(I)" + JasminMethodUtils.getTypeInJasminFormat(method.getReturnType())).append(NL);
 
         // Add limits
         code.append(TAB).append(".limit stack 99").append(NL);
@@ -202,8 +200,17 @@ public class JasminGenerator {
 
         // TODO: Hardcoded to int return type, needs to be expanded
 
-        code.append(generators.apply(returnInst.getOperand()));
-        code.append("ireturn").append(NL);
+        boolean voidReturningMethod = false;
+        if(returnInst.getOperand() == null) {
+            voidReturningMethod = true;
+        }
+
+        if(!voidReturningMethod) {
+            code.append(generators.apply(returnInst.getOperand()));
+            code.append("ireturn").append(NL);
+        } else {
+            code.append("return");
+        }
 
         return code.toString();
     }
