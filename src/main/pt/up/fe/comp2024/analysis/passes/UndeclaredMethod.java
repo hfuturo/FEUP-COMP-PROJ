@@ -32,15 +32,12 @@ public class UndeclaredMethod extends AnalysisVisitor {
 
         if(methodClass.getKind().equals("VarRefExpr")) {
             String varName = methodClass.get("name");
-            // TODO maybe should create function to check if is a class import
             Optional<Symbol> optSymbol = AnalysisUtils.validateSymbolFromSymbolTable(currentMethod, symbolTable, varName);
-
 
             if(optSymbol.isEmpty()) {
                 // var does not exist
                 return null;
             }
-
 
             String type = optSymbol.get().getType().getName();
 
