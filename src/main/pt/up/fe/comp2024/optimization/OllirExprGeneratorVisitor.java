@@ -91,9 +91,17 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
     }
 
     private OllirExprResult visitClassInstantiation(JmmNode node, Void unused) {
-        String code = String.format("new(%s).%s", node.get("name"), node.get("name"));
 
-        return new OllirExprResult(code);
+        StringBuilder computation = new StringBuilder();
+        String nodeType = OptUtils.toOllirType(node);
+        String tempVar = OptUtils.getTemp();
+
+        computation.append(String.format("%s%s :=%s new(%s)%s;\n", tempVar, nodeType, nodeType, node.get("name"), nodeType));
+        computation.append(String.format("invokespecial(%s%s, \"<init>\").V;\n", tempVar, nodeType));
+
+        String code = String.format("%s%s", tempVar, nodeType);
+
+        return new OllirExprResult(code, computation.toString());
     }
 
     private OllirExprResult visitBoolLiteral(JmmNode node, Void unused) {
@@ -150,7 +158,6 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
 
 
     private OllirExprResult visitVarRef(JmmNode node, Void unused) {
-
         var id = node.get("name");
         Type type = TypeUtils.getExprType(node, table);
         String ollirType = OptUtils.toOllirType(type);

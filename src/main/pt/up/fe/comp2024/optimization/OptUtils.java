@@ -33,7 +33,7 @@ public class OptUtils {
     }
 
     public static String toOllirType(JmmNode typeNode) {
-        Kind.fromString(typeNode.getKind()).checkIsTypeOrThrow(typeNode);
+        //Kind.fromString(typeNode.getKind()).checkIsTypeOrThrow(typeNode);
 
         String typeName = typeNode.get("name");
 
