@@ -117,7 +117,19 @@ public class JasminGenerator {
         var methodName = method.getMethodName();
 
         // TODO: Hardcoded param types and return type, needs to be expanded
-        code.append("\n.method ").append(modifier).append(methodName).append("(I)" + JasminMethodUtils.getTypeInJasminFormat(method.getReturnType())).append(NL);
+
+        // String with the types of the parameters
+        StringBuilder paramString = new StringBuilder();
+        paramString.append("(");
+
+        ArrayList<Element> params = method.getParams();
+        for(int i = 0; i < params.size(); i++) {
+            Element param = params.get(i);
+            paramString.append(JasminMethodUtils.getTypeInJasminFormat(param.getType()));
+        }
+        paramString.append(")");
+
+        code.append("\n.method ").append(modifier).append(methodName).append(paramString.toString() + JasminMethodUtils.getTypeInJasminFormat(method.getReturnType())).append(NL);
 
         // Add limits
         code.append(TAB).append(".limit stack 99").append(NL);

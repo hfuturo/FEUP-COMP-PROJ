@@ -8,8 +8,10 @@ public class JasminMethodUtils {
         return switch (type.toString()) {
             case "VOID" -> "V";
             case "INT" -> "I";
+            case "INT32" -> "I";
+            case "STRING[]" -> "java.lang.String[]";
             case "BOOLEAN" -> "Z";
-            default -> "";
+            default -> throw new RuntimeException(String.format("Type %s has no specified conversion to jasmin format", type.toString()));
         };
     }
 }
