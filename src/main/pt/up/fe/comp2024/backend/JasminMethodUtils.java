@@ -9,7 +9,7 @@ public class JasminMethodUtils {
             case "VOID" -> "V";
             case "INT" -> "I";
             case "INT32" -> "I";
-            case "STRING[]" -> "java.lang.String[]";
+            case "STRING[]" -> "[Ljava.lang.String;";
             case "BOOLEAN" -> "Z";
             default -> throw new RuntimeException(String.format("Type %s has no specified conversion to jasmin format", type.toString()));
         };

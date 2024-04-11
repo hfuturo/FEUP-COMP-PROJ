@@ -116,6 +116,10 @@ public class JasminGenerator {
 
         var methodName = method.getMethodName();
 
+        if(methodName.equals("main")) {
+            modifier = modifier + "static ";
+        }
+
         // TODO: Hardcoded param types and return type, needs to be expanded
 
         // String with the types of the parameters
