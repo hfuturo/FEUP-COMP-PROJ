@@ -1,0 +1,9 @@
+class CallUndeclaredMethodInNewInstance {
+
+    public int foo() {
+        CallUndeclaredMethodInNewInstance c;
+        c = new CallUndeclaredMethodInNewInstance();
+        return c.bar();
+    }
+
+}
