@@ -1,13 +1,14 @@
-import Test;
-class JustKidding extends Feup {
-    public static void main(String[] args) {
+class CallUndeclaredMethodInNewInstance {
 
+    public int foo() {
+        CallUndeclaredMethodInNewInstance c;
+        int a;
+        c = new CallUndeclaredMethodInNewInstance();
+        a = c.bar();
+        return a;
     }
 
-    public boolean foo() {
-        int b;
-        b = 5 + 5;
-
-        return false;
+    public boolean bar() {
+        return 0;
     }
 }

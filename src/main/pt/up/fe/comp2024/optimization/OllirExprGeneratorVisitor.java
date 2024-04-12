@@ -102,11 +102,11 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
                     methodReturnType = OptUtils.toOllirType(TypeUtils.getExprType(lhs, table));
                 }
             }
-            else {
-                methodReturnType = OptUtils.toOllirType(TypeUtils.getExprType(parent, table));
-            }
+//            else {
+//                methodReturnType = OptUtils.toOllirType(TypeUtils.getExprType(parent, table));
+//            }
 
-            computation.append(String.format("%s%s :=%s ", tempVar, methodReturnType, methodReturnType, methodReturnType));
+            computation.append(String.format("%s%s :=%s ", tempVar, methodReturnType, methodReturnType));
         }
 
         computation.append(invokeType);

@@ -15,36 +15,50 @@ public class AnalysisUtils {
     }
 
     public static Optional<Symbol> validateSymbolFromSymbolTable(SymbolTable table, String symbolName) {
-        for (String method: table.getMethods()) {
+        List<String> methods = table.getMethods();
 
-            Optional<Symbol> symbol = tryToGetSymbolFromMethod(symbolName, method, table);
+        if (methods != null) {
+            for (String method : methods) {
 
-            if(symbol.isPresent()) return symbol;
+                Optional<Symbol> symbol = tryToGetSymbolFromMethod(symbolName, method, table);
+
+                if (symbol.isPresent()) return symbol;
+            }
         }
 
         return AnalysisUtils.tryToGetSymbolFromClassFields(symbolName, table);
     }
 
     private static Optional<Symbol> tryToGetSymbolFromClassFields(String symbolName, SymbolTable table) {
-        for (Symbol symbol: table.getFields()) {
-            if (symbol.getName().equals(symbolName)) {
-                return Optional.of(symbol);
+        List<Symbol> fields = table.getFields();
+
+        if (fields != null) {
+            for (Symbol symbol : fields) {
+                if (symbol.getName().equals(symbolName)) {
+                    return Optional.of(symbol);
+                }
             }
         }
-
         return Optional.empty();
     }
 
     private static Optional<Symbol> tryToGetSymbolFromMethod(String symbolName, String method, SymbolTable table) {
-        for (Symbol symbol: table.getParameters(method)) {
-            if (symbol.getName().equals(symbolName)) {
-                return Optional.of(symbol);
+        List<Symbol> parameters = table.getParameters(method);
+        List<Symbol> localVars = table.getLocalVariables(method);
+
+        if (parameters != null) {
+            for (Symbol symbol : parameters) {
+                if (symbol.getName().equals(symbolName)) {
+                    return Optional.of(symbol);
+                }
             }
         }
 
-        for (Symbol symbol: table.getLocalVariables(method)) {
-            if (symbol.getName().equals(symbolName)) {
-                return Optional.of(symbol);
+        if (localVars != null) {
+            for (Symbol symbol : localVars) {
+                if (symbol.getName().equals(symbolName)) {
+                    return Optional.of(symbol);
+                }
             }
         }
 
@@ -53,6 +67,8 @@ public class AnalysisUtils {
 
     public static boolean validateIsImported(String name, SymbolTable table) {
         List<String> imports = table.getImports();
+        if (imports == null)
+            return false;
         return imports.stream().anyMatch(currImport -> currImport.equals(name));
     }
 

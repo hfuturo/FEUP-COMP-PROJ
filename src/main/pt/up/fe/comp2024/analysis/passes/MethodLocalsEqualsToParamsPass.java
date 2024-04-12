@@ -13,35 +13,27 @@ import pt.up.fe.comp2024.ast.NodeUtils;
 import java.util.List;
 
 public class MethodLocalsEqualsToParamsPass extends AnalysisVisitor{
-    private String currentMethod;
-
-    public MethodLocalsEqualsToParamsPass() {
-        this.currentMethod = "";
-    }
-
     public void buildVisitor() {
-        addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
         addVisit(Kind.VAR_DECL, this::visitVarDecl);
     }
 
-    private Void visitMethodDecl(JmmNode node, SymbolTable table) {
-        this.currentMethod = node.get("name");
-
-        return null;
-    }
-
     private Void visitVarDecl(JmmNode node, SymbolTable table) {
-        List<Symbol> params = table.getParameters(currentMethod);
+        var method = node.getAncestor(Kind.METHOD_DECL);
 
-        if(params != null) {
-            boolean varDeclInMethodParams = params.stream().anyMatch(symbol -> {
-                return symbol.getName().equals(node.get("name"));
-            });
+        if(method.isPresent()) {
+            List<Symbol> params = table.getParameters(method.get().get("name"));
+            String methodName = method.get().get("name");
 
-            if (varDeclInMethodParams) {
-                String message = String.format("%s is already declared on %s's parameters", node.get("name"), currentMethod);
-                addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(node),
-                        NodeUtils.getColumn(node), message, null));
+            if (params != null) {
+                boolean varDeclInMethodParams = params.stream().anyMatch(symbol -> {
+                    return symbol.getName().equals(node.get("name"));
+                });
+
+                if (varDeclInMethodParams) {
+                    String message = String.format("%s is already declared on %s's parameters", node.get("name"), methodName);
+                    addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(node),
+                            NodeUtils.getColumn(node), message, null));
+                }
             }
         }
 

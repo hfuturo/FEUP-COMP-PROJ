@@ -113,16 +113,6 @@ public class TypeUtils {
          return varRefSymbol.get().getType();
     }
 
-    public static Type getTypeByString(String string, SymbolTable table, String currentMethod) {
-        Optional<Symbol> symbol = AnalysisUtils.validateSymbolFromSymbolTable(currentMethod, table, string);
-
-        if (symbol.isEmpty()) {
-            throw new RuntimeException("Undeclared variable semantic analysis pass has failed!");
-        }
-
-        return symbol.get().getType();
-    }
-
     private static Type getNewClassType(JmmNode newClass, SymbolTable table) {
         String newClassName = newClass.get("name");
         List<String> imports = table.getImports();
@@ -161,12 +151,14 @@ public class TypeUtils {
             return checkArrayConsistency;
         }
 
+        // caso seja import A, B; A = B
         for (String imp : imports) {
             if (imp.equals(destName))
                 return true;
         }
 
-        return false;
+        // import A; int a = A.foo()
+        return destName.equals(TypeUtils.getImportTypeName());
     }
 
     public static boolean checkValuesInArrayInit(Type leftType, List<JmmNode> valuesNodes, SymbolTable table) {
@@ -177,5 +169,12 @@ public class TypeUtils {
                 return false;
         }
         return true;
+    }
+
+    public static Type getVarMethodType(JmmNode node, SymbolTable table) {
+        System.out.println("node:\t" + node.toString());
+        var expr = getVarExprType(node.getJmmChild(0), table);
+        System.out.println("varType:\t" + expr.toString());
+        return expr;
     }
 }
