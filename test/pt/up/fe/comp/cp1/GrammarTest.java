@@ -18,10 +18,7 @@ import pt.up.fe.comp.TestUtils;
 
 public class GrammarTest {
 
-
-    // TODO: Set name of imports grammar rule
     private static final String IMPORT = "importDecl";
-    // TODO: Set name of main method grammar rule
     private static final String MAIN_METHOD = "mainMethodDecl";
     private static final String INSTANCE_METHOD = "methodDeclRule";
     private static final String STATEMENT = "stmt";

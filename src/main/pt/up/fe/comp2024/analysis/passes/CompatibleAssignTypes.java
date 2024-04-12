@@ -36,9 +36,6 @@ public class CompatibleAssignTypes extends AnalysisVisitor {
         Type leftType = TypeUtils.getExprType(leftExpr, table);
         Type rightType = TypeUtils.getExprType(rightExpr, table);
 
-        System.out.println("left:\n" + leftType.toString());
-        System.out.println("right:\n" + rightType.toString());
-
         if (rightType.isArray()) {
             if (!TypeUtils.checkValuesInArrayInit(leftType, rightExpr.getChildren(), table)) {
                 String message = SemanticErrorUtils.incompatibleType(leftType.toString(), rightType.toString(), "ArrayInit");

@@ -3,7 +3,6 @@ package pt.up.fe.comp2024.analysis;
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

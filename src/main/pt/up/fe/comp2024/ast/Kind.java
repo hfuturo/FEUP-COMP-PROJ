@@ -52,7 +52,6 @@ public enum Kind {
   private Kind() { this.name = SpecsStrings.toCamelCase(name(), "_", true); }
 
   public static Kind fromString(String kind) {
-    System.out.println("Kind is: " + kind);
     for (Kind k : Kind.values()) {
       if (k.getNodeName().equals(kind)) {
         return k;

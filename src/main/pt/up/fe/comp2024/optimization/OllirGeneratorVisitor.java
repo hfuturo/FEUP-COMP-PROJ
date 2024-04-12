@@ -47,9 +47,13 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit(RETURN_STMT, this::visitReturn);
         addVisit(ASSIGN_STMT, this::visitAssignStmt);
         addVisit(INIT_ARRAY, this::visitInitArray);
-        addVisit(VAR_METHOD, this::visitVarMethod);
+        addVisit(EXPR_STMT, this::visitExprStmt);
         addVisit(INNER_MAIN_METHOD, this::visitMainMethod);
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private String visitExprStmt(JmmNode node, Void unused) {
+        return exprVisitor.visit(node.getJmmChild(0)).getCode();
     }
 
     private String visitMainMethod(JmmNode node, Void unused) {
@@ -78,44 +82,6 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
     private String visitImport(JmmNode node, Void unused) {
         String imports = node.get("names").replaceAll("[\\[\\]\\s]", "").replaceAll(",",".");
         return "import " + imports + END_STMT;
-    }
-
-    private String visitVarMethod(JmmNode node, Void unused) {
-        String methodName = node.get("name");
-        JmmNode callerNode = node.getJmmChild(0);
-        List<String> imports = table.getImports();
-        StringBuilder code = new StringBuilder();
-
-        String callerType = OptUtils.toOllirType(TypeUtils.getExprType(callerNode, table));
-        String callerName, methodReturnType;
-
-        // this.foo()
-        if (callerNode.isInstance(THIS)) {
-            code.append("invokevirtual");
-            callerName = "this" + callerType;
-            methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
-        }
-        else if(imports.contains(callerNode.get("name"))) { // A.foo()
-            code.append("invokestatic");
-            callerName = callerNode.get("name");
-            methodReturnType = "." + callerNode.get("name");
-        }
-        else { // A a; a.foo();
-            code.append("invokevirtual");
-            callerName = callerNode.get("name") + callerType;
-            methodReturnType = callerType;
-        }
-
-        code.append("(");
-        code.append(callerName);
-        code.append(", \"");
-        code.append(methodName);
-        code.append("\")");
-        code.append(methodReturnType);
-        code.append(";");
-        code.append(NL);
-
-        return code.toString();
     }
 
     private String visitInitArray(JmmNode node, Void unused) {

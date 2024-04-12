@@ -1,12 +1,10 @@
 package pt.up.fe.comp2024.optimization;
 
-import org.specs.comp.ollir.Ollir;
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PreorderJmmVisitor;
-import pt.up.fe.comp.jmm.ollir.OllirUtils;
 import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.comp2024.ast.TypeUtils;
 
@@ -53,41 +51,85 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
         JmmNode callerNode = node.getJmmChild(0);
         List<String> imports = table.getImports();
         StringBuilder computation = new StringBuilder();
-
-        String tempVar = OptUtils.getTemp();
-        String varMethodType = OptUtils.toOllirType(table.getReturnType(node.get("name")));
-        computation.append(String.format("%s%s :=%s ", tempVar, varMethodType, varMethodType, varMethodType));
-
         String callerType = OptUtils.toOllirType(TypeUtils.getExprType(callerNode, table));
         String callerName, methodReturnType;
 
+        // variaveis para caso seja um assignment;
+        JmmNode parent = node.getParent();
+        String invokeType;
+        String tempVar = "";
+
         // this.foo()
         if (callerNode.isInstance(THIS)) {
-            computation.append("invokevirtual");
+            invokeType =  "invokevirtual";
             callerName = "this" + callerType;
             methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
         }
         else if(imports.contains(callerNode.get("name"))) { // A.foo()
-            computation.append("invokestatic");
+            invokeType = "invokestatic";
             callerName = callerNode.get("name");
-            methodReturnType = "." + callerNode.get("name");
+            methodReturnType = ".V";
         }
         else { // A a; a.foo();
-            computation.append("invokevirtual");
+            invokeType = "invokevirtual";
             callerName = callerNode.get("name") + callerType;
             methodReturnType = callerType;
         }
 
+        StringBuilder params = new StringBuilder();
+        // tem parametros
+        if (node.getNumChildren() > 1) {
+            for (int i = 1; i < node.getNumChildren(); i++) {
+                JmmNode child = node.getJmmChild(i);
+                params.append(", ");
+                OllirExprResult result = visit(child);
+
+                // adiciona código extra caso param seja uma BINARY_EXPR ou VAR_METHOD
+                computation.append(result.getComputation());
+
+                params.append(result.getCode());
+            }
+        }
+
+        // é um assign / operacao
+        if (!parent.isInstance(EXPR_STMT)) {
+            tempVar = OptUtils.getTemp();
+
+            if (parent.isInstance(ASSIGN_STMT)) {
+                JmmNode lhs = parent.getChild(0);
+                Optional<Symbol> leftType = AnalysisUtils.validateSymbolFromSymbolTable(table, lhs.get("name"));
+                if (leftType.isPresent()) {
+                    methodReturnType = OptUtils.toOllirType(TypeUtils.getExprType(lhs, table));
+                }
+            }
+            else {
+                methodReturnType = OptUtils.toOllirType(TypeUtils.getExprType(parent, table));
+            }
+
+            computation.append(String.format("%s%s :=%s ", tempVar, methodReturnType, methodReturnType, methodReturnType));
+        }
+
+        computation.append(invokeType);
         computation.append("(");
         computation.append(callerName);
         computation.append(", \"");
         computation.append(methodName);
-        computation.append("\")");
+        computation.append("\"");
+
+        if (params.length() > 0) {
+            computation.append(params);
+        }
+
+        computation.append(")");
         computation.append(methodReturnType);
         computation.append(";");
         computation.append("\n");
 
-        return new OllirExprResult(String.format("%s%s", tempVar, varMethodType), computation.toString());
+        if (!parent.isInstance(EXPR_STMT)) {
+            return new OllirExprResult(String.format("%s%s", tempVar, methodReturnType), computation.toString());
+        }
+
+        return new OllirExprResult(computation.toString());
     }
 
     private OllirExprResult visitClassInstantiation(JmmNode node, Void unused) {

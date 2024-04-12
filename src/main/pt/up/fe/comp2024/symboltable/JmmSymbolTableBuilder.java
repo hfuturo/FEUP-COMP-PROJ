@@ -102,8 +102,6 @@ public class JmmSymbolTableBuilder {
                 .forEach(method -> method.getChildren(INNER_MAIN_METHOD).stream()
                         .forEach(main_method -> map.put("main", getLocalsList(main_method))));
 
-        System.out.println("Map is: " + map);
-
         return map;
     }
 
@@ -122,7 +120,6 @@ public class JmmSymbolTableBuilder {
 
 
     private static List<Symbol> getLocalsList(JmmNode methodDecl) {
-        System.out.println("Children: " + methodDecl.getChildren(VAR_DECL));
         return methodDecl.getChildren(VAR_DECL).stream()
                 .map(JmmSymbolTableBuilder::getSymbolBasedOnType)
                 .toList();

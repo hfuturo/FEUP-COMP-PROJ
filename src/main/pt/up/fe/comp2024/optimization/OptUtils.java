@@ -41,7 +41,6 @@ public class OptUtils {
     }
 
     public static String toOllirType(Type type) {
-        System.out.println("type:\n\t" + type.toString());
         return toOllirType(type.getName());
     }
 
