@@ -68,7 +68,7 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
         else if(imports.contains(callerNode.get("name"))) { // A.foo()
             invokeType = "invokestatic";
             callerName = callerNode.get("name");
-            methodReturnType = ".V";
+            methodReturnType = "." + callerNode.get("name");
         }
         else { // A a; a.foo();
             invokeType = "invokevirtual";
@@ -102,9 +102,9 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
                     methodReturnType = OptUtils.toOllirType(TypeUtils.getExprType(lhs, table));
                 }
             }
-//            else {
-//                methodReturnType = OptUtils.toOllirType(TypeUtils.getExprType(parent, table));
-//            }
+            else if (parent.isInstance(BINARY_EXPR)) {
+                methodReturnType = OptUtils.toOllirType(TypeUtils.getOperatorOperandsType(parent));
+            }
 
             computation.append(String.format("%s%s :=%s ", tempVar, methodReturnType, methodReturnType));
         }

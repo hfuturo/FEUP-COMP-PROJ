@@ -1,0 +1,19 @@
+import A;
+
+class CallImportMethodPresentInClass {
+
+    public int foo() {
+        boolean b;
+
+        A a;
+        A aa;
+
+        aa = new A();
+
+        b = A.foo();
+        b = a.foo();
+        b = aa.foo();
+
+        return 0;
+    }
+}

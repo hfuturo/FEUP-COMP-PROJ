@@ -269,11 +269,18 @@ public class SemanticAnalysisTest {
     public void callUndeclaredMethodInNewInstance() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/CallUndeclaredMethodInNewInstance.jmm"));
         TestUtils.mustFail(result);
+        System.out.println(result.getReports());
     }
 
     @Test
     public void callDeclaredMethodInNewInstance() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/CallDeclaredMethodInNewInstance.jmm"));
+        TestUtils.noErrors(result);
+    }
+
+    @Test
+    public void callImportMethodPresentInClass() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/CallImportMethodPresentInClass.jmm"));
         TestUtils.noErrors(result);
     }
 }

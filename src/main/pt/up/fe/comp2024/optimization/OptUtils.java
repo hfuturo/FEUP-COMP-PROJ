@@ -38,8 +38,8 @@ public class OptUtils {
     //necessário verificar se TYPE é IMPORT para atualizar!!!
     private static String toOllirType(String typeName) {
         String type = "." + switch (typeName) {
-            case "int" -> "i32";
-            case "boolean", "<", "&&", "!" -> "bool";
+            case "int", "<" -> "i32";
+            case "boolean", "&&", "!" -> "bool";
             default -> typeName; // main class ou import
         };
 

@@ -46,14 +46,10 @@ public class TypeUtils {
             case INTEGER_LITERAL, LENGTH, ACCESS_ARRAY -> new Type(INT_TYPE_NAME, false);
             case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
             case VAR_METHOD -> {
-                Type returnType = table.getReturnType(expr.get("name"));
-
-                boolean isImported = returnType == null;
-                if(isImported) {
+                if (expr.get("isDeclared").equals("False"))
                     yield new Type(IMPORT_TYPE_NAME, false);
-                }
 
-                yield returnType;
+                yield table.getReturnType(expr.get("name"));
             }
             case NEW_CLASS -> getNewClassType(expr, table);
             case NEW_INT, INIT_ARRAY -> new Type(INT_TYPE_NAME, true);

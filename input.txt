@@ -1,14 +1,45 @@
+import A;
+
 class CallUndeclaredMethodInNewInstance {
 
     public int foo() {
-        CallUndeclaredMethodInNewInstance c;
-        int a;
-        c = new CallUndeclaredMethodInNewInstance();
-        a = c.bar();
-        return a;
-    }
+        A a;
+        A aa;
 
-    public boolean bar() {
+        int c;
+        boolean b;
+
+        aa = new A();
+
+        A.bar();
+        a.bar();
+        aa.bar();
+
+        c = A.bar();
+        c = a.bar();
+        c = aa.bar();
+
+        b = A.foo();
+        b = a.foo();
+        b = aa.foo();
+
+        c = 2 + 3 + 4 * A.foo();
+        c = 2 + 3 + 4 * a.foo();
+        c = 2 + 3 + 4 * aa.foo();
+
+        b = aa.bar() && 2 < A.foo();
+        b = aa.bar() && 2 < a.foo();
+        b = aa.bar() && 2 < aa.foo();
+
+        c = 2 + 3 + A.foo(3, 4, A.bar());
+        c = 2 + 3 + A.foo(3, 4, a.bar());
+        c = 2 + 3 + A.foo(3, 4, aa.bar());
+
+        c = 2 + 3 + A.foo(3, 4, A.bar() + 1);
+        c = 2 + 3 + A.foo(3, 4, a.bar() + 1);
+        c = 2 + 3 + A.foo(3, 4, aa.bar() + 1);
+
         return 0;
     }
+
 }
