@@ -175,8 +175,12 @@ public class JasminGenerator {
         // get register
         var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
 
-        // TODO: Hardcoded for int type, needs to be expanded
-        code.append("istore ").append(reg).append(NL);
+        code.append(
+            switch (operand.getType().toString()) {
+                case "INT32", "INT" -> "istore";
+                default -> "astore";
+            }
+        ).append(reg < 4 ? "_" : " ").append(reg).append(NL);
 
         return code.toString();
     }
@@ -192,7 +196,11 @@ public class JasminGenerator {
     private String generateOperand(Operand operand) {
         // get register
         var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
-        return "iload " + reg + NL;
+
+        return switch (operand.getType().toString()) {
+            case "INT32", "INT" -> "iload";
+            default -> "aload";
+        } + (reg < 4 ? "_" : " ") + reg + NL;
     }
 
     private String generateBinaryOp(BinaryOpInstruction binaryOp) {
@@ -237,13 +245,27 @@ public class JasminGenerator {
     private String generateCall(CallInstruction callInst) {
         StringBuilder code = new StringBuilder();
 
-        code.append(callInst.getInvocationType());
+        CallType invocationType = callInst.getInvocationType();
+
+        switch (invocationType) {
+            case invokestatic -> generateInvokeStatic(callInst, code);
+            case invokevirtual -> generateInvokeVirtual(callInst, code);
+            case NEW -> generateNew(callInst, code);
+            case invokespecial -> generateSpecial(callInst, code);
+            default -> throw new NotImplementedException("Invocation type " + invocationType.name() + " not implemented in CallInstruction");
+        }
+
+        return code.toString();
+    }
+
+    private void generateInvokeStatic(CallInstruction callInst, StringBuilder code) {
+        String argumentsType = pushArgumentsIntoStackAndGetType(callInst, code);
+
+        code.append(callInst.getInvocationType().toString());
         code.append(" ");
-        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getCaller().getType()));
+        code.append(callInst.getOperands().get(0).toString().split(": ")[1].split("\\.")[0]);
         code.append("/");
 
-        System.out.println("callInst:\t" + callInst.toString());
-        System.out.println("caller:\t" + callInst.getCaller().toString() + " " + callInst.getCaller().getType().toString());
         Pattern pattern = Pattern.compile("\"(.*)\"");
         Matcher matcher = pattern.matcher(callInst.getMethodName().toString());
 
@@ -251,17 +273,71 @@ public class JasminGenerator {
             code.append(matcher.group(1));
 
         code.append("(");
-        if (callInst.getArguments().size() > 0)
-            callInst.getArguments().forEach(argument -> code.append(JasminMethodUtils.getTypeInJasminFormat(argument.getType())));
-
+        code.append(argumentsType);
         code.append(")");
 
         code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getReturnType()));
         code.append(NL);
+    }
 
-        System.out.println("code:\t" + code);
+    private void generateInvokeVirtual(CallInstruction callInst, StringBuilder code) {
 
-        return code.toString();
+        //push caller na stack
+        code.append(generators.apply(callInst.getOperands().get(0)));
+
+        //push arguments na stack
+        String argumentTypes = pushArgumentsIntoStackAndGetType(callInst, code);
+
+        code.append(callInst.getInvocationType().toString());
+        code.append(" ");
+        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getCaller().getType()));
+        code.append("/");
+
+        Pattern pattern = Pattern.compile("\"(.*)\"");
+        Matcher matcher = pattern.matcher(callInst.getMethodName().toString());
+
+        if (matcher.find())
+            code.append(matcher.group(1));
+
+        code.append("(");
+        code.append(argumentTypes);
+        code.append(")");
+
+        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getReturnType()));
+        code.append(NL);
+    }
+
+    private void generateNew(CallInstruction callInst, StringBuilder code) {
+        code.append("new ");
+        code.append(callInst.getOperands().get(0).toString().split(": ")[1].split("\\.")[0]);
+        code.append(NL);
+        code.append("dup");
+        code.append(NL);
+    }
+
+    private void generateSpecial(CallInstruction callInst, StringBuilder code) {
+        code.append(generators.apply(callInst.getOperands().get(0)));
+        code.append("invokespecial ");
+        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getOperands().get(0).getType()));
+        code.append("/");
+        code.append("<init>()V");
+        code.append(NL);
+        code.append("pop");
+        code.append(NL);
+    }
+
+    // da push dos arguments na stack e retorna uma string com os tipos dos argumentos
+    private String pushArgumentsIntoStackAndGetType(CallInstruction inst, StringBuilder code) {
+        StringBuilder argumentsType = new StringBuilder();
+
+        if (inst.getArguments().size() > 0) {
+            inst.getArguments().forEach(argument -> {
+                code.append(generators.apply(argument));
+                argumentsType.append(JasminMethodUtils.getTypeInJasminFormat(argument.getType()));
+            });
+        }
+
+        return argumentsType.toString();
     }
 
 }
