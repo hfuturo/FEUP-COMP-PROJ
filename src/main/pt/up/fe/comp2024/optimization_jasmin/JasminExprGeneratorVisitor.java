@@ -2,6 +2,7 @@ package pt.up.fe.comp2024.optimization_jasmin;
 
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PostorderJmmVisitor;
+import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.specs.util.SpecsCheck;
 import pt.up.fe.specs.util.exceptions.NotImplementedException;
 

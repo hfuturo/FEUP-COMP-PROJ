@@ -10,6 +10,8 @@ import pt.up.fe.specs.util.utilities.StringLines;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +50,7 @@ public class JasminGenerator {
         generators.put(Operand.class, this::generateOperand);
         generators.put(BinaryOpInstruction.class, this::generateBinaryOp);
         generators.put(ReturnInstruction.class, this::generateReturn);
+        generators.put(CallInstruction.class, this::generateCall);
     }
 
     public List<Report> getReports() {
@@ -227,6 +230,36 @@ public class JasminGenerator {
         } else {
             code.append("return");
         }
+
+        return code.toString();
+    }
+
+    private String generateCall(CallInstruction callInst) {
+        StringBuilder code = new StringBuilder();
+
+        code.append(callInst.getInvocationType());
+        code.append(" ");
+        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getCaller().getType()));
+        code.append("/");
+
+        System.out.println("callInst:\t" + callInst.toString());
+        System.out.println("caller:\t" + callInst.getCaller().toString() + " " + callInst.getCaller().getType().toString());
+        Pattern pattern = Pattern.compile("\"(.*)\"");
+        Matcher matcher = pattern.matcher(callInst.getMethodName().toString());
+
+        if (matcher.find())
+            code.append(matcher.group(1));
+
+        code.append("(");
+        if (callInst.getArguments().size() > 0)
+            callInst.getArguments().forEach(argument -> code.append(JasminMethodUtils.getTypeInJasminFormat(argument.getType())));
+
+        code.append(")");
+
+        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getReturnType()));
+        code.append(NL);
+
+        System.out.println("code:\t" + code);
 
         return code.toString();
     }

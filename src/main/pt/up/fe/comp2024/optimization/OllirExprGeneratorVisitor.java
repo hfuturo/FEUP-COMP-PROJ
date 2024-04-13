@@ -62,7 +62,7 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
         // this.foo()
         if (callerNode.isInstance(THIS)) {
             invokeType =  "invokevirtual";
-            callerName = "this" + callerType;
+            callerName = "this";
             methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
         }
         else if(imports.contains(callerNode.get("name"))) { // A.foo()
