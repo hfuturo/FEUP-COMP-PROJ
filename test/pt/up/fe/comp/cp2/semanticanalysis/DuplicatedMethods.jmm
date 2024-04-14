@@ -1,0 +1,9 @@
+class DuplicatedMethods {
+    public int foo() {
+        return 0;
+    }
+
+    public int foo() {
+        return 1;
+    }
+}

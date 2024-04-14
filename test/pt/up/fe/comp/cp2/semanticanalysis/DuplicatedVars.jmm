@@ -1,0 +1,9 @@
+class DuplicatedVars {
+
+    public int foo() {
+        int a;
+        boolean a;
+
+        return 0;
+    }
+}

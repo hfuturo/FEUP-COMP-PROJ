@@ -1,0 +1,8 @@
+import A;
+import A;
+
+class DuplicatedImports {
+    public int foo() {
+        return 0;
+    }
+}

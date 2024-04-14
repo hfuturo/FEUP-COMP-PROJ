@@ -39,7 +39,7 @@ ELSE : 'else' ;
 WHILE: 'while' ;
 
 STATIC: 'static';
-MAIN: 'main';
+//MAIN: 'main';
 VOID: 'void';
 EXTENDS : 'extends' ;
 
@@ -79,14 +79,14 @@ varDeclRule
 
 methodDeclRule locals[boolean isPublic=false]
     : (PUBLIC {$isPublic=true;})?
-        type name=ID
+        type (name='main' | name=ID)
         LPAREN (param (',' param)*)? RPAREN
         LCURLY varDeclRule* stmt* RCURLY # MethodDecl
     | mainMethodDecl # MainMethod
     ;
 
 mainMethodDecl
-    : (PUBLIC)? STATIC VOID MAIN LPAREN 'String' ('[' ']'  | '[]') name=ID RPAREN
+    : (PUBLIC)? STATIC VOID 'main' LPAREN 'String' ('[' ']'  | '[]') name=ID RPAREN
               LCURLY varDeclRule* stmt* RCURLY #InnerMainMethod
     ;
 

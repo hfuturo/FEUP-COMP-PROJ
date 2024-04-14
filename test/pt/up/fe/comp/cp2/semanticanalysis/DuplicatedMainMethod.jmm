@@ -1,0 +1,9 @@
+class DuplicatedMainMethod {
+
+    public static void main(String[] args) {
+    }
+
+    public int main() {
+        return 0;
+    }
+}

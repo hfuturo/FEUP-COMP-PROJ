@@ -16,4 +16,9 @@ public class SemanticErrorUtils {
     public static String lengthOnSomethingNotArray(String name) {
         return String.format("You cannot call length on a variable (%s) which is not an array", name);
     }
+
+    // type é import, metodo, var, ...
+    public static String alreadyExistsError(String type, String name) {
+        return String.format("(%s) with name (%s) already exists", type, name);
+    }
 }

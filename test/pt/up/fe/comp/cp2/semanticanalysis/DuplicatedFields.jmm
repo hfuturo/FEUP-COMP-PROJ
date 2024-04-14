@@ -1,0 +1,10 @@
+class DuplicatedFields {
+
+    int a;
+    boolean a;
+
+    public int foo() {
+        return 0;
+    }
+
+}

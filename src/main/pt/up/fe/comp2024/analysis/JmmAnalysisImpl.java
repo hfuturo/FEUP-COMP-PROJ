@@ -19,7 +19,9 @@ public class JmmAnalysisImpl implements JmmAnalysis {
     private final List<AnalysisPass> analysisPasses;
 
     public JmmAnalysisImpl() {
-        this.analysisPasses = List.of(new UndeclaredVariable(),
+        this.analysisPasses = List.of(
+                new CheckDuplicated(),
+                new UndeclaredVariable(),
                 new UndeclaredMethod(),
                 new IncompatibleReturn(),
                 new IncompatibleMethodTypes(),
@@ -29,7 +31,6 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                 new ValidConditionExpression(),
                 new ChecksThisInStaticMethods(),
                 new CheckVarArg(),
-                new MethodLocalsEqualsToParamsPass(),
                 new AddMethodReturnTypePass()
         );
     }
