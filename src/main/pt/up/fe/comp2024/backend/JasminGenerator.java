@@ -32,6 +32,8 @@ public class JasminGenerator {
 
     Method currentMethod;
 
+    int currentMethodVirtualReg = 1;
+
     private final FunctionClassMap<TreeNode, String> generators;
 
     public JasminGenerator(OllirResult ollirResult) {
@@ -74,20 +76,28 @@ public class JasminGenerator {
 
         // generate class name
         var className = ollirResult.getOllirClass().getClassName();
-        code.append(".class ").append(className).append(NL).append(NL);
+        code.append(".class public ").append(className).append(NL).append(NL);
 
         // TODO: Hardcoded to Object, needs to be expanded
-        code.append(".super java/lang/Object").append(NL);
+        String superClass = classUnit.getSuperClass();
+        StringBuilder superConstructorInvokerString = new StringBuilder();
+        if(superClass == null) {
+            code.append(".super java/lang/Object").append(NL);
+            superConstructorInvokerString.append("invokespecial java/lang/Object/<init>()V");
+        } else {
+            code.append(String.format(".super %s", superClass)).append(NL);
+            superConstructorInvokerString.append(String.format("invokespecial %s/<init>()V", superClass));
+        }
 
         // generate a single constructor method
-        var defaultConstructor = """
+        var defaultConstructor = String.format("""
                 ;default constructor
                 .method public <init>()V
                     aload_0
-                    invokespecial java/lang/Object/<init>()V
+                    %s
                     return
                 .end method
-                """;
+                """, superConstructorInvokerString.toString());
         code.append(defaultConstructor);
 
         // generate code for all other methods
@@ -109,6 +119,7 @@ public class JasminGenerator {
     private String generateMethod(Method method) {
         // set method
         currentMethod = method;
+        this.currentMethodVirtualReg = 1;
 
         var code = new StringBuilder();
 
@@ -177,7 +188,7 @@ public class JasminGenerator {
 
         code.append(
             switch (operand.getType().toString()) {
-                case "INT32", "INT" -> "istore";
+                case "INT32", "INT", "BOOLEAN" -> "istore";
                 default -> "astore";
             }
         ).append(reg < 4 ? "_" : " ").append(reg).append(NL);
@@ -198,7 +209,7 @@ public class JasminGenerator {
         var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
 
         return switch (operand.getType().toString()) {
-            case "INT32", "INT" -> "iload";
+            case "INT32", "INT", "BOOLEAN" -> "iload";
             default -> "aload";
         } + (reg < 4 ? "_" : " ") + reg + NL;
     }
