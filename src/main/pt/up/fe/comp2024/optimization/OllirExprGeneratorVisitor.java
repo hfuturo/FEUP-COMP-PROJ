@@ -68,12 +68,12 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
         else if(imports.contains(callerNode.get("name"))) { // A.foo()
             invokeType = "invokestatic";
             callerName = callerNode.get("name");
-            methodReturnType = "." + callerNode.get("name");
+            methodReturnType = ".V";
         }
         else { // A a; a.foo();
             invokeType = "invokevirtual";
             callerName = callerNode.get("name") + callerType;
-            methodReturnType = callerType;
+            methodReturnType = ".V";
         }
 
         StringBuilder params = new StringBuilder();

@@ -1,26 +1,46 @@
-import io;
-import Quicksort;
+import A;
 
-class SymbolTable extends Quicksort {
+class CallUndeclaredMethodInNewInstance {
 
-	int intField;
-	boolean boolField;
+    public int foo() {
+        A a;
+        A aa;
 
-	public int method1() {
-	    int intLocal1;
-	    boolean boolLocal1;
+        int c;
+        boolean b;
 
-		intLocal1 = 0;
-		boolLocal1 = 1;
+        aa = new A();
 
-		return 0;
-	}
+    /*    A.bar();
+        a.bar();
+        aa.bar();
 
-	public boolean method2(int intParam1, boolean boolParam1) {
-		return boolParam1;
-	}
+        c = A.bar();
+        c = a.bar();
+        c = aa.bar();
 
-	public static void main(String[] args) {
-	}
+        b = A.foo();
+        b = a.foo();
+        b = aa.foo();
+
+        c = 2 + 3 + 4 * A.foo();
+        c = 2 + 3 + 4 * a.foo();
+        c = 2 + 3 + 4 * aa.foo();
+
+        b = aa.bar() && 2 < A.foo();
+        b = aa.bar() && 2 < a.foo();
+        b = aa.bar() && 2 < aa.foo(); */
+
+        // estes
+        c = 2 + 3 + A.foo(3, 4, A.bar());
+        c = 2 + 3 + A.foo(3, 4, a.bar());
+        c = 2 + 3 + A.foo(3, 4, aa.bar());
+
+   /*     c = 2 + 3 + A.foo(3, 4, A.bar() + 1);
+        c = 2 + 3 + A.foo(3, 4, a.bar() + 1);
+        c = 2 + 3 + A.foo(3, 4, aa.bar() + 1); */
+
+        return 0;
+    }
 
 }
