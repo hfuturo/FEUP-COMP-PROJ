@@ -1,0 +1,12 @@
+import IO;
+
+class AssignToStaticClass {
+    public int foo() {
+        IO io;
+        io = new IO();
+
+        io = IO;
+        IO = io;
+        return 0;
+    }
+}

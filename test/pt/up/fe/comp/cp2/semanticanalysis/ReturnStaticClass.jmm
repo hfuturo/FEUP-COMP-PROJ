@@ -1,0 +1,16 @@
+import IO;
+
+class ReturnStaticClass {
+
+    public int foo() {
+        return IO;
+    }
+
+    public int bar() {
+        IO io;
+        io = new IO();
+
+        return io;
+    }
+
+}
