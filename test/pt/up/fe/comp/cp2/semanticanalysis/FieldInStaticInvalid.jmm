@@ -1,11 +1,9 @@
-class X {
+class FieldInStaticInvald {
 
-    int args;
+    int a;
 
     public static void main(String[] args) {
         int b;
-        int a;
         b = a;
     }
-
 }
