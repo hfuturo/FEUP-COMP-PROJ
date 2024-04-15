@@ -142,6 +142,10 @@ public class TypeUtils {
             return checkArrayConsistency;
         }
 
+        if (destName.equals(table.getSuper()) && sourceName.equals(table.getClassName())) {
+            return false;
+        }
+
         // caso seja import A, B; A = B
         for (String imp : imports) {
             if (imp.equals(destName))

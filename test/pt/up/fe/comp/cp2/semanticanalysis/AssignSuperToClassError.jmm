@@ -9,19 +9,8 @@ class Cao extends Animal {
         a = new Animal();
         c = new Cao();
 
-        //c = a;
-        c = this.doe(c);
+        c = a;
         return 0;
     }
-
-    //public Animal bar(Animal a) {
-    //    return a;
-    //}
-
-    public Cao doe(Cao c) {
-        return c;
-    }
-
-
 
 }

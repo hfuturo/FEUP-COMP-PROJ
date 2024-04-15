@@ -11,6 +11,6 @@ class AssignThisToVar extends B {
         a = this;
         c = this;
 
-        return a;
+        return c;
     }
 }

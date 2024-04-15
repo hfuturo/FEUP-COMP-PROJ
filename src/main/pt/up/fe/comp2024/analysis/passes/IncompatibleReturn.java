@@ -76,7 +76,7 @@ public class IncompatibleReturn extends AnalysisVisitor {
             Type childType = TypeUtils.getExprType(child, symbolTable);
 
             if(childType == null) continue; // var does not exist
-            if(!childType.getName().equals("import") && !TypeUtils.areTypesAssignable(childType, returnType, symbolTable)) {
+            if(!childType.getName().equals("import") && !TypeUtils.areTypesAssignable(returnType, childType, symbolTable)) {
                 var message = String.format("Incompatible return in function %s. Expected %s, found %s", methodName, returnType.getName(), childType.getName());
                 addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(returnNode),
                         NodeUtils.getColumn(returnNode), message, null));
