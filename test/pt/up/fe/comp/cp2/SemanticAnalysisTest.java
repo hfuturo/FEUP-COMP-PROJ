@@ -414,7 +414,7 @@ public class SemanticAnalysisTest {
     }
 
     @Test
-    public void acessValidArray() {
+    public void accessValidArray() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/AccessValidArray.jmm"));
         TestUtils.noErrors(result);
     }

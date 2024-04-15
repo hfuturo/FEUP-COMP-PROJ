@@ -41,7 +41,8 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
 
     String leftExprNodeKind = leftExprNode.getKind();
     boolean exprNodeHasValidKind = leftExprNodeKind.equals(Kind.VAR_METHOD.toString())
-            || leftExprNodeKind.equals(Kind.VAR_REF_EXPR.toString()) || leftExprNodeKind.equals(Kind.THIS.toString());
+            || leftExprNodeKind.equals(Kind.VAR_REF_EXPR.toString()) || leftExprNodeKind.equals(Kind.THIS.toString())
+            || leftExprNodeKind.equals(Kind.INIT_ARRAY.toString());
 
     if(!exprNodeHasValidKind) {
       throw new RuntimeException(String.format("Node where .length was called is of invalid kind: %s", leftExprNodeKind));
@@ -49,7 +50,7 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
 
     Type leftExprType = TypeUtils.getExprType(leftExprNode, table);
 
-    if(!leftExprType.isArray()) {
+    if(!leftExprType.isArray() && !leftExprType.getName().equals(TypeUtils.getImportTypeName())) {
       addReport(Report.newError(Stage.SEMANTIC,
               NodeUtils.getLine(leftExprNode),
               NodeUtils.getColumn(leftExprNode),

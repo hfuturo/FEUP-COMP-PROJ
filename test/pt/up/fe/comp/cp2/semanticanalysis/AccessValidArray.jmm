@@ -21,6 +21,7 @@ class AccessValidArray {
         b = arr[this.bar()];
         b = arr[c.bar()];
         b = arr[arr.length];
+        b = a[[1,2,3].length];
 
         return b;
     }

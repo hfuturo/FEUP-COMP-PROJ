@@ -8,7 +8,9 @@ class Cao extends Animal {
         int[] d;
         int b;
         int c;
+        Animal an;
         Cao cao;
+        an = new Animal();
         cao = new Cao();
 
 
@@ -20,8 +22,9 @@ class Cao extends Animal {
         b = a[c];
         b = a[this.bar()];
         b = a[d.length];
-        b = a[Animal.count()];
+        b = a[Animal.count().length];
         b = a[cao.bar()];
+        b = a[[1,2,3].length];
 
         return 0;
     }
