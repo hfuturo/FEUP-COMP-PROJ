@@ -128,8 +128,12 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
 
     private String visitReturn(JmmNode node, Void unused) {
-        String methodName = node.getAncestor(METHOD_DECL).map(method -> method.get("name")).orElseThrow();
-        Type retType = table.getReturnType(methodName);
+        Optional<String> methodName = node.getAncestor(METHOD_DECL).map(method -> method.get("name"));
+        if(methodName.isEmpty()) {
+            methodName = Optional.of("main");
+        }
+
+        Type retType = table.getReturnType(methodName.get());
 
         StringBuilder code = new StringBuilder();
 

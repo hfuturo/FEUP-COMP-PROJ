@@ -16,6 +16,26 @@ public class IncompatibleReturn extends AnalysisVisitor {
     @Override
     protected void buildVisitor() {
         addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
+        addVisit(Kind.INNER_MAIN_METHOD, this::visitInnerMainMethod);
+    }
+
+    private Object visitInnerMainMethod(JmmNode methodDecl, SymbolTable symbolTable) {
+        List<JmmNode> returns = methodDecl.getDescendants(Kind.RETURN_STMT);
+
+        for(JmmNode returnNode: returns) {
+            if(returnNode.getChildren().isEmpty()) continue;
+
+            JmmNode returnTypeChild = returnNode.getChild(0);
+            Type returnType = TypeUtils.getExprType(returnTypeChild, symbolTable);
+
+            if(!returnType.getName().equals("VOID")) {
+                var message = String.format("Method main expected a return of type void, but found return of type %s", returnType.getName());
+                addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodDecl),
+                        NodeUtils.getColumn(methodDecl), message, null));
+            }
+        }
+
+        return null;
     }
 
     private Object visitMethodDecl(JmmNode methodDecl, SymbolTable symbolTable) {
@@ -30,8 +50,15 @@ public class IncompatibleReturn extends AnalysisVisitor {
         }
 
         for(JmmNode returnNode : returns) {
-            if(returnNode.getChildren().isEmpty())
+            if(returnNode.getChildren().isEmpty()) {
+                if(!returnType.getName().equals("VOID")) {
+                    var message = String.format("Incompatible return in function %s. Expected %s, found void", methodName, returnType.getName());
+                    addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(returnNode),
+                            NodeUtils.getColumn(returnNode), message, null));
+                }
                 continue;
+            }
+
 
             JmmNode child = returnNode.getChild(0);
             Type childType = TypeUtils.getExprType(child, symbolTable);

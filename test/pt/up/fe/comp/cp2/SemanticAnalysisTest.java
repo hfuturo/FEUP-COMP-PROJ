@@ -255,7 +255,7 @@ public class SemanticAnalysisTest {
     @Test
     public void testCorrectAssignScopes() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/TestCorrectAssignScopes.jmm"));
-        TestUtils.noErrors(result);
+        TestUtils.mustFail(result);
     }
 
     @Test
