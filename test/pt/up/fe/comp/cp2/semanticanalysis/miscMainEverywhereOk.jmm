@@ -4,14 +4,14 @@ class main {
 
     int main;
 
-    public int main() {
+    public int foo() {
         int main;
         return 0;
     }
 
-    public int bar(int main) {
+    public main main(main main) {
         main a;
-        return 0;
+        a = main;
+        return main;
     }
-
 }

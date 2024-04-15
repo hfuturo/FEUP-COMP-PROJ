@@ -4,15 +4,16 @@ class length {
 
     int length;
 
-    public int length() {
-        int length;
-        return 0;
-    }
-
-    public int bar(int length) {
+    public length bar(int length) {
         length a;
         main b;
-        return 0;
+        return a;
+    }
+
+    public length length(length length) {
+        length a;
+        a = length;
+        return length;
     }
 
 }

@@ -129,5 +129,5 @@ expr
     | value=INTEGER #IntegerLiteral                                             // numeros
     | value=THIS #This                                                          // keyword: "this"
     | (value=TRUE | value=FALSE) #Bool                                          // keywords: "true" ; "false"
-    | name=ID #VarRefExpr                                                       // vars
+    | name=('main' | 'length' | ID) #VarRefExpr                                                       // vars
     ;
