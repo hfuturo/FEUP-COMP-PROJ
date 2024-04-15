@@ -48,7 +48,8 @@ public class IncompatibleArgumentTypes extends AnalysisVisitor {
             Type paramType = TypeUtils.getExprType(paramNode, symbolTable);
 
             if(!methodParamType.getName().equals(TypeUtils.getVarargTypeName())) {
-                if(!methodParamType.equals(paramType)) {
+                //if(!methodParamType.equals(paramType)) {
+                if (!TypeUtils.areTypesAssignable(paramType, methodParamType, symbolTable)) {
                     var message = String.format("Unexpected type %s at call to %s. Expected %s", paramType.getName(), methodCall.get("name"), methodParamType.getName());
                     addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(paramNode),
                             NodeUtils.getColumn(paramNode), message, null));
