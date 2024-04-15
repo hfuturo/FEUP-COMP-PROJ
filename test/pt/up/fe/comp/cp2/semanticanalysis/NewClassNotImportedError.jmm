@@ -1,0 +1,9 @@
+class NewClassNotImportedError {
+
+    public int foo() {
+        A a;
+        a = new A();
+        return 0;
+    }
+
+}

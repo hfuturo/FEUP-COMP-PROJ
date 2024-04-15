@@ -4,6 +4,7 @@ import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp2024.analysis.AnalysisUtils;
 
 import java.util.List;
@@ -118,13 +119,7 @@ public class TypeUtils {
             return new Type(newClassName, false);
         }
 
-        for (String imp : imports) {
-            if (imp.equals(newClassName)) {
-                return new Type(newClassName, false);
-            }
-        }
-
-        throw new RuntimeException("Undeclared variable semantic analysis pass has failed!");
+        return new Type(newClassName, false);
     }
 
 
