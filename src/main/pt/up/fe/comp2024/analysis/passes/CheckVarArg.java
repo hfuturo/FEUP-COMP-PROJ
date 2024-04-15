@@ -28,15 +28,8 @@ public class CheckVarArg extends AnalysisVisitor {
             if (symbol.getType().getName().equals(TypeUtils.getVarargTypeName())) {
                 Symbol lastSymbol = symbols.getLast();
 
-                if ((!lastSymbol.getType().getName().equals(TypeUtils.getIntTypeName()) &&
-                        !lastSymbol.getType().equals(symbol.getType())) ||
-                        varargCount > 0) {
-                    String message = varargCount > 0 ?
-                            "Only one parameter can be vararg." :
-                            SemanticErrorUtils.incompatibleType(
-                                    symbol.getType().toString(),
-                                    lastSymbol.getType().toString(),
-                                    "Vararg");
+                if(!symbol.equals(lastSymbol)) {
+                    String message = "Only last parameter can be vararg.";
 
                     addReport(Report.newError(Stage.SEMANTIC,
                             NodeUtils.getLine(method),
@@ -44,8 +37,24 @@ public class CheckVarArg extends AnalysisVisitor {
                             message, null));
                     break;
                 }
-
-                varargCount++;
+//                if ((!lastSymbol.getType().getName().equals(TypeUtils.getIntTypeName()) &&
+//                        !lastSymbol.getType().equals(symbol.getType())) ||
+//                        varargCount > 0) {
+//                    String message = varargCount > 0 ?
+//                            "Only one parameter can be vararg." :
+//                            SemanticErrorUtils.incompatibleType(
+//                                    symbol.getType().toString(),
+//                                    lastSymbol.getType().toString(),
+//                                    "Vararg");
+//
+//                    addReport(Report.newError(Stage.SEMANTIC,
+//                            NodeUtils.getLine(method),
+//                            NodeUtils.getColumn(method),
+//                            message, null));
+//                    break;
+//                }
+//
+//                varargCount++;
             }
         }
 
