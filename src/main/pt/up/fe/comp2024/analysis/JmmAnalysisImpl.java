@@ -32,7 +32,8 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                 new ValidConditionExpression(),
                 new ChecksThisInStaticMethods(),
                 new CheckVarArg(),
-                new AddMethodReturnTypePass()
+                new AddMethodReturnTypePass(),
+                new LastMethodStatementIsReturnPass()
         );
     }
 

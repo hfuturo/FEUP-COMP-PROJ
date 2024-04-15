@@ -22,6 +22,12 @@ public class IncompatibleReturn extends AnalysisVisitor {
     private Object visitInnerMainMethod(JmmNode methodDecl, SymbolTable symbolTable) {
         List<JmmNode> returns = methodDecl.getDescendants(Kind.RETURN_STMT);
 
+        if(returns.size() > 1) {
+            var message = "Multiple returns present on method main";
+            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodDecl),
+                    NodeUtils.getColumn(methodDecl), message, null));
+        }
+
         for(JmmNode returnNode: returns) {
             if(returnNode.getChildren().isEmpty()) continue;
 
@@ -45,6 +51,12 @@ public class IncompatibleReturn extends AnalysisVisitor {
 
         if(returns.size() == 0 && !returnType.getName().equals("VOID")) {
             var message = String.format("Method %s expected a return of type %s, but no return was found", methodName, returnType.getName());
+            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodDecl),
+                    NodeUtils.getColumn(methodDecl), message, null));
+        }
+
+        if(returns.size() > 1) {
+            var message = String.format("Found more than one return on method %s", methodName);
             addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodDecl),
                     NodeUtils.getColumn(methodDecl), message, null));
         }
