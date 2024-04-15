@@ -203,10 +203,21 @@ public class OllirExprGeneratorVisitor extends PreorderJmmVisitor<Void, OllirExp
         var id = node.get("name");
         Type type = TypeUtils.getExprType(node, table);
         String ollirType = OptUtils.toOllirType(type);
+        StringBuilder code = new StringBuilder();
+        StringBuilder computation = new StringBuilder();
 
-        String code = id + ollirType;
+        if(node.get("isField").equals("True")) {
+            if(node.get("assignLeft").equals("False")) {
+                var tmp = OptUtils.getTemp();
+                computation.append(tmp).append(ollirType).append(SPACE).append(ASSIGN).append(ollirType).append(SPACE);
+                computation.append("getfield(this, ").append(id).append(ollirType).append(")").append(ollirType).append(END_STMT);
+                code.append(tmp).append(ollirType);
+            }
+        } else {
+            code.append(id).append(ollirType);
+        }
 
-        return new OllirExprResult(code);
+        return new OllirExprResult(code.toString(), computation.toString());
     }
 
     /**

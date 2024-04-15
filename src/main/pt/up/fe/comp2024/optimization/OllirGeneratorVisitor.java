@@ -5,6 +5,7 @@ import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.AJmmVisitor;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.NodeUtils;
 import pt.up.fe.comp2024.ast.TypeUtils;
@@ -105,16 +106,22 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         Type thisType = TypeUtils.getExprType(node.getJmmChild(0), table);
         String typeString = OptUtils.toOllirType(thisType);
 
-        code.append(lhs.getCode());
-        code.append(SPACE);
 
-        code.append(ASSIGN);
-        code.append(typeString);
-        code.append(SPACE);
+        if(node.getJmmChild(0).get("isField").equals("True")) {
+            var leftChild = node.getJmmChild(0);
+            code.append("putfield(this, ").append(leftChild.get("name")).append(typeString).append(", ").append(rhs.getCode()).append(").V;\n");
+        } else {
+            code.append(lhs.getCode());
+            code.append(SPACE);
 
-        code.append(rhs.getCode());
+            code.append(ASSIGN);
+            code.append(typeString);
+            code.append(SPACE);
 
-        code.append(END_STMT);
+            code.append(rhs.getCode());
+
+            code.append(END_STMT);
+        }
 
         return code.toString();
     }

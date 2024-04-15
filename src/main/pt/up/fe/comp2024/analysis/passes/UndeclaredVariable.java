@@ -61,6 +61,14 @@ public class UndeclaredVariable extends AnalysisVisitor {
               NodeUtils.getColumn(varRefExpr), SemanticErrorUtils.undeclaredVarMsg(varRefName), null));
     }
 
+    if(AnalysisUtils.validateIsField(varRefName, currentMethod, table)) {
+      varRefExpr.put("isField", "True");
+    } else {
+      varRefExpr.put("isField", "False");
+    }
+
+    varRefExpr.put("assignLeft", "False");
+
     return null;
   }
 }

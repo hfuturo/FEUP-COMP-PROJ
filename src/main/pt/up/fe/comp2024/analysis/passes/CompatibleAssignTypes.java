@@ -33,6 +33,8 @@ public class CompatibleAssignTypes extends AnalysisVisitor {
         JmmNode leftExpr = children.get(0);
         JmmNode rightExpr = children.get(1);
 
+        leftExpr.put("assignLeft", "True");
+
         Type leftType = TypeUtils.getExprType(leftExpr, table);
         Type rightType = TypeUtils.getExprType(rightExpr, table);
 
