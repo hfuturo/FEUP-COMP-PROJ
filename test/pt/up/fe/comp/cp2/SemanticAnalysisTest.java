@@ -255,7 +255,7 @@ public class SemanticAnalysisTest {
     @Test
     public void testCorrectAssignScopes() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/TestCorrectAssignScopes.jmm"));
-        TestUtils.mustFail(result);
+        TestUtils.noErrors(result);
     }
 
     @Test
@@ -358,5 +358,11 @@ public class SemanticAnalysisTest {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/VarDeclaredInParam.jmm"));
         TestUtils.mustFail(result);
         System.out.println(result.getReports());
+    }
+
+    @Test
+    public void miscMainEverywhereOk() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/MiscMainEverywhereOk.jmm"));
+        TestUtils.noErrors(result);
     }
 }

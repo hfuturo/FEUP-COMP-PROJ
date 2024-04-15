@@ -10,8 +10,6 @@ class TestCorrectAssignScopes {
 
         a = true;
         b = 5;
-
-        return 0;
     }
 
     public int methodVarsAndFields(boolean d) {

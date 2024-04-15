@@ -35,9 +35,10 @@ public class CheckDuplicated extends AnalysisVisitor {
 
     private Void visitImport(JmmNode node, SymbolTable table) {
         List<String> imports = table.getImports();
+        String importName = node.hasAttribute("ID") ? node.get("ID") : node.get("s1");
 
-        if (Collections.frequency(imports, node.get("ID")) > 1) {
-            addError(node, "import", node.get("ID"));
+        if (Collections.frequency(imports, importName) > 1) {
+            addError(node, "import", importName);
         }
 
         return null;

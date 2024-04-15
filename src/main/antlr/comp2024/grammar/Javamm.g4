@@ -39,7 +39,6 @@ ELSE : 'else' ;
 WHILE: 'while' ;
 
 STATIC: 'static';
-//MAIN: 'main';
 VOID: 'void';
 EXTENDS : 'extends' ;
 
@@ -61,12 +60,12 @@ program
     ;
 
 importDecl
-    : IMPORT names+=ID ('.' names+=ID)* SEMI # Import
+    : IMPORT (names+='main' | names+=ID) ('.' (names+='main' | names+=ID))* SEMI # Import
     ;
 
 
 classDeclRule
-    :   CLASS name=ID
+    :   CLASS (name='main' | name=ID)
         (EXTENDS ultraSuper=ID)?
         LCURLY
         varDeclRule* methodDeclRule*
