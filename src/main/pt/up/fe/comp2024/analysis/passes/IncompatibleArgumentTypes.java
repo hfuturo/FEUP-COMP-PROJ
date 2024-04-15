@@ -78,7 +78,7 @@ public class IncompatibleArgumentTypes extends AnalysisVisitor {
                     NodeUtils.getColumn(methodCall), message, null));
             return null;
         } else if(callParamsNodes.size() > methodParamsTypes.size()) {
-            if(!methodParamsTypes.get(methodParamsTypes.size()-1).getName().equals(TypeUtils.getVarargTypeName())) {
+            if(methodParamsTypes.size() == 0 || (!methodParamsTypes.get(methodParamsTypes.size()-1).getName().equals(TypeUtils.getVarargTypeName()))) {
                 var message = String.format("Received more parameters than expected on call of %s. Expected %d, found %d", methodCall.get("name"), methodParamsTypes.size(), callParamsNodes.size());
                 addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
                         NodeUtils.getColumn(methodCall), message, null));
