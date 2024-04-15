@@ -2,6 +2,9 @@ package pt.up.fe.comp2024.analysis;
 
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
+import pt.up.fe.comp.jmm.analysis.table.Type;
+import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -79,5 +82,15 @@ public class AnalysisUtils {
         Optional<Symbol> classField = AnalysisUtils.tryToGetSymbolFromClassFields(name, table);
 
         return classField.isPresent();
+    }
+
+    public static boolean allElementsOfArrayAreOfType(Type type, JmmNode arrayNode, SymbolTable table) {
+        for(JmmNode arrayElement: arrayNode.getChildren()) {
+            if(!TypeUtils.getExprType(arrayElement, table).getName().equals(type.getName())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

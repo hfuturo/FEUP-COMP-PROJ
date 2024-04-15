@@ -377,4 +377,10 @@ public class SemanticAnalysisTest {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/FieldInStaticInvalid.jmm"));
         TestUtils.mustFail(result);
     }
+
+    @Test
+    public void varArgWrongArrayType() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/VarArgArrayWrongType.jmm"));
+        TestUtils.mustFail(result);
+    }
 }

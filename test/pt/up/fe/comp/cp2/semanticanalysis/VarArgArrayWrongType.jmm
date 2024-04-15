@@ -9,7 +9,8 @@ class X {
     }
 
     public int a(int c, int d, boolean b) {
-        this.varargs([1, true, 4]);
+        X x;
+        this.varargs([x, true, 4]);
         return 0;
     }
 

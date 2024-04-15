@@ -13,9 +13,8 @@ import pt.up.fe.comp2024.ast.NodeUtils;
 import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
-import java.util.Optional;
 
-public class IncompatibleMethodTypes extends AnalysisVisitor {
+public class IncompatibleArgumentTypes extends AnalysisVisitor {
     private String currentMethod;
 
     @Override
@@ -57,6 +56,13 @@ public class IncompatibleMethodTypes extends AnalysisVisitor {
                     return null;
                 }
             } else {
+                boolean paramIsArray = paramType.isArray();
+                if(paramIsArray && !AnalysisUtils.allElementsOfArrayAreOfType(paramType, paramNode, symbolTable)) {
+                    var message = String.format("Var arg elements are not of the same type. They should all be of type %s", paramType.getName());
+                    addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(paramNode),
+                            NodeUtils.getColumn(paramNode), message, null));
+                }
+
                 if(!paramType.getName().equals(TypeUtils.getIntTypeName())) {
                     var message = String.format("Unexpected type %s at call to %s. Expected %s", paramType.getName(), methodCall.get("name"), TypeUtils.getIntTypeName());
                     addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(paramNode),

@@ -25,7 +25,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                 new UndeclaredMethod(),
                 new VarArgDeclPass(),
                 new IncompatibleReturn(),
-                new IncompatibleMethodTypes(),
+                new IncompatibleArgumentTypes(),
                 new VerifyArrayAccess(),
                 new IncompatibleTypesOperation(),
                 new CompatibleAssignTypes(),
