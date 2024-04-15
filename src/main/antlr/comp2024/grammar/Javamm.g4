@@ -60,12 +60,12 @@ program
     ;
 
 importDecl
-    : IMPORT (names+='main' | names+=ID) ('.' (names+='main' | names+=ID))* SEMI # Import
+    : IMPORT names+=('main' | 'length' | ID) ('.' names+=('main' | 'length' | ID))* SEMI # Import
     ;
 
 
 classDeclRule
-    :   CLASS (name='main' | name=ID)
+    :   CLASS name=('main' | LENGTH | ID)
         (EXTENDS ultraSuper=ID)?
         LCURLY
         varDeclRule* methodDeclRule*
@@ -78,7 +78,7 @@ varDeclRule
 
 methodDeclRule locals[boolean isPublic=false]
     : (PUBLIC {$isPublic=true;})?
-        type (name='main' | name=ID)
+        type name=('main' | LENGTH | ID)
         LPAREN (param (',' param)*)? RPAREN
         LCURLY varDeclRule* stmt* RCURLY # MethodDecl
     | mainMethodDecl # MainMethod
@@ -117,7 +117,7 @@ expr
     : openingParentheses=LPAREN expr closingParentheses=RPAREN #Parenthesis                                     // ()
     | var=expr op=LSQUARE index=expr op=RSQUARE #AccessArray                              // aceder a um array, i.e., a[2]
     | expr op=STOP name=ID LPAREN (expr (COMMA expr)* )? RPAREN #VarMethod         // foo.bar(), foo.bar(...)
-    | expr op=STOP LENGTH #Length                                               // foo.length
+    | expr op=STOP 'length' #Length                                               // foo.length
     | op=LSQUARE (expr (op=COMMA expr)* )? op=RSQUARE #InitArray                // inicializar array, i.e., [1,2,3]
     | op=NEGATION expr #Unary                                                   // !
     | op=NEW INT LSQUARE size=expr RSQUARE   #NewInt                                 // new int

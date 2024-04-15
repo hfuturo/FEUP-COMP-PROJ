@@ -365,4 +365,10 @@ public class SemanticAnalysisTest {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/MiscMainEverywhereOk.jmm"));
         TestUtils.noErrors(result);
     }
+
+    @Test
+    public void miscLengthAsNameOk() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/MiscLengthAsNameOk.jmm"));
+        TestUtils.noErrors(result);
+    }
 }
