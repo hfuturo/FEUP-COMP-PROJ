@@ -78,16 +78,20 @@ public class JasminGenerator {
         var className = ollirResult.getOllirClass().getClassName();
         code.append(".class public ").append(className).append(NL).append(NL);
 
-        // TODO: Hardcoded to Object, needs to be expanded
-        String superClass = classUnit.getSuperClass();
-        StringBuilder superConstructorInvokerString = new StringBuilder();
-        if(superClass == null) {
-            code.append(".super java/lang/Object").append(NL);
-            superConstructorInvokerString.append("invokespecial java/lang/Object/<init>()V");
-        } else {
-            code.append(String.format(".super %s", superClass)).append(NL);
-            superConstructorInvokerString.append(String.format("invokespecial %s/<init>()V", superClass));
+        String superClass = "java/lang/Object";
+
+        if (classUnit.getSuperClass() != null) {
+            for (String imp : classUnit.getImports()) {
+                String[] impParsed = imp.split("\\.");
+
+                if (impParsed[impParsed.length - 1].equals(classUnit.getSuperClass())) {
+                    superClass = imp.replace(".", "/");
+                }
+            }
         }
+
+        code.append(".super ").append(superClass).append(NL);
+        String superConstructorInvokerString = "invokespecial " + superClass + "/<init>()V";
 
         // generate a single constructor method
         var defaultConstructor = String.format("""
@@ -97,7 +101,7 @@ public class JasminGenerator {
                     %s
                     return
                 .end method
-                """, superConstructorInvokerString.toString());
+                """, superConstructorInvokerString);
         code.append(defaultConstructor);
 
         // generate code for all other methods

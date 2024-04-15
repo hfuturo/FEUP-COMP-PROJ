@@ -1,6 +1,6 @@
-import Y;
+import A.B;
 
-class X extends Y {
+class X extends B {
 
     public boolean foo() {
         boolean a;
