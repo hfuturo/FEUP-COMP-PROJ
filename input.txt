@@ -1,7 +1,6 @@
-class AssignToStaticClass {
-
-    public int foo(int a) {
-        return 0;
-    }
-
+import ioPlus;
+class HelloWorld {
+	public static void main(String[] args) {
+		ioPlus.printHelloWorld();
+	}
 }

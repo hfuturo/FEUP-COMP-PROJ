@@ -58,11 +58,12 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
     private String visitMainMethod(JmmNode node, Void unused) {
         StringBuilder code = new StringBuilder(".method ");
-
         code.append("public static main(args.array.String).V {\n");
 
+        var params = node.getChildren(PARAM);
+
         // rest of its children stmts
-        var afterParam = 1;
+        var afterParam = params.size();
         for (int i = afterParam; i < node.getNumChildren(); i++) {
             var child = node.getJmmChild(i);
             if(Kind.fromString(child.getKind()).equals(PARAM)) {
