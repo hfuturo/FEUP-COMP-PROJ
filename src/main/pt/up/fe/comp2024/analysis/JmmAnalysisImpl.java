@@ -23,6 +23,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                 new CheckDuplicated(),
                 new UndeclaredVariable(),
                 new UndeclaredMethod(),
+                new VarArgDeclPass(),
                 new IncompatibleReturn(),
                 new IncompatibleMethodTypes(),
                 new VerifyArrayAccess(),

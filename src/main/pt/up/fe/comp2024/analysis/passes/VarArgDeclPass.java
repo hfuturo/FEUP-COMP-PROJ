@@ -57,11 +57,7 @@ public class VarArgDeclPass extends AnalysisVisitor {
 
         Optional<Symbol> symbol = AnalysisUtils.validateSymbolFromSymbolTable(currentScope, table, varDeclName);
 
-        if(symbol.isEmpty()) {
-            var message = String.format("Variable '%s' does not exist.", varDeclName);
-            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(varDecl),
-                    NodeUtils.getColumn(varDecl), message, null));
-        } else {
+        if(!symbol.isEmpty()) {
             Symbol realSymbol = symbol.get();
             Type type = realSymbol.getType();
 
