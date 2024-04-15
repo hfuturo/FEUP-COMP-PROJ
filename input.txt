@@ -1,28 +1,24 @@
-import Animal;
+import A;
+import B;
 
-class Cao extends Animal {
+class Cao {
 
     public int test(){
-        Cao cao;
-        Animal animal;
+        A a;
+        B b;
+        int d;
 
+        a = new A();
+        b = new B();
 
-        cao = new Cao();
-        animal = new Animal();
-
-        animal = cao;
-
-        animal = this.foo(cao);
-        animal = this.bar(cao);
+        d = this.foo(A);
 
         return 0;
     }
 
-    public Animal foo(Animal animal) {
-        return animal;
-    }
-
-    public Animal bar(Cao cao) {
-        return cao;
+    public B foo(int a) {
+        B b;
+        b = new B();
+        return b;
     }
 }
