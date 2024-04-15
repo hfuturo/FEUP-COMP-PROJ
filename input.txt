@@ -1,11 +1,19 @@
+import A;
+import B;
+
 class X {
 
-    int args;
-
-    public static void main(String[] args) {
-        int b;
+    public int bar() {
         int a;
-        b = a;
+
+        a = this.foo(1);
+
+
+        return 0;
+    }
+
+    public int foo() {
+        return 0;
     }
 
 }
