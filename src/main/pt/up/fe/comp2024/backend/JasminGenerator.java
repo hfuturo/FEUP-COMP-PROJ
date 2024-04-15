@@ -53,7 +53,10 @@ public class JasminGenerator {
         generators.put(BinaryOpInstruction.class, this::generateBinaryOp);
         generators.put(ReturnInstruction.class, this::generateReturn);
         generators.put(CallInstruction.class, this::generateCall);
+        generators.put(PutFieldInstruction.class, this::generatePutField);
+        generators.put(GetFieldInstruction.class, this::generateGetField);
     }
+
 
     public List<Report> getReports() {
         return reports;
@@ -357,4 +360,39 @@ public class JasminGenerator {
         return argumentsType.toString();
     }
 
+
+    private String generatePutField(PutFieldInstruction putFieldInstruction) {
+        StringBuilder code = new StringBuilder();
+
+        code.append("aload_0").append(NL);
+        code.append(generators.apply(putFieldInstruction.getOperands().get(2)));
+
+        code.append("putfield");
+        code.append(" ");
+        code.append(ollirResult.getOllirClass().getClassName());
+        code.append("/");
+        code.append(putFieldInstruction.getField().getName());
+        code.append(" ");
+        code.append(JasminMethodUtils.getTypeInJasminFormat(putFieldInstruction.getField().getType()));
+        code.append(NL);
+
+        return code.toString();
+    }
+
+    private String generateGetField(GetFieldInstruction getFieldInstruction) {
+        StringBuilder code = new StringBuilder();
+
+        code.append("aload_0").append(NL);
+
+        code.append("getfield");
+        code.append(" ");
+        code.append(ollirResult.getOllirClass().getClassName());
+        code.append("/");
+        code.append(getFieldInstruction.getField().getName());
+        code.append(" ");
+        code.append(JasminMethodUtils.getTypeInJasminFormat(getFieldInstruction.getField().getType()));
+        code.append(NL);
+
+        return code.toString();
+    }
 }
