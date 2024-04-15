@@ -165,11 +165,4 @@ public class TypeUtils {
         }
         return true;
     }
-
-    public static Type getVarMethodType(JmmNode node, SymbolTable table) {
-        System.out.println("node:\t" + node.toString());
-        var expr = getVarExprType(node.getJmmChild(0), table);
-        System.out.println("varType:\t" + expr.toString());
-        return expr;
-    }
 }

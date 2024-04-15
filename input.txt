@@ -1,27 +1,37 @@
 import Animal;
+import B;
 
 class Cao extends Animal {
 
     public int foo() {
-        Animal a;
-        Cao c;
+        int[] a;
+        int[] d;
+        int b;
+        int c;
+        Cao cao;
+        cao = new Cao();
 
-        a = new Animal();
-        c = new Cao();
 
-        //c = a;
-        c = this.doe(c);
+        c = 1;
+
+        a = [1, 2, 3];
+        b = a[0];
+        b = a[1+1];
+        b = a[c];
+        b = a[this.bar()];
+        b = a[d.length];
+        b = a[Animal.count()];
+        b = a[cao.bar()];
+
         return 0;
     }
 
-    //public Animal bar(Animal a) {
-    //    return a;
-    //}
-
-    public Cao doe(Cao c) {
-        return c;
+    public int bar() {
+        return 0;
     }
 
-
+    public boolean doe() {
+        return false;
+    }
 
 }
