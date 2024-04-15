@@ -91,7 +91,7 @@ mainMethodDecl
 
 // É preciso ter atenção de que depois a visitar os nós temos de ver se quando encontrarmos um VarArgType, eles está no fim
 type
-    : name= ID #AbstractDataType
+    : name= ('length' | 'main' | ID) #AbstractDataType
     | name=INT ('[]' | '[' ']') #ArrayType
     | name=INT ELLIPSIS #VarArgType
     | name= INT #IntegerType

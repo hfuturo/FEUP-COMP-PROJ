@@ -1,3 +1,17 @@
-class MiscMainEverywhereOk {
+import main;
+
+class main {
+
+    int main;
+
+    public int main() {
+        int main;
+        return 0;
+    }
+
+    public int bar(int main) {
+        main a;
+        return 0;
+    }
 
 }

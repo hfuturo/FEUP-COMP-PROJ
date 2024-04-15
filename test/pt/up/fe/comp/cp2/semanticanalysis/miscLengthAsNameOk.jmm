@@ -10,6 +10,7 @@ class length {
     }
 
     public int bar(int length) {
+        length a;
         return 0;
     }
 

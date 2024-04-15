@@ -1,4 +1,4 @@
-import A.length;
+import length;
 
 class length {
 
@@ -6,13 +6,12 @@ class length {
 
     public int length() {
         int length;
-        int[] arr;
-        arr = new int[3];
-        arr.length;
         return 0;
     }
 
     public int bar(int length) {
+        length a;
+        main b;
         return 0;
     }
 
