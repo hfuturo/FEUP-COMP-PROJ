@@ -312,7 +312,7 @@ public class JasminGenerator {
 
         code.append(callInst.getInvocationType().toString());
         code.append(" ");
-        code.append(callInst.getOperands().get(0).toString().split(": ")[1].split("\\.")[0]);
+        code.append(JasminMethodUtils.importFullPath(callInst.getOperands().get(0).toString().split(": ")[1].split("\\.")[0], this.classUnitImports));
         code.append("/");
 
         Pattern pattern = Pattern.compile("\"(.*)\"");
