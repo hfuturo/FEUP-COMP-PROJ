@@ -71,8 +71,8 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
 
     Type operationType = TypeUtils.getOperatorOperandsType(binaryExpr);
 
-    Type leftType = (Type) visit(leftExpr, table);
-    Type rightType = (Type) visit(rightExpr, table);
+    Type leftType = TypeUtils.getExprType(leftExpr, table);
+    Type rightType = TypeUtils.getExprType(rightExpr, table);
 
     if(Kind.fromString(leftExpr.getKind()).equals(Kind.PARENTHESIS) || Kind.fromString(rightExpr.getKind()).equals(Kind.PARENTHESIS)) {
       return TypeUtils.getExprType(binaryExpr, table);
