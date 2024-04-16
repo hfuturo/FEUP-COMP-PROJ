@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
+import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp.jmm.report.Stage;
@@ -128,6 +129,20 @@ public class VerifyArrayAccess extends AnalysisVisitor {
                             NodeUtils.getColumn(index), message, null));
                 }
             }
+            return;
+        }
+
+        if (index.isInstance(PARENTHESIS)) {
+            List<JmmNode> parenthesisChildren = index.getChildren();
+            for(JmmNode expr: parenthesisChildren) {
+                Type exprType = TypeUtils.getExprType(expr, table);
+                if(!exprType.getName().equals(TypeUtils.getIntTypeName())) {
+                    var message = "Array indexes need to be integers";
+                    addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(index),
+                            NodeUtils.getColumn(index), message, null));
+                }
+            }
+
             return;
         }
 
