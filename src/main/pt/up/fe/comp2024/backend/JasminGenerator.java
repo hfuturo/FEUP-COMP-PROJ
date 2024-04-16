@@ -234,12 +234,23 @@ public class JasminGenerator {
 
     private String generateOperand(Operand operand) {
         // get register
-        var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
+        Descriptor descriptor = currentMethod.getVarTable().get(operand.getName());
+        int reg;
+
+        if(descriptor == null) {
+            reg = this.currentMethodVirtualReg;
+            this.currentMethodVirtualReg += 1;
+        } else {
+            reg = descriptor.getVirtualReg();
+            this.currentMethodVirtualReg += 1;
+        }
+
 
         return switch (operand.getType().toString()) {
             case "INT32", "INT", "BOOLEAN" -> "iload";
             default -> "aload";
         } + (reg < 4 ? "_" : " ") + reg + NL;
+
     }
 
     private String generateBinaryOp(BinaryOpInstruction binaryOp) {
