@@ -171,7 +171,7 @@ public class JasminGenerator {
         ArrayList<Element> params = method.getParams();
         for(int i = 0; i < params.size(); i++) {
             Element param = params.get(i);
-            paramString.append(JasminMethodUtils.getTypeInJasminFormat(param.getType()));
+            paramString.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(param.getType()));
         }
         paramString.append(")");
 
