@@ -45,6 +45,7 @@ public class JasminGenerator {
 
         this.generators = new FunctionClassMap<>();
         generators.put(ClassUnit.class, this::generateClassUnit);
+        generators.put(Field.class, this::generateField);
         generators.put(Method.class, this::generateMethod);
         generators.put(AssignInstruction.class, this::generateAssign);
         generators.put(SingleOpInstruction.class, this::generateSingleOp);
@@ -55,6 +56,21 @@ public class JasminGenerator {
         generators.put(CallInstruction.class, this::generateCall);
         generators.put(PutFieldInstruction.class, this::generatePutField);
         generators.put(GetFieldInstruction.class, this::generateGetField);
+    }
+
+    private String generateField(Field field) {
+        StringBuilder code = new StringBuilder();
+
+        code.append(".field");
+        code.append(" ");
+        code.append("private");
+        code.append(" ");
+        code.append(field.getFieldName());
+        code.append(" ");
+        code.append(JasminMethodUtils.getTypeInJasminFormat(field.getFieldType()));
+        code.append(NL);
+
+        return code.toString();
     }
 
 
@@ -94,6 +110,11 @@ public class JasminGenerator {
         }
 
         code.append(".super ").append(superClass).append(NL);
+
+        for(var field : classUnit.getFields()) {
+            code.append(generators.apply(field));
+        }
+
         String superConstructorInvokerString = "invokespecial " + superClass + "/<init>()V";
 
         // generate a single constructor method
