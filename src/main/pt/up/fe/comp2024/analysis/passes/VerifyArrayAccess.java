@@ -62,7 +62,30 @@ public class VerifyArrayAccess extends AnalysisVisitor {
                             NodeUtils.getColumn(expr), message, null));
                 }
             }
-        } else {
+        }
+        else if (exprKind.equals(VAR_METHOD.toString())) {
+            var caller = expr.getJmmChild(0);
+
+            if (!caller.isInstance(THIS)) {
+                String callerName = caller.get("name");
+
+                if (AnalysisUtils.validateIsImported(callerName, table))
+                    return;
+            }
+
+            for (String method : table.getMethods()) {
+                if (expr.get("name").equals(method)) {
+                    var methodReturnType = table.getReturnType(expr.get("name")).getName();
+                    if (!methodReturnType.equals(TypeUtils.getIntTypeName())) {
+                        var message = "Method does not return an integer.";
+                        addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(expr),
+                                NodeUtils.getColumn(expr), message, null));
+                    }
+                    return;
+                }
+            }
+        }
+        else {
             var message = "Array access should be made through an array variable";
             addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(expr),
                     NodeUtils.getColumn(expr), message, null));

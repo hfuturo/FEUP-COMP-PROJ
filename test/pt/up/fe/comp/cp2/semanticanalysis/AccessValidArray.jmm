@@ -27,12 +27,17 @@ class AccessValidArray {
         b = arr[[1,2,3].length];
         b = arr[arr2[0]];
         b = [1,2,3][0];
+        b = this.test()[0];
 
         return b;
     }
 
     public int bar() {
         return 0;
+    }
+
+    public int[] test() {
+        return [1, 2, 3];
     }
 
 }

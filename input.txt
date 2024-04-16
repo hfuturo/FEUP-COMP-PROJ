@@ -3,14 +3,16 @@ import A;
 class AccessValidArray {
 
     public int foo() {
-        int[] a;
+        int a;
         //a = [1, 2, 3];
-        a = this.bar();
+        a = this.bar()[1+2];
         return 0;
     }
 
     public int[] bar() {
-        return [1,2,3];
+        //int[] a;
+        //a = [1, 2, 3];
+        return [1, 2, 3];
     }
 
 }
