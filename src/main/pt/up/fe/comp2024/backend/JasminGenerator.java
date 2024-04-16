@@ -175,13 +175,13 @@ public class JasminGenerator {
         ArrayList<Element> params = method.getParams();
         for(int i = 0; i < params.size(); i++) {
             Element param = params.get(i);
-            paramString.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(param.getType(), this.classUnitImports));
+            paramString.append(JasminMethodUtils.getTypeInJasminFormat(param.getType(), this.classUnitImports));
         }
         paramString.append(")");
 
         code.append("\n.method ").append(modifier).append(methodName).
                 append(paramString.toString() +
-                        JasminMethodUtils.getTypeInJasminFormatMethodParam(method.getReturnType(), this.classUnitImports)).
+                        JasminMethodUtils.getTypeInJasminFormat(method.getReturnType(), this.classUnitImports)).
                 append(NL);
 
         // Add limits
@@ -328,7 +328,7 @@ public class JasminGenerator {
         code.append(argumentsType);
         code.append(")");
 
-        code.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(callInst.getReturnType(), this.classUnitImports));
+        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getReturnType(), this.classUnitImports));
         code.append(NL);
     }
 
@@ -342,7 +342,7 @@ public class JasminGenerator {
 
         code.append(callInst.getInvocationType().toString());
         code.append(" ");
-        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getCaller().getType(), this.classUnitImports));
+        code.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(callInst.getCaller().getType(), this.classUnitImports));
         code.append("/");
 
         Pattern pattern = Pattern.compile("\"(.*)\"");
@@ -355,7 +355,7 @@ public class JasminGenerator {
         code.append(argumentTypes);
         code.append(")");
 
-        code.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(callInst.getReturnType(), this.classUnitImports));
+        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getReturnType(), this.classUnitImports));
         code.append(NL);
     }
 
@@ -370,7 +370,7 @@ public class JasminGenerator {
     private void generateSpecial(CallInstruction callInst, StringBuilder code) {
         code.append(generators.apply(callInst.getOperands().get(0)));
         code.append("invokespecial ");
-        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getOperands().get(0).getType(), this.classUnitImports));
+        code.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(callInst.getOperands().get(0).getType(), this.classUnitImports));
         code.append("/");
         code.append("<init>()V");
         code.append(NL);
@@ -385,7 +385,7 @@ public class JasminGenerator {
         if (inst.getArguments().size() > 0) {
             inst.getArguments().forEach(argument -> {
                 code.append(generators.apply(argument));
-                argumentsType.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(argument.getType(), this.classUnitImports));
+                argumentsType.append(JasminMethodUtils.getTypeInJasminFormat(argument.getType(), this.classUnitImports));
             });
         }
 

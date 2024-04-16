@@ -26,19 +26,18 @@ public class JasminMethodUtils {
 
         return name;
     }
+
     public static String getTypeInJasminFormatMethodParam(Type type, List<String> imports) {
         String typeString = type.toString();
 
-        if(TypeUtils.abstractType(typeString)) {
+        if(typeString.startsWith("OBJECTREF")) {
             Pattern pattern = Pattern.compile("\\((.*)\\)");
             Matcher matcher = pattern.matcher(typeString);
 
             // CLASS(x) e THIS(x)
             if (matcher.find()) {
                 String s = matcher.group(1);
-                if(TypeUtils.abstractType(s)) {
-                    return String.format("L%s;", JasminMethodUtils.importFullPath(s, imports));
-                }
+                    return String.format("%s", JasminMethodUtils.importFullPath(s, imports));
             }
         }
 
@@ -48,16 +47,16 @@ public class JasminMethodUtils {
     public static String getTypeInJasminFormat(Type type, List<String> imports) {
         String typeString = type.toString();
 
-        if(TypeUtils.abstractType(typeString)) {
+        if(typeString.startsWith("OBJECTREF")) {
             Pattern pattern = Pattern.compile("\\((.*)\\)");
             Matcher matcher = pattern.matcher(typeString);
 
             // CLASS(x) e THIS(x)
             if (matcher.find()) {
                 String s = matcher.group(1);
-                if(TypeUtils.abstractType(s)) {
-                    return String.format("%s", JasminMethodUtils.importFullPath(s, imports));
-                }
+//                if(TypeUtils.abstractType(s)) {
+                    return String.format("L%s;", JasminMethodUtils.importFullPath(s, imports));
+//                }
             }
         }
 

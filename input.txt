@@ -1,15 +1,14 @@
-import A.X;
+import B.C.D;
 
 class X {
 
-    int a;
+    D a;
 
-    public int foo() {
-        int b;
-        b  = 0;
+    public D foo() {
+        D b;
         b = a;
         a = b;
-        return a;
+        return b;
     }
 
 }
