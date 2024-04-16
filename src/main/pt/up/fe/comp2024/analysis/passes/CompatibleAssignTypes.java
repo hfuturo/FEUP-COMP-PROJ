@@ -38,6 +38,13 @@ public class CompatibleAssignTypes extends AnalysisVisitor {
         Type leftType = TypeUtils.getExprType(leftExpr, table);
         Type rightType = TypeUtils.getExprType(rightExpr, table);
 
+        if(!leftExpr.getKind().equals("VarRefExpr")) {
+            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(leftExpr),
+                    NodeUtils.getColumn(leftExpr), "Assign of non var ref", null));
+
+            return null;
+        }
+
         if (rightType.isArray()) {
             if (!rightExpr.isInstance(Kind.VAR_METHOD)) {
                 if (!TypeUtils.checkValuesInArrayInit(leftType, rightExpr.getChildren(), table)) {
