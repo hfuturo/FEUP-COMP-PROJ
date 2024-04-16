@@ -96,8 +96,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             }
         }
 
-        System.out.println("params:\t" + params);
-
         // é um assign / operacao
         if (!parent.isInstance(EXPR_STMT)) {
             tempVar = OptUtils.getTemp();
@@ -117,7 +115,9 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
                 var currentMethodName = currentMethodNodeOpt.orElse(null);
 
                 if (currentMethodName != null) {
-                    methodReturnType = OptUtils.toOllirType(currentMethodName.getJmmChild(0));
+                    var returnNode = currentMethodName.getJmmChild(0);
+                    String finalType = OptUtils.toOllirType(returnNode);
+                    methodReturnType = returnNode.isInstance(ARRAY_TYPE) ? (".array" + finalType) : finalType;
                 }
             }
 

@@ -179,7 +179,10 @@ public class JasminGenerator {
         }
         paramString.append(")");
 
-        code.append("\n.method ").append(modifier).append(methodName).append(paramString.toString() + JasminMethodUtils.getTypeInJasminFormatMethodParam(method.getReturnType(), this.classUnitImports)).append(NL);
+        code.append("\n.method ").append(modifier).append(methodName).
+                append(paramString.toString() +
+                        JasminMethodUtils.getTypeInJasminFormatMethodParam(method.getReturnType(), this.classUnitImports)).
+                append(NL);
 
         // Add limits
         code.append(TAB).append(".limit stack 99").append(NL);
