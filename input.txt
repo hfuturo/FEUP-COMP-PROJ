@@ -1,14 +1,19 @@
-import B.C.D;
+import D.C.B;
+import Z.W.A;
 
 class X {
 
-    D a;
+    A a;
+    B b;
+    X x;
 
-    public D foo() {
-        D b;
-        b = a;
+    public A foo() {
+        x = this;
+
         a = b;
-        return b;
+        b = a;
+
+        return a;
     }
 
 }
