@@ -245,8 +245,6 @@ public class JasminGenerator {
     private String generateReturn(ReturnInstruction returnInst) {
         var code = new StringBuilder();
 
-        // TODO: Hardcoded to int return type, needs to be expanded
-
         boolean voidReturningMethod = false;
         if(returnInst.getOperand() == null) {
             voidReturningMethod = true;
@@ -255,8 +253,10 @@ public class JasminGenerator {
         if(!voidReturningMethod) {
             code.append(generators.apply(returnInst.getOperand()));
             code.append("ireturn").append(NL);
-        } else {
+        } else if(voidReturningMethod) {
             code.append("return");
+        } else {
+            code.append("areturn");
         }
 
         return code.toString();
