@@ -46,9 +46,9 @@ public class VerifyArrayAccess extends AnalysisVisitor {
 
         String exprKind = expr.getKind();
 
-        String varName = expr.get("name");
 
         if (exprKind.equals("VarRefExpr")) {
+            String varName = expr.get("name");
             Optional<Symbol> symbol = AnalysisUtils.validateSymbolFromSymbolTable(currentMethod, table, varName);
 
             if(symbol.isEmpty()) {
@@ -94,7 +94,12 @@ public class VerifyArrayAccess extends AnalysisVisitor {
     }
 
     private void checkArrayAccessHasIntegerIndex(JmmNode arrayAccess, SymbolTable table) {
-        JmmNode index = arrayAccess.getChildren().get(1);
+        JmmNode index;
+        if (arrayAccess.isInstance(ACCESS_ARRAY)) {
+            index = arrayAccess.getChildren().get(1);
+        } else {
+            index = arrayAccess;
+        }
 
         // se for inteiro, length ou acesso a um array aceita automaticamente
         if (index.isInstance(INTEGER_LITERAL) || index.isInstance(LENGTH) || index.isInstance(ACCESS_ARRAY))
@@ -107,6 +112,12 @@ public class VerifyArrayAccess extends AnalysisVisitor {
                 addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(index),
                         NodeUtils.getColumn(index), message, null));
             }
+            return;
+        }
+
+        // se tiver ()
+        if (index.isInstance(PARENTHESIS)) {
+            checkArrayAccessHasIntegerIndex(index.getJmmChild(0), table);
             return;
         }
 
