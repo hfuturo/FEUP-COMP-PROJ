@@ -21,6 +21,7 @@ public class JmmAnalysisImpl implements JmmAnalysis {
     public JmmAnalysisImpl() {
         this.analysisPasses = List.of(
                 new CheckDuplicated(),
+                new VarDeclName(),
                 new UndeclaredVariable(),
                 new CheckIfTypesExist(),
                 new UndeclaredMethod(),
