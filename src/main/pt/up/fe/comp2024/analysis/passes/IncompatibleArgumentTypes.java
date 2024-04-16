@@ -66,6 +66,7 @@ public class IncompatibleArgumentTypes extends AnalysisVisitor {
                     var message = String.format("Var arg elements are not of the same type. They should all be of type %s", paramType.getName());
                     addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(paramNode),
                             NodeUtils.getColumn(paramNode), message, null));
+                    return null;
                 }
 
                 if(!paramType.getName().equals(TypeUtils.getIntTypeName())) {
@@ -83,6 +84,7 @@ public class IncompatibleArgumentTypes extends AnalysisVisitor {
                     NodeUtils.getColumn(methodCall), message, null));
             return null;
         } else if(callParamsNodes.size() > methodParamsTypes.size()) {
+
             if(methodParamsTypes.size() == 0 || (!methodParamsTypes.get(methodParamsTypes.size()-1).getName().equals(TypeUtils.getVarargTypeName()))) {
                 var message = String.format("Received more parameters than expected on call of %s. Expected %d, found %d", methodCall.get("name"), methodParamsTypes.size(), callParamsNodes.size());
                 addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
@@ -90,9 +92,21 @@ public class IncompatibleArgumentTypes extends AnalysisVisitor {
                 return null;
             }
 
+            // This is checking if the parameter of vararg is not an array when there's a list of ints
+            JmmNode varArgNodeAtCall = callParamsNodes.get(methodParamsTypes.size()-1);
+            Type varArgTypeOfCall = TypeUtils.getExprType(varArgNodeAtCall, symbolTable);
+            if(varArgTypeOfCall.isArray()) {
+                var message = String.format("Received more parameters than expected on call of %s. Expected %d, found %d", methodCall.get("name"), methodParamsTypes.size(), callParamsNodes.size());
+                addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
+                        NodeUtils.getColumn(methodCall), message, null));
+                return null;
+            }
+
             for(int i = methodParamsTypes.size(); i < callParamsNodes.size(); i++) {
-                String nodeType = TypeUtils.getExprType(callParamsNodes.get(i), symbolTable).getName();
-                if(!nodeType.equals(TypeUtils.getIntTypeName())) {
+                JmmNode node = callParamsNodes.get(i);
+                Type type = TypeUtils.getExprType(node, symbolTable);
+                String nodeType = type.getName();
+                if(!nodeType.equals(TypeUtils.getIntTypeName()) || type.isArray()) {
                     var message = String.format("Unexpected type %s at call to %s. Expected %s", nodeType, methodCall.get("name"), TypeUtils.getIntTypeName());
                     addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
                             NodeUtils.getColumn(methodCall), message, null));
