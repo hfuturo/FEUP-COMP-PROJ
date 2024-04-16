@@ -71,7 +71,7 @@ public class JasminGenerator {
         code.append(" ");
         code.append(field.getFieldName());
         code.append(" ");
-        code.append(JasminMethodUtils.getTypeInJasminFormat(field.getFieldType()));
+        code.append(JasminMethodUtils.getTypeInJasminFormat(field.getFieldType(), this.classUnitImports));
         code.append(NL);
 
         return code.toString();
@@ -339,7 +339,7 @@ public class JasminGenerator {
 
         code.append(callInst.getInvocationType().toString());
         code.append(" ");
-        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getCaller().getType()));
+        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getCaller().getType(), this.classUnitImports));
         code.append("/");
 
         Pattern pattern = Pattern.compile("\"(.*)\"");
@@ -367,7 +367,7 @@ public class JasminGenerator {
     private void generateSpecial(CallInstruction callInst, StringBuilder code) {
         code.append(generators.apply(callInst.getOperands().get(0)));
         code.append("invokespecial ");
-        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getOperands().get(0).getType()));
+        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getOperands().get(0).getType(), this.classUnitImports));
         code.append("/");
         code.append("<init>()V");
         code.append(NL);
@@ -382,7 +382,7 @@ public class JasminGenerator {
         if (inst.getArguments().size() > 0) {
             inst.getArguments().forEach(argument -> {
                 code.append(generators.apply(argument));
-                argumentsType.append(JasminMethodUtils.getTypeInJasminFormat(argument.getType()));
+                argumentsType.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(argument.getType(), this.classUnitImports));
             });
         }
 
@@ -402,7 +402,7 @@ public class JasminGenerator {
         code.append("/");
         code.append(putFieldInstruction.getField().getName());
         code.append(" ");
-        code.append(JasminMethodUtils.getTypeInJasminFormat(putFieldInstruction.getField().getType()));
+        code.append(JasminMethodUtils.getTypeInJasminFormat(putFieldInstruction.getField().getType(), this.classUnitImports));
         code.append(NL);
 
         return code.toString();
@@ -419,7 +419,7 @@ public class JasminGenerator {
         code.append("/");
         code.append(getFieldInstruction.getField().getName());
         code.append(" ");
-        code.append(JasminMethodUtils.getTypeInJasminFormat(getFieldInstruction.getField().getType()));
+        code.append(JasminMethodUtils.getTypeInJasminFormat(getFieldInstruction.getField().getType(), this.classUnitImports));
         code.append(NL);
 
         return code.toString();

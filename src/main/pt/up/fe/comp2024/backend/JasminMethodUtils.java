@@ -42,11 +42,25 @@ public class JasminMethodUtils {
             }
         }
 
-        return JasminMethodUtils.getTypeInJasminFormat(type);
+        return JasminMethodUtils.getTypeInJasminFormat(type, imports);
     }
 
-    public static String getTypeInJasminFormat(Type type) {
+    public static String getTypeInJasminFormat(Type type, List<String> imports) {
         String typeString = type.toString();
+
+        if(TypeUtils.abstractType(typeString)) {
+            Pattern pattern = Pattern.compile("\\((.*)\\)");
+            Matcher matcher = pattern.matcher(typeString);
+
+            // CLASS(x) e THIS(x)
+            if (matcher.find()) {
+                String s = matcher.group(1);
+                if(TypeUtils.abstractType(s)) {
+                    return String.format("%s", JasminMethodUtils.importFullPath(s, imports));
+                }
+            }
+        }
+
 
         return switch (typeString) {
             case "VOID" -> "V";
