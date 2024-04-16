@@ -278,11 +278,14 @@ public class JasminGenerator {
 
         if(!voidReturningMethod) {
             code.append(generators.apply(returnInst.getOperand()));
-            code.append("ireturn").append(NL);
+            Type returnType = returnInst.getReturnType();
+            if(returnType.getTypeOfElement().name().equals("INT32") || returnType.getTypeOfElement().name().equals("BOOLEAN")) {
+                code.append("ireturn").append(NL);
+            } else {
+                code.append("areturn").append(NL);
+            }
         } else if(voidReturningMethod) {
             code.append("return");
-        } else {
-            code.append("areturn");
         }
 
         return code.toString();
