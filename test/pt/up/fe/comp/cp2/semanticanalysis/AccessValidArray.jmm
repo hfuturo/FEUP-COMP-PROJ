@@ -4,6 +4,7 @@ class AccessValidArray {
 
     public int foo() {
         int[] arr;
+        int[] arr2;
         int b;
         A a;
         AccessValidArray c;
@@ -14,6 +15,8 @@ class AccessValidArray {
         c = new AccessValidArray();
 
         arr = [1, 2, 3];
+        arr2 = [1, 2, 3];
+
         b = arr[0];
         b = arr[b];
         b = arr[1+1];
@@ -21,7 +24,8 @@ class AccessValidArray {
         b = arr[this.bar()];
         b = arr[c.bar()];
         b = arr[arr.length];
-        b = a[[1,2,3].length];
+        b = arr[[1,2,3].length];
+        b = arr[arr2[0]];
 
         return b;
     }

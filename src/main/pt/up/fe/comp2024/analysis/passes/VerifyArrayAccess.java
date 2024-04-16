@@ -67,9 +67,11 @@ public class VerifyArrayAccess extends AnalysisVisitor {
     private void checkArrayAccessHasIntegerIndex(JmmNode arrayAccess, SymbolTable table) {
         JmmNode index = arrayAccess.getChildren().get(1);
 
-        if (index.isInstance(INTEGER_LITERAL) || index.isInstance(LENGTH))
+        // se for inteiro, length ou acesso a um array aceita automaticamente
+        if (index.isInstance(INTEGER_LITERAL) || index.isInstance(LENGTH) || index.isInstance(ACCESS_ARRAY))
             return;
 
+        // se for binary expression verifica se retorno é um inteiro ou bool
         if (index.isInstance(BINARY_EXPR)) {
             if (!TypeUtils.getExprType(index, table).getName().equals(TypeUtils.getIntTypeName())) {
                 var message = String.format("Expression does not return an integer.");
@@ -79,6 +81,7 @@ public class VerifyArrayAccess extends AnalysisVisitor {
             return;
         }
 
+        // se for uma variável verifica se é um inteiro
         if (index.isInstance(VAR_REF_EXPR)) {
             String varName = index.get("name");
             Optional<Symbol> indexSymbol = AnalysisUtils.validateSymbolFromSymbolTable(currentMethod, table, varName);
@@ -100,6 +103,7 @@ public class VerifyArrayAccess extends AnalysisVisitor {
             return;
         }
 
+        // chamadas de métodos
         if (index.isInstance(VAR_METHOD)) {
             var caller = index.getJmmChild(0);
 
@@ -107,10 +111,14 @@ public class VerifyArrayAccess extends AnalysisVisitor {
             if (!caller.isInstance(THIS)) {
                 String callerName = caller.get("name");
 
+                // se for import dá return pois aceita automaticamente.
+                // se não for necessário veriricar se é a classe atual e trata como
+                // se fosse um 'this'
                 if (AnalysisUtils.validateIsImported(callerName, table))
                     return;
             }
 
+            // this. ...
             for (String method : table.getMethods()) {
                 if (index.get("name").equals(method)) {
                     var methodReturnType = table.getReturnType(index.get("name")).getName();

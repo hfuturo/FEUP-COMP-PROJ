@@ -4,37 +4,16 @@ import B;
 class Cao extends Animal {
 
     public int foo() {
-        int[] a;
-        int[] d;
-        int b;
-        int c;
-        Animal an;
-        Cao cao;
-        an = new Animal();
-        cao = new Cao();
+        int[] arr1;
+        int[] arr2;
+        int sum;
 
+        arr1 = [1, 2, 3];
+        arr2 = [1, 2, 3];
 
-        c = 1;
+        sum = arr1[arr2[0]] + arr2[0];
 
-        a = [1, 2, 3];
-        b = a[0];
-        b = a[1+1];
-        b = a[c];
-        b = a[this.bar()];
-        b = a[d.length];
-        b = a[Animal.count().length];
-        b = a[cao.bar()];
-        b = a[[1,2,3].length];
-
-        return 0;
-    }
-
-    public int bar() {
-        return 0;
-    }
-
-    public boolean doe() {
-        return false;
+        return sum;
     }
 
 }
