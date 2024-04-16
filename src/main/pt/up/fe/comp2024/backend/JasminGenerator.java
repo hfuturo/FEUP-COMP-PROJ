@@ -73,6 +73,7 @@ public class JasminGenerator {
         code.append(" ");
         code.append(JasminMethodUtils.getTypeInJasminFormat(field.getFieldType(), this.classUnitImports));
         code.append(NL);
+
         return code.toString();
     }
 

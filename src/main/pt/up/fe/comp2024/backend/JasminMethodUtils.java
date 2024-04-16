@@ -3,7 +3,6 @@ package pt.up.fe.comp2024.backend;
 import org.specs.comp.ollir.Type;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp2024.ast.TypeUtils;
-import pt.up.fe.comp2024.optimization.OptUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,9 +27,9 @@ public class JasminMethodUtils {
         return name;
     }
     public static String getTypeInJasminFormatMethodParam(Type type, List<String> imports) {
-        String typeString = type.getTypeOfElement().name();
+        String typeString = type.toString();
 
-        if(OptUtils.ollirAbstractType(typeString)) {
+        if(TypeUtils.abstractType(typeString)) {
             Pattern pattern = Pattern.compile("\\((.*)\\)");
             Matcher matcher = pattern.matcher(typeString);
 
@@ -41,8 +40,6 @@ public class JasminMethodUtils {
                     return String.format("L%s;", JasminMethodUtils.importFullPath(s, imports));
                 }
             }
-        } else if(typeString.equals("STRING")) {
-            return "Ljava/lang/String;";
         }
 
         return JasminMethodUtils.getTypeInJasminFormat(type, imports);
