@@ -21,6 +21,7 @@ public class IncompatibleArgumentTypes extends AnalysisVisitor {
     protected void buildVisitor() {
         // types of arguments on method call must be compatible with method decl
         addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
+        addVisit(Kind.INNER_MAIN_METHOD, this::visitInnerMainMethod);
         addVisit(Kind.VAR_METHOD, this::visitMethodCall);
     }
 
@@ -29,6 +30,10 @@ public class IncompatibleArgumentTypes extends AnalysisVisitor {
         return null;
     }
 
+    private Void visitInnerMainMethod(JmmNode method, SymbolTable table) {
+        this.currentMethod = "main";
+        return null;
+    }
     private Void visitMethodCall(JmmNode methodCall, SymbolTable symbolTable) {
         String methodName = methodCall.get("name");
         String isDeclared = methodCall.get("isDeclared");
