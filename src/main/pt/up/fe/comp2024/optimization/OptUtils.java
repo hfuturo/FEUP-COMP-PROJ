@@ -3,9 +3,18 @@ package pt.up.fe.comp2024.optimization;
 
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp2024.ast.TypeUtils;
 
 public class OptUtils {
+    private static final String OLLIR_BOOL_NAME = "BOOLEAN";
+    private static final String OLLIR_INT_NAME = "INT32";
+    private static final String OLLIR_STRING_NAME = "STRING";
+    private static final String OLLIR_VOID_NAME = "VOID";
     private static int tempNumber = -1;
+
+    public static boolean ollirAbstractType(String typeName) {
+        return !(typeName.equals(OLLIR_BOOL_NAME) || typeName.equals(OLLIR_INT_NAME) || typeName.equals(OLLIR_VOID_NAME) || typeName.equals(OLLIR_STRING_NAME));
+    }
 
     public static String getTemp() {
 
