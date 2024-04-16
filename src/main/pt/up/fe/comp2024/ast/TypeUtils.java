@@ -62,6 +62,11 @@ public class TypeUtils {
         return type;
     }
 
+    public static boolean abstractType(String typeName) {
+        return !(typeName.equals(TypeUtils.getIntTypeName()) || typeName.equals(TypeUtils.getStringTypeName()) || typeName.equals(TypeUtils.getBoolTypeName())
+            || typeName.equals(TypeUtils.getVarargTypeName()) || typeName.equals(TypeUtils.getImportTypeName()));
+    }
+
     private static Type getBinExprType(JmmNode binaryExpr) {
         String operator = binaryExpr.get("op");
 
@@ -72,6 +77,7 @@ public class TypeUtils {
                     throw new RuntimeException("Unknown operator '" + operator + "' of expression '" + binaryExpr + "'");
         };
     }
+
 
     public static Type getOperatorOperandsType(JmmNode binaryExpr) {
         String operator = binaryExpr.get("op");
