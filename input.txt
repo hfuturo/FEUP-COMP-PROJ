@@ -1,9 +1,21 @@
 import A;
-import Whort;
 
-class AccessValidArray extends Whort {
-    public int c(AccessValidArray avr) {
+class T {
 
+    public int foo() {
+        A a;
+        a = new A();
+
+        this.doe(0);
+        this.bar(this);
+        return 0;
     }
 
+    public int doe(int a) {
+        return 0;
+    }
+
+    public int bar(T t) {
+        return 0;
+    }
 }
