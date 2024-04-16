@@ -38,9 +38,13 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         addVisit(NEW_CLASS, this::visitClassInstantiation);
         addVisit(VAR_METHOD, this::visitVarMethod);
         addVisit(PARENTHESIS, this::visitParenthesis);
-
+        addVisit(THIS, this::visitThis);
 
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private OllirExprResult visitThis(JmmNode node, Void unused) {
+        return new OllirExprResult("this." + table.getClassName());
     }
 
     private OllirExprResult visitParenthesis(JmmNode node, Void unused) {
@@ -91,6 +95,8 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
                 params.append(result.getCode());
             }
         }
+
+        System.out.println("params:\t" + params);
 
         // é um assign / operacao
         if (!parent.isInstance(EXPR_STMT)) {
