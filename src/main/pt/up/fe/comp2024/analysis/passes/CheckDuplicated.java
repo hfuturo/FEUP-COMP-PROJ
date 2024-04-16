@@ -57,6 +57,11 @@ public class CheckDuplicated extends AnalysisVisitor {
             addError(node, "method", methodName);
         }
 
+        if (Collections.frequency(methods, "_") > 0) {
+            String message = "Method name can not be _.";
+            addError(node, message);
+        }
+
         return null;
     }
 

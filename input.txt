@@ -1,16 +1,15 @@
-import Animal;
-import B;
+import A;
 
-class Cao extends Animal {
+class AccessValidArray {
 
     public int foo() {
-        int arr1;
-        int[] arr2;
-        int sum;
 
-        arr1 = [1, 2, 3][1+1];
+        int a;
+        return 0;
+    }
 
-        return sum;
+    public int __(int a) {
+        return 0;
     }
 
 }
