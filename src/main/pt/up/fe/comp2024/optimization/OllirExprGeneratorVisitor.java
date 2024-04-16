@@ -112,6 +112,14 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             else if (parent.isInstance(BINARY_EXPR)) {
                 methodReturnType = OptUtils.toOllirType(TypeUtils.getOperatorOperandsType(parent));
             }
+            else if (parent.isInstance(RETURN_STMT)) {
+                var currentMethodNodeOpt = node.getAncestor(METHOD_DECL);
+                var currentMethodName = currentMethodNodeOpt.orElse(null);
+
+                if (currentMethodName != null) {
+                    methodReturnType = OptUtils.toOllirType(currentMethodName.getJmmChild(0));
+                }
+            }
 
             computation.append(String.format("%s%s :=%s ", tempVar, methodReturnType, methodReturnType));
         }

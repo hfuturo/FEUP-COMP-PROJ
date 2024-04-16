@@ -61,11 +61,10 @@ public class JasminMethodUtils {
             }
         }
 
-
         return switch (typeString) {
             case "VOID" -> "V";
-            case "INT" -> "I";
-            case "INT32" -> "I";
+            case "INT", "INT32" -> "I";
+            case "INT32[]" -> "[I";
             case "STRING[]" -> "[Ljava/lang/String;";
             case "STRING" -> "Ljava/lang/String";
             case "BOOLEAN" -> "Z";

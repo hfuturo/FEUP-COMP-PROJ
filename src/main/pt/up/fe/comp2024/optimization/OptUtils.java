@@ -3,6 +3,7 @@ package pt.up.fe.comp2024.optimization;
 
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp2024.ast.Kind;
 
 public class OptUtils {
     private static int tempNumber = -1;
@@ -27,12 +28,15 @@ public class OptUtils {
         //Kind.fromString(typeNode.getKind()).checkIsTypeOrThrow(typeNode);
 
         String typeName = typeNode.get("name");
+        if (typeNode.isInstance(Kind.ARRAY_TYPE)) {
+            return ".array" + toOllirType(typeName);
+        }
 
         return toOllirType(typeName);
     }
 
     public static String toOllirType(Type type) {
-        return toOllirType(type.getName());
+        return toOllirType(type.getName(), type.isArray());
     }
 
     //necessário verificar se TYPE é IMPORT para atualizar!!!
@@ -44,6 +48,16 @@ public class OptUtils {
         };
 
         return type;
+    }
+
+    private static String toOllirType(String typeName, boolean isArray) {
+        String type = "." + switch (typeName) {
+            case "int", "<" -> "i32";
+            case "boolean", "&&", "!" -> "bool";
+            default -> typeName; // main class ou import
+        };
+
+        return isArray ? (".array" + type) : type;
     }
 
 

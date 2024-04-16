@@ -1,21 +1,47 @@
-import A;
+import SomeClass;
+import a.b.SomeClass2;
 
-class T {
+class Test {
+    public static void main(String[] args) {
+        Test a;
+        SomeClass b;
+        SomeClass2 e;
+        int c;
+        boolean d;
+        a = new Test();
+        c = a.invokeMethod();
 
-    public int foo() {
-        A a;
-        a = new A();
+        b = new SomeClass();
+        d = b.invokeMethod();
 
-        this.doe(0);
-        this.bar(this);
-        return 0;
+        e = new SomeClass2();
+        d = e.invokeMethod();
+
+        SomeClass.ola();
+        SomeClass2.ola(1+3*4);
+
+        //1+2;
     }
 
-    public int doe(int a) {
-        return 0;
+    public int invokeMethod() {
+        return 1;
     }
 
-    public int bar(T t) {
-        return 0;
+    public int[] invokeMethod2() {
+        int []a;
+        a = SomeClass2.ola();
+        return a;
+    }
+
+  /* public String invokeMethod3(){
+        return SomeClass2.ola();
+    } */
+
+    public SomeClass invokeMethod4(){
+        return SomeClass.ola();
+    }
+
+    public SomeClass2 invokeMethod5(){
+        return SomeClass2.ola();
     }
 }
