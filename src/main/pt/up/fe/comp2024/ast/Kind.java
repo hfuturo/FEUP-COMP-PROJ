@@ -10,6 +10,7 @@ public enum Kind {
   IMPORT,
   BOOL,
   ACCESS_ARRAY,
+  STRING_TYPE,
   CLASS_DECL,
   VAR_ARG_TYPE,
   VAR_DECL,
