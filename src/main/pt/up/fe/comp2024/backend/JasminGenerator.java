@@ -26,6 +26,8 @@ public class JasminGenerator {
 
     private final OllirResult ollirResult;
 
+    List<String> classUnitImports;
+
     List<Report> reports;
 
     String code;
@@ -42,6 +44,8 @@ public class JasminGenerator {
         reports = new ArrayList<>();
         code = null;
         currentMethod = null;
+
+        this.classUnitImports = new ArrayList<>();
 
         this.generators = new FunctionClassMap<>();
         generators.put(ClassUnit.class, this::generateClassUnit);
@@ -91,7 +95,9 @@ public class JasminGenerator {
 
     private String generateClassUnit(ClassUnit classUnit) {
 
+        this.classUnitImports = classUnit.getImports();
         var code = new StringBuilder();
+
 
         // generate class name
         var className = ollirResult.getOllirClass().getClassName();
@@ -162,8 +168,6 @@ public class JasminGenerator {
             modifier = modifier + "static ";
         }
 
-        // TODO: Hardcoded param types and return type, needs to be expanded
-
         // String with the types of the parameters
         StringBuilder paramString = new StringBuilder();
         paramString.append("(");
@@ -171,11 +175,11 @@ public class JasminGenerator {
         ArrayList<Element> params = method.getParams();
         for(int i = 0; i < params.size(); i++) {
             Element param = params.get(i);
-            paramString.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(param.getType()));
+            paramString.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(param.getType(), this.classUnitImports));
         }
         paramString.append(")");
 
-        code.append("\n.method ").append(modifier).append(methodName).append(paramString.toString() + JasminMethodUtils.getTypeInJasminFormat(method.getReturnType())).append(NL);
+        code.append("\n.method ").append(modifier).append(methodName).append(paramString.toString() + JasminMethodUtils.getTypeInJasminFormatMethodParam(method.getReturnType(), this.classUnitImports)).append(NL);
 
         // Add limits
         code.append(TAB).append(".limit stack 99").append(NL);
@@ -234,17 +238,7 @@ public class JasminGenerator {
 
     private String generateOperand(Operand operand) {
         // get register
-        Descriptor descriptor = currentMethod.getVarTable().get(operand.getName());
-        int reg;
-
-        if(descriptor == null) {
-            reg = this.currentMethodVirtualReg;
-            this.currentMethodVirtualReg += 1;
-        } else {
-            reg = descriptor.getVirtualReg();
-            this.currentMethodVirtualReg += 1;
-        }
-
+        var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
 
         return switch (operand.getType().toString()) {
             case "INT32", "INT", "BOOLEAN" -> "iload";
@@ -328,7 +322,7 @@ public class JasminGenerator {
         code.append(argumentsType);
         code.append(")");
 
-        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getReturnType()));
+        code.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(callInst.getReturnType(), this.classUnitImports));
         code.append(NL);
     }
 
@@ -355,7 +349,7 @@ public class JasminGenerator {
         code.append(argumentTypes);
         code.append(")");
 
-        code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getReturnType()));
+        code.append(JasminMethodUtils.getTypeInJasminFormatMethodParam(callInst.getReturnType(), this.classUnitImports));
         code.append(NL);
     }
 
