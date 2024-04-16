@@ -67,7 +67,7 @@ public class JasminGenerator {
 
         code.append(".field");
         code.append(" ");
-        code.append("private");
+        code.append("public");
         code.append(" ");
         code.append(field.getFieldName());
         code.append(" ");

@@ -1,47 +1,15 @@
-import SomeClass;
-import a.b.SomeClass2;
+import A.X;
 
-class Test {
-    public static void main(String[] args) {
-        Test a;
-        SomeClass b;
-        SomeClass2 e;
-        int c;
-        boolean d;
-        a = new Test();
-        c = a.invokeMethod();
+class X {
 
-        b = new SomeClass();
-        d = b.invokeMethod();
+    int a;
 
-        e = new SomeClass2();
-        d = e.invokeMethod();
-
-        SomeClass.ola();
-        SomeClass2.ola(1+3*4);
-
-        //1+2;
-    }
-
-    public int invokeMethod() {
-        return 1;
-    }
-
-    public int[] invokeMethod2() {
-        int []a;
-        a = SomeClass2.ola();
+    public int foo() {
+        int b;
+        b  = 0;
+        b = a;
+        a = b;
         return a;
     }
 
-  /* public String invokeMethod3(){
-        return SomeClass2.ola();
-    } */
-
-    public SomeClass invokeMethod4(){
-        return SomeClass.ola();
-    }
-
-    public SomeClass2 invokeMethod5(){
-        return SomeClass2.ola();
-    }
 }
