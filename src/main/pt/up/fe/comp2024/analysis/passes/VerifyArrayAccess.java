@@ -76,9 +76,9 @@ public class VerifyArrayAccess extends AnalysisVisitor {
 
             for (String method : table.getMethods()) {
                 if (expr.get("name").equals(method)) {
-                    var methodReturnType = table.getReturnType(expr.get("name")).getName();
-                    if (!methodReturnType.equals(TypeUtils.getIntTypeName())) {
-                        var message = "Method does not return an integer.";
+                    var methodReturnType = table.getReturnType(expr.get("name"));
+                    if (!methodReturnType.isArray()) {
+                        var message = "Method does not return an array.";
                         addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(expr),
                                 NodeUtils.getColumn(expr), message, null));
                     }
@@ -149,7 +149,6 @@ public class VerifyArrayAccess extends AnalysisVisitor {
         // chamadas de métodos
         if (index.isInstance(VAR_METHOD)) {
             var caller = index.getJmmChild(0);
-
 
             if (!caller.isInstance(THIS)) {
                 String callerName = caller.get("name");
