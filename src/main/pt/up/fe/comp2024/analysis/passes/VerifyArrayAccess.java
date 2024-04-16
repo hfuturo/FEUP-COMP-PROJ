@@ -24,20 +24,16 @@ import static pt.up.fe.comp2024.ast.Kind.*;
  * @author JBispo
  */
 public class VerifyArrayAccess extends AnalysisVisitor {
-    private String currentMethod;
 
     @Override
     public void buildVisitor() {
-        addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
         addVisit(Kind.ACCESS_ARRAY, this::visitArrayAccess);
     }
 
-    private Void visitMethodDecl(JmmNode method, SymbolTable table) {
-        this.currentMethod = method.get("name");
-        return null;
-    }
-
     private void checkArrayAccessIsOnArray(JmmNode arrayAccess, SymbolTable table) {
+        Optional<JmmNode> methodNode = arrayAccess.getAncestor(METHOD_DECL);
+        String currentMethod = methodNode.isPresent() ? methodNode.get().get("name") : "main";
+
         JmmNode expr = arrayAccess.getChildren().get(0);
 
         // se for init_array aceita imediatamente
@@ -95,6 +91,9 @@ public class VerifyArrayAccess extends AnalysisVisitor {
 
     private void checkArrayAccessHasIntegerIndex(JmmNode arrayAccess, SymbolTable table) {
         JmmNode index;
+        Optional<JmmNode> methodNode = arrayAccess.getAncestor(METHOD_DECL);
+        String currentMethod = methodNode.isPresent() ? methodNode.get().get("name") : "main";
+
         if (arrayAccess.isInstance(ACCESS_ARRAY)) {
             index = arrayAccess.getChildren().get(1);
         } else {

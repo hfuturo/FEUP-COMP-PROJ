@@ -93,15 +93,9 @@ public class TypeUtils {
     private static Type getVarExprType(JmmNode varRefExpr, SymbolTable table) {
         String name = varRefExpr.get("name");
 
-         Optional<JmmNode> method = varRefExpr.getAncestor(METHOD_DECL);
-         Optional<Symbol> varRefSymbol;
-
-         if (method.isPresent()) {
-             varRefSymbol = AnalysisUtils.validateSymbolFromSymbolTable(method.get().get("name"), table, name);
-         }
-         else {
-             varRefSymbol = AnalysisUtils.validateSymbolFromSymbolTable(table, name);
-         }
+         Optional<JmmNode> methodNode = varRefExpr.getAncestor(METHOD_DECL);
+         String methodName = methodNode.isPresent() ? methodNode.get().get("name") : "main";
+         Optional<Symbol> varRefSymbol = AnalysisUtils.validateSymbolFromSymbolTable(methodName, table, name);
 
          if (varRefSymbol.isEmpty()) {
              boolean isImport = AnalysisUtils.validateIsImported(name, table);

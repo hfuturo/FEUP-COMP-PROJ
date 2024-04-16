@@ -15,17 +15,10 @@ import pt.up.fe.comp2024.ast.TypeUtils;
 import java.util.List;
 
 public class CompatibleAssignTypes extends AnalysisVisitor {
-    private String methodName;
 
     @Override
     public void buildVisitor() {
-        addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
         addVisit(Kind.ASSIGN_STMT, this::visitAssignStmt);
-    }
-
-    private Void visitMethodDecl(JmmNode method, SymbolTable table) {
-        this.methodName = method.get("name");
-        return null;
     }
 
     private Void visitAssignStmt(JmmNode assignStmt, SymbolTable table) {
