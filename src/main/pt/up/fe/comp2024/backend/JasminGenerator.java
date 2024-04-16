@@ -405,7 +405,7 @@ public class JasminGenerator {
         code.append("/");
         code.append(putFieldInstruction.getField().getName());
         code.append(" ");
-        code.append(JasminMethodUtils.getTypeInJasminFormat(putFieldInstruction.getField().getType(), this.classUnitImports));
+        code.append(JasminMethodUtils.getTypeInJasminFormat(putFieldInstruction.getValue().getType(), this.classUnitImports));
         code.append(NL);
 
         return code.toString();
