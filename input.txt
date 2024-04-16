@@ -1,48 +1,8 @@
 import A;
+import Whort;
 
-class AccessValidArray {
+class AccessValidArray extends Whort {
+    public int c(AccessValidArray avr) {
 
-    public int foo() {
-        int[] arr;
-        int[] arr2;
-        int b;
-        A a;
-        AccessValidArray c;
-
-        b = 1;
-
-        a = new A();
-        c = new AccessValidArray();
-
-        arr = [1, 2, 3];
-        arr2 = [1, 2, 3];
-
-        b = arr[0];
-        b = arr[b];
-        b = arr[1+1];
-        b = arr[A.bar()];
-        b = arr[this.bar()];
-        b = arr[c.bar()];
-        b = arr[arr.length];
-        b = arr[[1,2,3].length];
-        b = arr[arr2[0]];
-        b = [1,2,3][0];
-        b = this.test()[0];
-        b = arr[(1+1)];
-        b = arr[(1)];
-        b = arr[(this.bar() + 1)];
-        b = arr[(this.test().length)];
-        b = arr[(this.test()[(1+2)] + 1)];
-
-        return b;
     }
-
-    public int bar() {
-        return 0;
-    }
-
-    public int[] test() {
-        return [1, 2, 3];
-    }
-
 }
