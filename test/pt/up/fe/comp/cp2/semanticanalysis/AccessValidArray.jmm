@@ -26,6 +26,7 @@ class AccessValidArray {
         b = arr[arr.length];
         b = arr[[1,2,3].length];
         b = arr[arr2[0]];
+        b = [1,2,3][0];
 
         return b;
     }

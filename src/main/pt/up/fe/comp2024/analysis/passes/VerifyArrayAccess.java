@@ -38,6 +38,11 @@ public class VerifyArrayAccess extends AnalysisVisitor {
 
     private void checkArrayAccessIsOnArray(JmmNode arrayAccess, SymbolTable table) {
         JmmNode expr = arrayAccess.getChildren().get(0);
+
+        // se for init_array aceita imediatamente
+        if (expr.isInstance(INIT_ARRAY))
+            return;
+
         String exprKind = expr.getKind();
 
         String varName = expr.get("name");
