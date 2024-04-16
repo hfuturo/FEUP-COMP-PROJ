@@ -358,7 +358,7 @@ public class JasminGenerator {
 
     private void generateNew(CallInstruction callInst, StringBuilder code) {
         code.append("new ");
-        code.append(callInst.getOperands().get(0).toString().split(": ")[1].split("\\.")[0]);
+        code.append(JasminMethodUtils.importFullPath(callInst.getOperands().get(0).toString().split(": ")[1].split("\\.")[0], this.classUnitImports));
         code.append(NL);
         code.append("dup");
         code.append(NL);
