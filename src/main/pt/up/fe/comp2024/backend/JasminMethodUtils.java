@@ -65,7 +65,7 @@ public class JasminMethodUtils {
             case "INT", "INT32" -> "I";
             case "INT32[]" -> "[I";
             case "STRING[]" -> "[Ljava/lang/String;";
-            case "STRING" -> "Ljava/lang/String";
+            case "STRING" -> "Ljava/lang/String;";
             case "BOOLEAN" -> "Z";
             default -> {
                 Pattern pattern = Pattern.compile("\\((.*)\\)");
