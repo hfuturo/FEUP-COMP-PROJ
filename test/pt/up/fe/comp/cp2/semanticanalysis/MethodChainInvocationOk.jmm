@@ -1,0 +1,27 @@
+import A;
+
+class MethodChainInvocationOk extends A {
+
+    public int doe() {
+        this.foo().boo().bar();
+        this.foo().bar();
+        this.foo().imported();
+        this.imported().foo();
+        this.foo().imported().bar();
+
+        return 0;
+    }
+
+    public int bar() {
+        return 0;
+    }
+
+    public MethodChainInvocationOk foo() {
+        return this;
+    }
+
+    public MethodChainInvocationOk boo() {
+        return this;
+    }
+
+}

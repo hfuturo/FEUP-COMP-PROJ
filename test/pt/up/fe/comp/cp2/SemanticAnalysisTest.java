@@ -419,4 +419,17 @@ public class SemanticAnalysisTest {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/AccessValidArray.jmm"));
         TestUtils.noErrors(result);
     }
+
+    @Test
+    public void methodChainInvocationOk() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/MethodChainInvocationOk.jmm"));
+        TestUtils.noErrors(result);
+    }
+
+    @Test
+    public void methodChainInvocationError() {
+        var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/MethodChainInvocationError.jmm"));
+        TestUtils.mustFail(result);
+        System.out.println(result.getReports());
+    }
 }

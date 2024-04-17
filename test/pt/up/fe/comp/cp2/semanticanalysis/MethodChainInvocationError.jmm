@@ -1,13 +1,11 @@
-import A;
-
-class AccessValidArray extends A {
+class MethodChainInvocationOk {
 
     public static void main(String[] args) {
         args[1+1];
     }
 
     public int doe() {
-        this.foo().bar();
+        this.bar().foo();
         return 0;
     }
 
@@ -15,11 +13,11 @@ class AccessValidArray extends A {
         return 0;
     }
 
-    public AccessValidArray foo() {
+    public MethodChainInvocationOk foo() {
         return this;
     }
 
-    public AccessValidArray boo() {
+    public MethodChainInvocationOk boo() {
         return this;
     }
 

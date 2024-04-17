@@ -2,6 +2,7 @@ package pt.up.fe.comp2024.analysis.passes;
 
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
+import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.comp.jmm.report.Stage;
@@ -9,6 +10,7 @@ import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.comp2024.analysis.AnalysisVisitor;
 import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.NodeUtils;
+import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +65,6 @@ public class UndeclaredMethod extends AnalysisVisitor {
         if(methodClass.getKind().equals("VarRefExpr")) {
             String varName = methodClass.get("name");
             Optional<Symbol> optSymbol = AnalysisUtils.validateSymbolFromSymbolTable(currentMethod, symbolTable, varName);
-
             if(optSymbol.isEmpty()) {
                 // var does not exist
                 return null;
@@ -112,11 +113,66 @@ public class UndeclaredMethod extends AnalysisVisitor {
                 return null;
             }
         }
+        else if(methodClass.isInstance(Kind.VAR_METHOD)) {
+            Type ret = verifyMethodChainReturnType(methodCall, symbolTable);
+            if (ret == null) {
+                var message = "Method in chain returns wrong type / does not exist.";
+                addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
+                        NodeUtils.getColumn(methodCall), message, null));
+            }
+            return null;
+        }
 
         var message = String.format("Method %s is not declared", methodName);
         addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
                 NodeUtils.getColumn(methodCall), message, null));
 
+        return null;
+    }
+
+    private Type verifyMethodChainReturnType(JmmNode node, SymbolTable table) {
+        JmmNode caller = node.getJmmChild(0);
+
+        if (caller.isInstance(Kind.VAR_METHOD)) {
+            Type retType = verifyMethodChainReturnType(caller, table);
+
+            // se for null, significa que houve uma invocação inválida
+            if (retType == null)
+                return null;
+
+            // se tipo retornado é da classe atual, verifica se método que node invoca existe
+            if (retType.getName().equals(table.getClassName())) {
+                Optional<Type> ret = table.getReturnTypeTry(node.get("name"));
+
+                if (ret.isEmpty()) {
+                    if (!table.getSuper().trim().equals("")) {
+                        return new Type(table.getClassName(), false);
+                    }
+                    System.out.println("entra");
+                    return  null;
+                }
+
+                return ret.get();
+            }
+            return null;
+        }
+        // chegou ao inicio da chain
+        else {
+            Type callerType = TypeUtils.getExprType(caller, table);
+            // se caller for THIS ou elemento da classe atual, verifica se método exite e retorna type do método
+            if (caller.isInstance(Kind.THIS) || callerType.getName().equals(table.getClassName())) {
+                Optional<Type> returnTypeTry = table.getReturnTypeTry(node.get("name"));
+
+                if (returnTypeTry.isEmpty()) {
+                    if (!table.getSuper().trim().equals("")) {
+                        return new Type(table.getClassName(), false);
+                    }
+                    return null;
+                }
+
+                return returnTypeTry.get();
+            }
+        }
         return null;
     }
 }
