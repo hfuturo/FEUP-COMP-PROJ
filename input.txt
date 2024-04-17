@@ -1,19 +1,22 @@
-import D.C.B;
-import Z.W.A;
+import A;
 
-class X {
+class Simple {
 
-    A a;
-    B b;
-    X x;
+    public static void main(String[] args) {
+        int n;
+        A a;
+        //n = (new Simple()).foo((new Simple()).bar());
+        //n = (new Simple()).foo((new A()).doe());
+    }
 
-    public A foo() {
-        x = this;
+    public int foo(boolean n) {
+        return 0;
+    }
 
-        a = b;
-        b = a;
-
-        return a;
+    public boolean bar() {
+        A a;
+        this.foo(a.doe());
+        return true;
     }
 
 }

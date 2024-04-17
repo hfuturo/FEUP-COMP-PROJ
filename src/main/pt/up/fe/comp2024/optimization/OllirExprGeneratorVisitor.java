@@ -52,8 +52,16 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
     }
 
     private OllirExprResult visitVarMethod(JmmNode node, Void unused) {
+
         String methodName = node.get("name");
-        JmmNode callerNode = node.getJmmChild(0);
+//        JmmNode callerNode = node.getJmmChild(0);
+        JmmNode callerNode;
+
+        if (node.getJmmChild(0).isInstance(PARENTHESIS))
+            callerNode = node.getJmmChild(0).getJmmChild(0);
+        else
+            callerNode = node.getJmmChild(0);
+
         List<String> imports = table.getImports();
         StringBuilder computation = new StringBuilder();
         String callerType = OptUtils.toOllirType(TypeUtils.getExprType(callerNode, table));
@@ -69,6 +77,24 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             invokeType =  "invokevirtual";
             callerName = "this";
             methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
+        }
+        else if (callerNode.isInstance(NEW_CLASS)) {
+            // constroi NEW em OLLIR
+            var ret = visitClassInstantiation(callerNode, null);
+            computation.append(ret.getComputation());
+
+            // cria var temporaria
+            invokeType = "invokevirtual";
+            callerName = ret.getCode();
+
+            // se new X criar um elemento da classe atual, obtem return type
+            if (callerNode.get("name").equals(table.getClassName())) {
+                methodReturnType = OptUtils.toOllirType(table.getReturnType(node.get("name")));
+            }
+            else {  // new X de um import.
+                methodReturnType = "." + callerNode.get("name");
+            }
+
         }
         else if(imports.contains(callerNode.get("name"))) { // A.foo()
             invokeType = "invokestatic";
