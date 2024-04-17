@@ -1,26 +1,14 @@
 import A;
 
-class AccessValidArray extends A {
+class AccessValidArray {
 
-    public static void main(String[] args) {
-        args[1+1];
-    }
+    public int foo() {
+        int[] arr;
+        arr = [1, 2, 3];
 
-    public int doe() {
-        this.foo().bar();
+        arr[0] = 2;
         return 0;
     }
 
-    public int bar() {
-        return 0;
-    }
-
-    public AccessValidArray foo() {
-        return this;
-    }
-
-    public AccessValidArray boo() {
-        return this;
-    }
 
 }
