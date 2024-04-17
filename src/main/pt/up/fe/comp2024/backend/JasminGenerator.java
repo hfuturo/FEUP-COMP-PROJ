@@ -37,6 +37,7 @@ public class JasminGenerator {
     int currentMethodVirtualReg = 1;
 
     private final FunctionClassMap<TreeNode, String> generators;
+    private boolean currentCallInstructionIsOnAssign;
 
     public JasminGenerator(OllirResult ollirResult) {
         this.ollirResult = ollirResult;
@@ -60,6 +61,8 @@ public class JasminGenerator {
         generators.put(CallInstruction.class, this::generateCall);
         generators.put(PutFieldInstruction.class, this::generatePutField);
         generators.put(GetFieldInstruction.class, this::generateGetField);
+
+        this.currentCallInstructionIsOnAssign = false;
     }
 
     private String generateField(Field field) {
@@ -206,6 +209,9 @@ public class JasminGenerator {
     private String generateAssign(AssignInstruction assign) {
         var code = new StringBuilder();
 
+        if(assign.getRhs().getInstType().name().equals(InstructionType.CALL.name())) {
+            this.currentCallInstructionIsOnAssign = true;
+        }
         // generate code for loading what's on the right
         code.append(generators.apply(assign.getRhs()));
 
@@ -356,6 +362,15 @@ public class JasminGenerator {
         code.append(")");
 
         code.append(JasminMethodUtils.getTypeInJasminFormat(callInst.getReturnType(), this.classUnitImports));
+        if(!callInst.getReturnType().getTypeOfElement().name().equals("VOID") && !this.currentCallInstructionIsOnAssign) {
+            code.append(NL);
+            code.append("pop");
+        }
+
+        if(this.currentCallInstructionIsOnAssign) {
+            this.currentCallInstructionIsOnAssign = false;
+        }
+
         code.append(NL);
     }
 
