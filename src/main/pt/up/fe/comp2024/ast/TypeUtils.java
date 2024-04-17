@@ -134,6 +134,9 @@ public class TypeUtils {
         List<String> imports = table.getImports();
         boolean checkArrayConsistency = (sourceType.isArray() && destinationType.isArray()) || (!sourceType.isArray() && !destinationType.isArray());
 
+        System.out.println("left:\t" + sourceType.toString());
+        System.out.println("right:\t" + destinationType.toString());
+
         if (sourceName.equals(destName)) {
             return checkArrayConsistency;
         }
@@ -146,10 +149,21 @@ public class TypeUtils {
             return false;
         }
 
+        boolean foundLeft = false;
+        boolean foundRight = false;
+
         // caso seja import A, B; A = B
         for (String imp : imports) {
-            if (imp.equals(destName))
-                return true;
+            if (imp.equals(destName)) {
+                foundRight = true;
+            }
+            if (imp.equals(sourceName)) {
+                foundLeft = true;
+            }
+        }
+
+        if (foundLeft && foundRight) {
+            return true;
         }
 
         // import A; int a = A.foo()

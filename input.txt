@@ -1,13 +1,14 @@
 import A;
 
-class AccessValidArray {
+class AccessValidArray extends A {
+
+    A a;
 
     public int foo() {
-        int[] arr;
-
-        //arr[0] = 1;
-        [1,2][0] = 1;
-
+        A c;
+        int b;
+        b = c;
+        b = c.foo();
         return 0;
     }
 
