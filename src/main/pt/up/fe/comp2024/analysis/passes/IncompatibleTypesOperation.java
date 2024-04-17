@@ -1,5 +1,6 @@
 package pt.up.fe.comp2024.analysis.passes;
 
+import static pt.up.fe.comp2024.ast.Kind.PARENTHESIS;
 import static pt.up.fe.comp2024.ast.Kind.VAR_DECL;
 
 import java.util.List;
@@ -74,8 +75,22 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
     Type leftType = TypeUtils.getExprType(leftExpr, table);
     Type rightType = TypeUtils.getExprType(rightExpr, table);
 
-    if(Kind.fromString(leftExpr.getKind()).equals(Kind.PARENTHESIS) || Kind.fromString(rightExpr.getKind()).equals(Kind.PARENTHESIS)) {
-      return TypeUtils.getExprType(binaryExpr, table);
+    if (Kind.fromString(leftExpr.getKind()).equals(PARENTHESIS)) {
+      for (JmmNode descendent : leftExpr.getDescendants()) {
+        if (!descendent.isInstance(PARENTHESIS)) {
+          leftType = TypeUtils.getExprType(descendent ,table);
+          break;
+        }
+      }
+    }
+
+    if (Kind.fromString(rightExpr.getKind()).equals(PARENTHESIS)) {
+      for (JmmNode descendent : rightExpr.getDescendants()) {
+        if (!descendent.isInstance(PARENTHESIS)) {
+          rightType = TypeUtils.getExprType(descendent ,table);
+          break;
+        }
+      }
     }
 
     boolean neitherTypeIsImport = !(TypeUtils.isImportType(leftType) || TypeUtils.isImportType(rightType));

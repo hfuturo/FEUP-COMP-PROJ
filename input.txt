@@ -3,20 +3,19 @@ import A;
 class Simple {
 
     public static void main(String[] args) {
-        int n;
-        A a;
-        //n = (new Simple()).foo((new Simple()).bar());
-        //n = (new Simple()).foo((new A()).doe());
     }
 
-    public int foo(boolean n) {
+    public int foo() {
+        int a;
+        int[] b;
+        //a = (1 + (2 - (true)));
+        a = (1 + (2 - (this.bar())));
+
+        return a;
+    }
+
+    public int bar() {
         return 0;
-    }
-
-    public boolean bar() {
-        A a;
-        this.foo(a.doe());
-        return true;
     }
 
 }
