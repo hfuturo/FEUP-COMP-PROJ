@@ -14,7 +14,8 @@ public class AnalysisUtils {
         Optional<Symbol> methodSymbol = AnalysisUtils.tryToGetSymbolFromMethod(symbolName, currentMethod, table) ;
         if(methodSymbol.isPresent()) return methodSymbol;
 
-        return AnalysisUtils.tryToGetSymbolFromClassFields(symbolName, table);
+        //return AnalysisUtils.tryToGetSymbolFromClassFields(symbolName, table);
+        return methodSymbol;
     }
 
     public static Optional<Symbol> validateSymbolFromSymbolTable(SymbolTable table, String symbolName) {

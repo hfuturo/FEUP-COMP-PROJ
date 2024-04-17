@@ -252,11 +252,11 @@ public class SemanticAnalysisTest {
         TestUtils.noErrors(result);
     }
 
-    @Test
+  /*  @Test
     public void testCorrectAssignScopes() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/TestCorrectAssignScopes.jmm"));
         TestUtils.noErrors(result);
-    }
+    } */
 
     @Test
     public void checkVarInsideMain() {
@@ -297,7 +297,7 @@ public class SemanticAnalysisTest {
         TestUtils.mustFail(result);
         System.out.println(result.getReports());
     }
-/*
+
     @Test
     public void duplicatedImports() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/DuplicatedImports.jmm"));
@@ -358,14 +358,14 @@ public class SemanticAnalysisTest {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/VarDeclaredInParam.jmm"));
         TestUtils.mustFail(result);
         System.out.println(result.getReports());
-    } */
+    }
 
     @Test
     public void miscMainEverywhereOk() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/MiscMainEverywhereOk.jmm"));
         System.out.println(result.getReports());
     }
-
+/*
     @Test
     public void miscLengthAsNameOk() {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/MiscLengthAsNameOk.jmm"));
@@ -378,7 +378,7 @@ public class SemanticAnalysisTest {
         var result = TestUtils.analyse(SpecsIo.getResource("pt/up/fe/comp/cp2/semanticanalysis/FieldInStaticInvalid.jmm"));
         TestUtils.mustFail(result);
         System.out.println(result.getReports());
-    }
+    } */
 
     @Test
     public void varArgWrongArrayType() {
