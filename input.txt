@@ -2,15 +2,11 @@ import A;
 
 class AccessValidArray extends A {
 
-    A a;
+    public static void main(String[] args) {
 
-    public int foo() {
-        A c;
-        int b;
-        b = c;
-        b = c.foo();
-        return 0;
+        int[] arr;
+        boolean a;
+
     }
-
 
 }

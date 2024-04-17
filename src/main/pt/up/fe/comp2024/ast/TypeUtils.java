@@ -134,9 +134,6 @@ public class TypeUtils {
         List<String> imports = table.getImports();
         boolean checkArrayConsistency = (sourceType.isArray() && destinationType.isArray()) || (!sourceType.isArray() && !destinationType.isArray());
 
-        System.out.println("left:\t" + sourceType.toString());
-        System.out.println("right:\t" + destinationType.toString());
-
         if (sourceName.equals(destName)) {
             return checkArrayConsistency;
         }
