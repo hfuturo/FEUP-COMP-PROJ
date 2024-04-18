@@ -1,15 +1,12 @@
 import A;
 
-class AccessValidArray {
+class AccessValidArray extends A {
 
-    public int foo() {
+    public static void main(String[] args) {
+
         int[] arr;
+        boolean a;
 
-        //arr[0] = 1;
-        [1,2][0] = 1;
-
-        return 0;
     }
-
 
 }
