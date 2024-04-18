@@ -6,16 +6,14 @@ class X extends A {
     }
 
     public int foo() {
-        int a;
-        boolean b;
-        X x;
-        int[] arr;
 
-        this.bar(a, b, x, (((1+2)))<3, !true);
+        X x;
+
+        this.bar(x.reti(), x.retb());
         return 0;
     }
 
-    public int bar(int a, boolean b, X x, boolean c, boolean d) {
+    public int bar(int a, boolean b) {
         return 0;
     }
 
@@ -25,6 +23,10 @@ class X extends A {
 
     public boolean retb() {
         return true;
+    }
+
+    public X idk() {
+        return this;
     }
 
 }

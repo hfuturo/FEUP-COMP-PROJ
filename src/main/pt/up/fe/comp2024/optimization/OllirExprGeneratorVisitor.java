@@ -48,8 +48,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         StringBuilder code = new StringBuilder();
 
         var ret = visit(node.getJmmChild(0));
-        System.out.println("code:\t" + ret.getCode());
-        System.out.println("comp:\t" + ret.getComputation());
         code.append(ret.getComputation());
 
         String tempVar = OptUtils.getTemp();
@@ -69,7 +67,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
     private OllirExprResult visitVarMethod(JmmNode node, Void unused) {
 
         String methodName = node.get("name");
-//        JmmNode callerNode = node.getJmmChild(0);
         JmmNode callerNode;
 
         if (node.getJmmChild(0).isInstance(PARENTHESIS))
@@ -88,9 +85,10 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         String tempVar = "";
 
         // this.foo() ou className classname; classname.foo()
-        if (callerNode.isInstance(THIS)) {
-            invokeType =  "invokevirtual";
-            callerName = "this";
+        if (callerNode.isInstance(THIS) ||
+                (callerNode.isInstance(VAR_REF_EXPR) && callerType.equals("." + table.getClassName()))) {
+            invokeType = "invokevirtual";
+            callerName = callerNode.isInstance(THIS) ? "this" : (callerNode.get("name") + callerType);
             methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
         }
         else if (callerNode.isInstance(NEW_CLASS)) {

@@ -32,9 +32,6 @@ public class OptUtils {
             return ".array" + toOllirType(typeName);
         }
 
-        if (typeNode.isInstance(Kind.ARRAY_TYPE))
-            return ".array" + toOllirType(typeName);
-
         return toOllirType(typeName);
     }
 
