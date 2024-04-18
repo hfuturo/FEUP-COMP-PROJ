@@ -84,7 +84,7 @@ public class CheckDuplicated extends AnalysisVisitor {
             // var igual a parametro
             List<String> params = table.getParameters(methodName).stream().map(Symbol::getName).toList();
             if (Collections.frequency(params, varName) > 0) {
-                addError(node, String.format("FODA-SE", node.get("name"), methodName));
+                addError(node, String.format("%s is already defined on method %s", node.get("name"), methodName));
             }
         }
         else {
