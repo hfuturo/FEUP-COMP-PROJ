@@ -2,13 +2,29 @@ import A;
 
 class X {
 
+    public static void main(String[] args) {
+    }
+
     public int foo() {
-        this.bar(A.foo(), A.bar());
+        int a;
+        boolean b;
+        X x;
+        int[] arr;
+
+        this.bar(a, b, x, (((1+2)))<3, !true);
         return 0;
     }
 
-    public int bar(int a, boolean b) {
+    public int bar(int a, boolean b, X x, boolean c, boolean d) {
         return 0;
+    }
+
+    public int reti() {
+        return 0;
+    }
+
+    public boolean retb() {
+        return true;
     }
 
 }
