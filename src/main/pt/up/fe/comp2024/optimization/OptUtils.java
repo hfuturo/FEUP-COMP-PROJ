@@ -43,7 +43,7 @@ public class OptUtils {
     }
 
     //necessário verificar se TYPE é IMPORT para atualizar!!!
-    private static String toOllirType(String typeName) {
+    public static String toOllirType(String typeName) {
         String type = "." + switch (typeName) {
             case "int", "<" -> "i32";
             case "boolean", "&&", "!" -> "bool";
@@ -53,7 +53,7 @@ public class OptUtils {
         return type;
     }
 
-    private static String toOllirType(String typeName, boolean isArray) {
+    public static String toOllirType(String typeName, boolean isArray) {
         String type = "." + switch (typeName) {
             case "int", "<" -> "i32";
             case "boolean", "&&", "!" -> "bool";

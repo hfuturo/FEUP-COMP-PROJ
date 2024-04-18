@@ -6,6 +6,7 @@ import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.AJmmVisitor;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PreorderJmmVisitor;
+import pt.up.fe.comp.jmm.ollir.OllirUtils;
 import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.comp2024.ast.TypeUtils;
 
@@ -53,8 +54,9 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
     private OllirExprResult visitVarMethod(JmmNode node, Void unused) {
 
+        System.out.println("node:\t" + node.toString());
+
         String methodName = node.get("name");
-//        JmmNode callerNode = node.getJmmChild(0);
         JmmNode callerNode;
 
         if (node.getJmmChild(0).isInstance(PARENTHESIS))
@@ -146,10 +148,18 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
                     methodReturnType = returnNode.isInstance(ARRAY_TYPE) ? (".array" + finalType) : finalType;
                 }
             }
+            else if (parent.isInstance(VAR_METHOD)) {
+
+                // é import, assume tipo dos args da funcao
+                if (node.get("isDeclared").equals("False")) {
+                    methodReturnType = OptUtils.toOllirType(node.get("insideMethodReturnType"));
+                }
+            }
 
             computation.append(String.format("%s%s :=%s ", tempVar, methodReturnType, methodReturnType));
         }
 
+        System.out.println("methodReturnTypeFinal:\t" + methodReturnType);
         computation.append(invokeType);
         computation.append("(");
         computation.append(callerName);
@@ -167,6 +177,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         computation.append("\n");
 
         if (!parent.isInstance(EXPR_STMT)) {
+            System.out.println("computação:\t" + computation.toString());
             return new OllirExprResult(String.format("%s%s", tempVar, methodReturnType), computation.toString());
         }
 

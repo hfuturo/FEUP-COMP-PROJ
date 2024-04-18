@@ -1,10 +1,14 @@
 import A;
 
-class AccessValidArray extends A {
+class X {
 
-    public static void main(String[] args) {
-
-        int[] arr;
-        arr[o] = 1;
+    public int foo() {
+        this.bar(A.foo(), A.bar());
+        return 0;
     }
+
+    public int bar(int a, boolean b) {
+        return 0;
+    }
+
 }
