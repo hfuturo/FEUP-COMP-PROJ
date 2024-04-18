@@ -10,6 +10,7 @@ import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.comp2024.analysis.AnalysisVisitor;
 import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.NodeUtils;
+import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,14 +32,22 @@ public class MethodParamPass extends AnalysisVisitor {
 
         List<Symbol> params = table.getParameters(node.get("name"));
 
-        if(params.isEmpty()) {
+        if(params == null || params.isEmpty()) {
             return null;
         }
 
         for(int i = 1; i < children.size(); i++) {
             Type type = params.get(i - 1).getType();
-            JmmNode paramNode = children.get(i);
 
+            if(type.getName().equals(TypeUtils.getVarargTypeName())) {
+                for(int j = i; j < children.size(); j++) {
+                    children.get(j).put("insideMethodReturnType", type.getName());
+                }
+
+                break;
+            }
+
+            JmmNode paramNode = children.get(i);
             paramNode.put("insideMethodReturnType", type.getName());
         }
 
