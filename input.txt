@@ -6,7 +6,5 @@ class AccessValidArray extends A {
 
         int[] arr;
         arr[o] = 1;
-
     }
-
 }

@@ -36,7 +36,8 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                 new CheckVarArg(),
                 new AddMethodReturnTypePass(),
                 new LastMethodStatementIsReturnPass(),
-                new SuperIsImportedPass()
+                new SuperIsImportedPass(),
+                new MethodParamPass()
         );
     }
 
