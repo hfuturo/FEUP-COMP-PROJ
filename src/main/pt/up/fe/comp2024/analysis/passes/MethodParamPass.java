@@ -24,7 +24,7 @@ public class MethodParamPass extends AnalysisVisitor {
         List<JmmNode> children = node.getChildren();
         JmmNode caller = children.get(0);
 
-        boolean callerIsNotThis = !caller.getKind().equals("THIS");
+        boolean callerIsNotThis = !caller.isInstance(Kind.THIS);
         if(callerIsNotThis ) {
             return null;
         }
