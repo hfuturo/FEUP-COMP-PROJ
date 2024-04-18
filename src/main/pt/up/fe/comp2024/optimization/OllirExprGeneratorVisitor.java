@@ -39,8 +39,23 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         addVisit(VAR_METHOD, this::visitVarMethod);
         addVisit(PARENTHESIS, this::visitParenthesis);
         addVisit(THIS, this::visitThis);
+        addVisit(UNARY, this::visitUnary);
 
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private OllirExprResult visitUnary(JmmNode node, Void unused) {
+        StringBuilder code = new StringBuilder();
+
+        var ret = visit(node.getJmmChild(0));
+        System.out.println("code:\t" + ret.getCode());
+        System.out.println("comp:\t" + ret.getComputation());
+        code.append(ret.getComputation());
+
+        String tempVar = OptUtils.getTemp();
+        code.append(tempVar).append(".bool :=.bool !.bool ").append(ret.getCode()).append(";").append("\n");
+
+        return new OllirExprResult(tempVar + ".bool", code);
     }
 
     private OllirExprResult visitThis(JmmNode node, Void unused) {
@@ -72,7 +87,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         String invokeType;
         String tempVar = "";
 
-        // this.foo()
+        // this.foo() ou className classname; classname.foo()
         if (callerNode.isInstance(THIS)) {
             invokeType =  "invokevirtual";
             callerName = "this";
