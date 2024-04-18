@@ -5,7 +5,7 @@ class AccessValidArray extends A {
     public static void main(String[] args) {
 
         int[] arr;
-        boolean a;
+        arr[o] = 1;
 
     }
 
