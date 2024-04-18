@@ -75,7 +75,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         // this.foo()
         if (callerNode.isInstance(THIS)) {
             invokeType =  "invokevirtual";
-            callerName = String.format("this.%s", this.table.getClassName());
+            callerName = "this";
             methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
         }
         else if (callerNode.isInstance(NEW_CLASS)) {
