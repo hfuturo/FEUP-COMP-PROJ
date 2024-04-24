@@ -1,0 +1,36 @@
+class BoolInWhileCondition {
+
+    public static void main(String[] args) {
+    }
+
+    public boolean foo() {
+        boolean t;
+        boolean t1;
+
+        t = true;
+        t1 = true;
+
+        while (t) {
+        }
+
+        while (t && t1) {
+        }
+
+        while (true) {
+        }
+
+        while (1 < 2) {
+        }
+
+        while (true && true) {
+        }
+
+        while (!false) {
+        }
+
+        while (!t) {
+        }
+
+        return t;
+    }
+}

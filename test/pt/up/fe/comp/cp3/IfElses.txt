@@ -1,0 +1,44 @@
+class IntInIfCondition {
+
+    public static void main(String[] args) {
+
+    }
+
+    public int foo() {
+        boolean a;
+        boolean b;
+
+        a = true;
+        b = true;
+
+        if (a) {
+        } else {
+        }
+
+        if (a && b) {
+        } else {
+        }
+
+        if (false) {
+        } else {
+        }
+
+        if (1 < 2){
+        } else {
+        }
+
+        if (true && true) {
+        } else {
+        }
+
+        if (!true) {
+        } else {
+        }
+
+       if (!a) {
+        } else {
+        }
+
+        return 0;
+    }
+}
