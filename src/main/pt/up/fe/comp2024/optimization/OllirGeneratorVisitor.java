@@ -81,7 +81,7 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         code.append(String.format("goto if_end_%s;", node.get("ifLabel"))).append(NL);
 
         code.append(String.format("if_then_%s:", node.get("ifLabel"))).append(NL);
-        code.append(visit(statementToExecuteIfIfCondIsTrue)).append(NL);
+        code.append(visit(statementToExecuteIfIfCondIsTrue));
 
         code.append(String.format("if_end_%s:", node.get("ifLabel"))).append(NL);
         return code.toString();
