@@ -37,6 +37,7 @@ public enum Kind {
   BOOL_TYPE,
   INTEGER_TYPE,
   ARRAY_TYPE,
+  SCOPE_STMT,
   EXPR_STMT,
   ABSTRACT_DATA_TYPE;
 

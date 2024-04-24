@@ -26,6 +26,7 @@ public class CheckVarArg extends AnalysisVisitor {
         int varargCount = 0;
         for (Symbol symbol : symbols) {
             if (symbol.getType().getName().equals(TypeUtils.getVarargTypeName())) {
+                symbols.getLast();
                 Symbol lastSymbol = symbols.getLast();
 
                 if(!symbol.equals(lastSymbol)) {

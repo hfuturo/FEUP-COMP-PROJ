@@ -27,8 +27,7 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
     private final String NL = "\n";
     private final String L_BRACKET = " {\n";
     private final String R_BRACKET = "}\n";
-
-
+    private int lBranchCounter = 0;
     private final SymbolTable table;
 
     private final OllirExprGeneratorVisitor exprVisitor;
@@ -49,8 +48,52 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit(ASSIGN_STMT, this::visitAssignStmt);
         addVisit(INIT_ARRAY, this::visitInitArray);
         addVisit(EXPR_STMT, this::visitExprStmt);
+        addVisit(SCOPE_STMT, this::visitScopeStmt);
+        addVisit(IF_ELSE_STMT, this::visitIfElseStmt);
         addVisit(INNER_MAIN_METHOD, this::visitMainMethod);
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private String visitScopeStmt(JmmNode node, Void unused) {
+        StringBuilder code = new StringBuilder();
+        List<JmmNode> children = node.getChildren();
+
+        for(JmmNode child: children) {
+            code.append(visit(child));
+        }
+
+        return code.toString();
+    }
+
+    private String visitIfElseStmt(JmmNode node, Void unused) {
+        StringBuilder code = new StringBuilder();
+        List<JmmNode> children = node.getChildren();
+
+        JmmNode expressionToEvaluate = children.get(0);
+        JmmNode statementToExecuteIfIfCondIsTrue = children.get(1);
+        JmmNode statementToExecuteIfIfCondIsFalse = children.get(2);
+
+        OllirExprResult expressionToEvaluateOllir = this.exprVisitor.visit(expressionToEvaluate);
+        code.append(expressionToEvaluateOllir.getComputation());
+        code.append(this.buildIfCode(node, expressionToEvaluateOllir.getCode()));
+
+        code.append(visit(statementToExecuteIfIfCondIsFalse));
+        code.append(String.format("goto if_end_%s;", node.get("ifLabel"))).append(NL);
+
+        code.append(String.format("if_then_%s:", node.get("ifLabel"))).append(NL);
+        code.append(visit(statementToExecuteIfIfCondIsTrue)).append(NL);
+
+        code.append(String.format("if_end_%s:", node.get("ifLabel"))).append(NL);
+        return code.toString();
+    }
+
+    private String buildIfCode(JmmNode node, String code) {
+        StringBuilder result = new StringBuilder();
+
+        result.append(String.format("if(%s) goto if_then_%s;", code, node.get("ifLabel"))).append(NL);
+        lBranchCounter += 1;
+
+        return result.toString();
     }
 
     private String visitExprStmt(JmmNode node, Void unused) {
@@ -262,6 +305,7 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
 
     private String visitProgram(JmmNode node, Void unused) {
+        this.lBranchCounter = 0;
 
         StringBuilder code = new StringBuilder();
 
