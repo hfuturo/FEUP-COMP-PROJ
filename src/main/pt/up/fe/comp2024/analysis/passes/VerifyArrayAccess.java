@@ -24,9 +24,11 @@ import static pt.up.fe.comp2024.ast.Kind.*;
  * @author JBispo
  */
 public class VerifyArrayAccess extends AnalysisVisitor {
-
+    private String currentMethod;
     @Override
     public void buildVisitor() {
+        addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
+        addVisit(Kind.INNER_MAIN_METHOD, this::visitInnerMainMethod);
         addVisit(Kind.ACCESS_ARRAY, this::visitArrayAccess);
     }
 
@@ -190,9 +192,27 @@ public class VerifyArrayAccess extends AnalysisVisitor {
     }
 
     private Void visitArrayAccess(JmmNode arrayAccess, SymbolTable table) {
+        String name = arrayAccess.get("var");
+        if(AnalysisUtils.validateIsField(name, this.currentMethod, table)) {
+            arrayAccess.put("isField", "true");
+        } else {
+            arrayAccess.put("isField", "false");
+        }
+
         this.checkArrayAccessIsOnArray(arrayAccess, table);
         this.checkArrayAccessHasIntegerIndex(arrayAccess, table);
 
+        return null;
+    }
+
+
+    private Void visitMethodDecl(JmmNode method, SymbolTable table) {
+        this.currentMethod = method.get("name");
+        return null;
+    }
+
+    private Void visitInnerMainMethod(JmmNode method, SymbolTable table) {
+        this.currentMethod = "main";
         return null;
     }
 }

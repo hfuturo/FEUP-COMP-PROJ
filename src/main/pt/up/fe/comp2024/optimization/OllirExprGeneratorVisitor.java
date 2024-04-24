@@ -1,5 +1,7 @@
 package pt.up.fe.comp2024.optimization;
 
+import org.specs.comp.ollir.Ollir;
+import org.specs.comp.ollir.OperandType;
 import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
@@ -40,8 +42,35 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         addVisit(PARENTHESIS, this::visitParenthesis);
         addVisit(THIS, this::visitThis);
         addVisit(UNARY, this::visitUnary);
+        addVisit(ACCESS_ARRAY, this::visitAccessArray);
 
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private OllirExprResult visitAccessArray(JmmNode node, Void unused) {
+        StringBuilder code = new StringBuilder();
+        StringBuilder computation = new StringBuilder();
+
+        String arrayAccessType = OptUtils.toOllirType(TypeUtils.getExprType(node, table));
+        JmmNode indexNode = node.getJmmChild(1);
+        JmmNode leftNode = node.getJmmChild(0);
+
+        if(node.get("assignLeft").equals("True")) {
+            code.append(leftNode.get("name")).append("[").append(indexNode.get("value")).append(arrayAccessType).append("]").append(arrayAccessType);
+        } else {
+            // just computation
+            // Create a temp variable that accesses the array
+            //computation.append(OptUtils.getTemp()).append(arrayAccessType);
+            //computation.append(" :=").append(arrayAccessType).append(SPACE);
+            String tmpVar = OptUtils.getTemp();
+
+            computation.append(tmpVar).append(arrayAccessType).append(" :=").append(arrayAccessType).append(SPACE);
+            computation.append(leftNode.get("name")).append(".array").append(arrayAccessType);
+            computation.append("[").append(indexNode.get("value")).append(".i32]").append(arrayAccessType).append(";\n");
+            code.append(tmpVar).append(arrayAccessType);
+        }
+
+        return new OllirExprResult(code.toString(), computation.toString());
     }
 
     private OllirExprResult visitUnary(JmmNode node, Void unused) {
@@ -141,7 +170,11 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
             if (parent.isInstance(ASSIGN_STMT)) {
                 JmmNode lhs = parent.getChild(0);
-                Optional<Symbol> leftType = AnalysisUtils.validateSymbolFromSymbolTable(table, lhs.get("name"));
+
+                Optional<String> name = lhs.getOptional("name");
+                if(name.isEmpty()) name = lhs.getOptional("var");
+
+                Optional<Symbol> leftType = AnalysisUtils.validateSymbolFromSymbolTable(table, name.get());
                 if (leftType.isPresent()) {
                     methodReturnType = OptUtils.toOllirType(TypeUtils.getExprType(lhs, table));
                 }
