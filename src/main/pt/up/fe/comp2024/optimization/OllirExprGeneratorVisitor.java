@@ -9,6 +9,7 @@ import pt.up.fe.comp.jmm.ast.AJmmVisitor;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PreorderJmmVisitor;
 import pt.up.fe.comp2024.analysis.AnalysisUtils;
+import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
@@ -58,15 +59,22 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         if(node.get("assignLeft").equals("True")) {
             code.append(leftNode.get("name")).append("[").append(indexNode.get("value")).append(arrayAccessType).append("]").append(arrayAccessType);
         } else {
-            // just computation
-            // Create a temp variable that accesses the array
-            //computation.append(OptUtils.getTemp()).append(arrayAccessType);
-            //computation.append(" :=").append(arrayAccessType).append(SPACE);
             String tmpVar = OptUtils.getTemp();
+
+            StringBuilder indexValue = new StringBuilder();
+
+            if(indexNode.getKind().equals("VarMethod")) {
+                // get code and computation of method
+                OllirExprResult result = visit(indexNode);
+                computation.append(result.getComputation());
+                indexValue.append(result.getCode());
+            } else {
+                indexValue.append(indexNode.get("value")).append(arrayAccessType);
+            }
 
             computation.append(tmpVar).append(arrayAccessType).append(" :=").append(arrayAccessType).append(SPACE);
             computation.append(leftNode.get("name")).append(".array").append(arrayAccessType);
-            computation.append("[").append(indexNode.get("value")).append(".i32]").append(arrayAccessType).append(";\n");
+            computation.append("[").append(indexValue).append("]").append(arrayAccessType).append(";\n");
             code.append(tmpVar).append(arrayAccessType);
         }
 
