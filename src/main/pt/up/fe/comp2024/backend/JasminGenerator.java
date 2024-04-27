@@ -25,6 +25,8 @@ public class JasminGenerator {
     private static final String TAB = "   ";
 
     private final OllirResult ollirResult;
+    private int maxConstantPoolValue = 5;
+    private int minConstantPoolValue = 0;
 
     List<String> classUnitImports;
 
@@ -242,7 +244,32 @@ public class JasminGenerator {
     }
 
     private String generateLiteral(LiteralElement literal) {
-        return "ldc " + literal.getLiteral() + NL;
+        StringBuilder generatedResult = new StringBuilder();
+
+        int literalValue = Integer.valueOf(literal.getLiteral());
+        if(this.constantValueExistsInConstantPool(literalValue)) {
+            generatedResult.append("iconst_" + literalValue);
+        } else if(this.isByte(literalValue)){
+            generatedResult.append("bipush " + literalValue);
+        } else if(this.isShort(literalValue)){
+            generatedResult.append("sipush " + literalValue);
+        } else {
+            generatedResult.append("ldc " + literalValue);
+        }
+
+        return generatedResult.toString() + NL;
+    }
+
+    private boolean isShort(int value) {
+        return ((-value) >> 15) == 0;
+    }
+
+    private boolean isByte(int value) {
+        return ((-value) >> 7) == 0;
+    }
+
+    private boolean constantValueExistsInConstantPool(int value) {
+        return (value >= this.minConstantPoolValue) && (value <= this.maxConstantPoolValue);
     }
 
     private String generateOperand(Operand operand) {
