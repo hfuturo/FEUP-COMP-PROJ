@@ -261,11 +261,11 @@ public class JasminGenerator {
     }
 
     private boolean isShort(int value) {
-        return ((-value) >> 15) == 0;
+        return (value <= 32767) && (value >= -32768);
     }
 
     private boolean isByte(int value) {
-        return ((-value) >> 7) == 0;
+        return (value <= 127) && (value >= -128);
     }
 
     private boolean constantValueExistsInConstantPool(int value) {
