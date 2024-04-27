@@ -63,7 +63,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
             StringBuilder indexValue = new StringBuilder();
 
-            if(indexNode.getKind().equals("VarMethod")) {
+            if(!indexNode.getKind().equals("IntegerLiteral")) {
                 // get code and computation of method
                 OllirExprResult result = visit(indexNode);
                 computation.append(result.getComputation());
