@@ -50,8 +50,35 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         addVisit(EXPR_STMT, this::visitExprStmt);
         addVisit(SCOPE_STMT, this::visitScopeStmt);
         addVisit(IF_ELSE_STMT, this::visitIfElseStmt);
+        addVisit(WHILE_STMT, this::visitWhileStmt);
         addVisit(INNER_MAIN_METHOD, this::visitMainMethod);
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private String visitWhileStmt(JmmNode jmmNode, Void unused) {
+        StringBuilder code = new StringBuilder();
+        List<JmmNode> children = jmmNode.getChildren();
+        String whileLabel = jmmNode.get("whileLabel");
+
+        JmmNode expressionToEvaluate = children.get(0);
+        JmmNode whileBody = children.get(1);
+
+        code.append(String.format("whileCond%s:", whileLabel)).append(NL);
+
+        OllirExprResult expressionToEvaluateOllir = this.exprVisitor.visit(expressionToEvaluate);
+
+        code.append(expressionToEvaluateOllir.getComputation());
+        code.append(String.format("if(%s) goto whileLoop%s;", expressionToEvaluateOllir.getCode(), whileLabel)).append(NL);
+        code.append(String.format("goto whileEnd%s;", whileLabel)).append(NL);
+
+        code.append(String.format("whileLoop%s:", whileLabel)).append(NL);
+
+        code.append(visit(whileBody));
+
+        code.append(String.format("goto whileCond%s;", whileLabel)).append(NL);
+        code.append(String.format("whileEnd%s:", whileLabel)).append(NL);
+
+        return code.toString();
     }
 
     private String visitScopeStmt(JmmNode node, Void unused) {

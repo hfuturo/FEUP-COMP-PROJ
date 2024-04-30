@@ -38,7 +38,8 @@ public class JmmAnalysisImpl implements JmmAnalysis {
                 new LastMethodStatementIsReturnPass(),
                 new SuperIsImportedPass(),
                 new MethodParamPass(),
-                new AddIfElseLabelNumber()
+                new AddIfElseLabelNumber(),
+                new AddWhileLabelNumber()
         );
     }
 
