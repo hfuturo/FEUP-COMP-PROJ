@@ -115,8 +115,6 @@ public class JasminGeneratorVisitor extends AJmmVisitor<Void, String> {
         code.append("\n.method ").append(modifier).append(methodName).append("(I)I").append(NL);
 
         // Add limits
-        code.append(TAB).append(".limit stack 99").append(NL);
-        code.append(TAB).append(".limit locals 99").append(NL);
 
         for (var stmt : methodDecl.getChildren("Stmt")) {
             // Get code for statement, split into lines and insert the necessary indentation

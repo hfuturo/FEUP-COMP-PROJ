@@ -2,6 +2,7 @@ package pt.up.fe.comp2024.backend;
 
 import org.specs.comp.ollir.*;
 import org.specs.comp.ollir.tree.TreeNode;
+import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ollir.OllirResult;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.specs.util.classmap.FunctionClassMap;
@@ -27,9 +28,9 @@ public class JasminGenerator {
     private final OllirResult ollirResult;
     private int maxConstantPoolValue = 5;
     private int minConstantPoolValue = 0;
-
+    private int stack = 1;
+    private int currentStackValue = 0;
     List<String> classUnitImports;
-
     List<Report> reports;
 
     String code;
@@ -159,6 +160,7 @@ public class JasminGenerator {
         // set method
         currentMethod = method;
         this.currentMethodVirtualReg = 1;
+        this.stack = 1;
 
         var code = new StringBuilder();
 
@@ -189,16 +191,20 @@ public class JasminGenerator {
                         JasminMethodUtils.getTypeInJasminFormat(method.getReturnType(), this.classUnitImports)).
                 append(NL);
 
-        // Add limits
-        code.append(TAB).append(".limit stack 99").append(NL);
-        code.append(TAB).append(".limit locals 99").append(NL);
-
+        StringBuilder instructions = new StringBuilder();
         for (var inst : method.getInstructions()) {
             var instCode = StringLines.getLines(generators.apply(inst)).stream()
                     .collect(Collectors.joining(NL + TAB, TAB, NL));
 
-            code.append(instCode);
+            instructions.append(instCode);
         }
+
+        int locals = this.getLimitLocals(method);
+
+        code.append(TAB).append(".limit stack " + this.stack).append(NL);
+        code.append(TAB).append(".limit locals " + locals).append(NL);
+
+        code.append(instructions);
 
         code.append(".end method\n");
 
@@ -206,6 +212,10 @@ public class JasminGenerator {
         currentMethod = null;
 
         return code.toString();
+    }
+
+    private int getLimitLocals(Method method) {
+        return method.getParams().size() + method.getVarTable().size() + 1;
     }
 
     private String generateAssign(AssignInstruction assign) {
@@ -236,6 +246,8 @@ public class JasminGenerator {
             }
         ).append(reg < 4 ? "_" : " ").append(reg).append(NL);
 
+        this.decreaseLimitStack();
+
         return code.toString();
     }
 
@@ -257,6 +269,8 @@ public class JasminGenerator {
             generatedResult.append("ldc " + literalValue);
         }
 
+        this.increaseLimitStack();
+
         return generatedResult.toString() + NL;
     }
 
@@ -276,11 +290,12 @@ public class JasminGenerator {
         // get register
         var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
 
+        this.increaseLimitStack();
+
         return switch (operand.getType().toString()) {
             case "INT32", "INT", "BOOLEAN" -> "iload";
             default -> "aload";
         } + (reg < 4 ? "_" : " ") + reg + NL;
-
     }
 
     private String generateBinaryOp(BinaryOpInstruction binaryOp) {
@@ -300,6 +315,8 @@ public class JasminGenerator {
         };
 
         code.append(op).append(NL);
+
+        this.decreaseLimitStack();
 
         return code.toString();
     }
@@ -392,6 +409,7 @@ public class JasminGenerator {
         if(!callInst.getReturnType().getTypeOfElement().name().equals("VOID") && !this.currentCallInstructionIsOnAssign) {
             code.append(NL);
             code.append("pop");
+            this.decreaseLimitStack();
         }
 
         if(this.currentCallInstructionIsOnAssign) {
@@ -403,9 +421,11 @@ public class JasminGenerator {
 
     private void generateNew(CallInstruction callInst, StringBuilder code) {
         code.append("new ");
+        this.increaseLimitStack();
         code.append(JasminMethodUtils.importFullPath(callInst.getOperands().get(0).toString().split(": ")[1].split("\\.")[0], this.classUnitImports));
         code.append(NL);
         code.append("dup");
+        this.increaseLimitStack();
         code.append(NL);
     }
 
@@ -417,6 +437,7 @@ public class JasminGenerator {
         code.append("<init>()V");
         code.append(NL);
         code.append("pop");
+        this.decreaseLimitStack();
         code.append(NL);
     }
 
@@ -439,6 +460,9 @@ public class JasminGenerator {
         StringBuilder code = new StringBuilder();
 
         code.append("aload_0").append(NL);
+        this.increaseLimitStack();
+
+        // This will also increase the stack, since it will apply the generators to the children
         code.append(generators.apply(putFieldInstruction.getOperands().get(2)));
 
         code.append("putfield");
@@ -451,6 +475,16 @@ public class JasminGenerator {
         code.append(NL);
 
         return code.toString();
+    }
+
+    private void increaseLimitStack() {
+        this.currentStackValue += 1;
+        this.stack = Math.max(this.currentStackValue, this.stack);
+    }
+
+    private void decreaseLimitStack() {
+        this.stack = Math.max(this.stack, this.currentStackValue);
+        this.currentStackValue--;
     }
 
     private String generateGetField(GetFieldInstruction getFieldInstruction) {
