@@ -11,6 +11,7 @@ import pt.up.fe.specs.util.utilities.StringLines;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ public class JasminGenerator {
     private int maxConstantPoolValue = 5;
     private int minConstantPoolValue = 0;
     private int stack = 1;
+    private int currentLthLabel = 0;
     private int currentStackValue = 0;
     List<String> classUnitImports;
     List<Report> reports;
@@ -57,6 +59,7 @@ public class JasminGenerator {
         generators.put(Method.class, this::generateMethod);
         generators.put(AssignInstruction.class, this::generateAssign);
         generators.put(SingleOpInstruction.class, this::generateSingleOp);
+        generators.put(SingleOpCondInstruction.class, this::generateSingleOpCond);
         generators.put(LiteralElement.class, this::generateLiteral);
         generators.put(Operand.class, this::generateOperand);
         generators.put(BinaryOpInstruction.class, this::generateBinaryOp);
@@ -64,8 +67,43 @@ public class JasminGenerator {
         generators.put(CallInstruction.class, this::generateCall);
         generators.put(PutFieldInstruction.class, this::generatePutField);
         generators.put(GetFieldInstruction.class, this::generateGetField);
+        generators.put(GotoInstruction.class, this::generateGotoInst);
+        generators.put(OpCondInstruction.class, this::t);
 
         this.currentCallInstructionIsOnAssign = false;
+    }
+
+    private String t(OpCondInstruction inst) {
+        return "";
+    }
+
+    private String generateGotoInst(GotoInstruction gotoInst) {
+        StringBuilder code = new StringBuilder();
+
+        code.append("goto ").append(gotoInst.getLabel()).append(NL).toString();
+        //code.append(gotoInst.get)
+
+        return code.toString();
+    }
+
+    private String generateSingleOpCond(SingleOpCondInstruction instruction) {
+        StringBuilder code = new StringBuilder();
+
+        List children = instruction.getChildren();
+        List descendants = instruction.getDescendants();
+        List h = instruction.getPredecessors();
+        List f = instruction.getSuccessors();
+
+        Operand operand = (Operand) instruction.getOperands().get(0);
+        var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
+        code.append("aload_").append(reg).append(NL);
+
+        // 2. Verificar se está a 1 (ifne) e se estiver, avançar para o statement dentro do if
+        code.append("ifne ").append(instruction.getLabel()).append(NL);
+
+        // 3. Antes da label do if temos de meter o código para correr em caso de else
+
+        return code.toString();
     }
 
     private String generateField(Field field) {
@@ -103,7 +141,6 @@ public class JasminGenerator {
 
         this.classUnitImports = classUnit.getImports();
         var code = new StringBuilder();
-
 
         // generate class name
         var className = ollirResult.getOllirClass().getClassName();
@@ -193,6 +230,13 @@ public class JasminGenerator {
 
         StringBuilder instructions = new StringBuilder();
         for (var inst : method.getInstructions()) {
+            for (Map.Entry<String, Instruction> entry : method.getLabels().entrySet()) {
+                Instruction currentInstruction = entry.getValue();
+                if(currentInstruction.equals(inst)) {
+                    instructions.append(entry.getKey()).append(":").append(NL);
+                }
+            }
+
             var instCode = StringLines.getLines(generators.apply(inst)).stream()
                     .collect(Collectors.joining(NL + TAB, TAB, NL));
 
@@ -311,6 +355,7 @@ public class JasminGenerator {
             case MUL -> "imul";
             case SUB -> "isub";
             case DIV -> "idiv";
+            case LTH -> this.lthCode(binaryOp);
             default -> throw new NotImplementedException(binaryOp.getOperation().getOpType());
         };
 
@@ -319,6 +364,42 @@ public class JasminGenerator {
         this.decreaseLimitStack();
 
         return code.toString();
+    }
+
+    private String lthCode(BinaryOpInstruction binaryOp) {
+        StringBuilder code = new StringBuilder();
+
+        code.append("isub").append(NL);
+        this.decreaseLimitStack();
+
+        int labelValue = this.currentLthLabel;
+
+        String trueLabel = this.getCmpTrueLabel(labelValue);
+        String endLabel = this.getCmpEndLabel(labelValue);
+
+        code.append("iflt ").append(trueLabel).append(NL);
+        code.append("iconst_0").append(NL);
+        code.append("goto ").append(endLabel).append(NL);
+
+        // 1. Generate cmp_0__true_label
+        code.append(trueLabel).append(":").append(NL);
+        code.append("iconst_1").append(NL);
+
+        this.increaseLimitStack(); // We just increment once besides having two iconst instructions because they are mutually exclusive
+
+        code.append(endLabel).append(":").append(NL);
+
+        this.currentLthLabel++;
+
+        return code.toString();
+    }
+
+    private String getCmpEndLabel(int labelValue) {
+        return "cmp_" + labelValue + "_end_label";
+    }
+
+    private String getCmpTrueLabel(int labelValue) {
+        return "cmp_" + labelValue + "_true_label";
     }
 
     private String generateReturn(ReturnInstruction returnInst) {
