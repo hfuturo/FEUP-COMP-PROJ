@@ -68,13 +68,33 @@ public class JasminGenerator {
         generators.put(PutFieldInstruction.class, this::generatePutField);
         generators.put(GetFieldInstruction.class, this::generateGetField);
         generators.put(GotoInstruction.class, this::generateGotoInst);
-        generators.put(OpCondInstruction.class, this::t);
+        generators.put(UnaryOpInstruction.class, this::generateUnaryOpInst);
+        generators.put(OpCondInstruction.class, this::generateOpCondInst);
 
         this.currentCallInstructionIsOnAssign = false;
     }
 
-    private String t(OpCondInstruction inst) {
-        return "";
+    private String generateOpCondInst(OpCondInstruction opCondInstruction) {
+        return this.generators.apply(opCondInstruction.getCondition());
+    }
+
+    private String generateUnaryOpInst(UnaryOpInstruction unaryOpInstruction) {
+        StringBuilder code = new StringBuilder();
+        code.append(generators.apply(unaryOpInstruction.getOperand()));
+        code.append("ifeq ").append(this.getCmpTrueLabel(this.currentLthLabel)).append(NL);
+        code.append("iconst_0").append(NL);
+        code.append("goto ").append(this.getCmpEndLabel(this.currentLthLabel)).append(NL);
+
+        code.append(this.getCmpTrueLabel(this.currentLthLabel)).append(":").append(NL);
+        code.append("iconst_1").append(NL);
+
+        // Store 1 into the condition
+        code.append(this.getCmpEndLabel(this.currentLthLabel)).append(":").append(NL);
+
+        this.increaseLimitStack();
+        this.currentLthLabel++;
+
+        return code.toString();
     }
 
     private String generateGotoInst(GotoInstruction gotoInst) {
@@ -206,7 +226,7 @@ public class JasminGenerator {
 
     private String generateMethod(Method method) {
         // set method
-        currentMethod = method;
+        this.currentMethod = method;
         this.currentMethodVirtualReg = 1;
         this.stack = 1;
 
@@ -372,12 +392,43 @@ public class JasminGenerator {
             case SUB -> "isub";
             case DIV -> "idiv";
             case LTH -> this.lthCode(binaryOp);
+            case ANDB -> this.andbCode(binaryOp);
             default -> throw new NotImplementedException(binaryOp.getOperation().getOpType());
         };
 
         code.append(op).append(NL);
 
         this.decreaseLimitStack();
+
+        return code.toString();
+    }
+
+    private String andbCode(BinaryOpInstruction binaryOp) {
+        StringBuilder code = new StringBuilder();
+
+        // 1. Avaliar left
+        code.append(generators.apply(binaryOp.getLeftOperand()));
+        code.append("ifne ").append(this.getCmpTrueLabel(this.currentLthLabel)).append(NL);
+
+        // 2. Se left for falso, sair logo e dar push do 0
+        code.append("iconst_0").append(NL);
+        code.append("goto ").append(this.getCmpEndLabel(this.currentLthLabel)).append(NL);
+
+        // 3. Este é o bloco de código onde vamos verificar o right
+        code.append(this.getCmpTrueLabel(this.currentLthLabel)).append(":").append(NL);
+        code.append(generators.apply(binaryOp.getRightOperand()));
+        code.append("ifne ").append(this.getCmpTrueLabel(this.currentLthLabel + 1)).append(NL);
+        code.append("iconst_0").append(NL);
+        code.append("goto ").append(this.getCmpEndLabel(this.currentLthLabel)).append(NL);
+
+        // 4. Dar push de verdadeiro caso o right seja diferente de zero
+        code.append(this.getCmpTrueLabel(this.currentLthLabel + 1)).append(":").append(NL);
+        code.append("iconst_1").append(NL);
+
+        // 5. Código final
+        code.append(this.getCmpEndLabel(this.currentLthLabel)).append(":").append(NL);
+
+        this.currentLthLabel += 2;
 
         return code.toString();
     }
