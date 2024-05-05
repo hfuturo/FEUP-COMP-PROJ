@@ -89,21 +89,32 @@ public class JasminGenerator {
     private String generateSingleOpCond(SingleOpCondInstruction instruction) {
         StringBuilder code = new StringBuilder();
 
-        List children = instruction.getChildren();
-        List descendants = instruction.getDescendants();
-        List h = instruction.getPredecessors();
-        List f = instruction.getSuccessors();
-
-        Operand operand = (Operand) instruction.getOperands().get(0);
-        var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
-        code.append("aload_").append(reg).append(NL);
+        Element operand = instruction.getOperands().get(0);
+        if(operand instanceof LiteralElement) {
+            code.append(generators.apply(operand));
+        } else if(operand instanceof Operand) {
+            code.append(this.generateLoadIndexInstruction(this.intOrReferenceLoad((Operand) operand), (Operand) operand)).append(NL);
+        }
 
         // 2. Verificar se está a 1 (ifne) e se estiver, avançar para o statement dentro do if
         code.append("ifne ").append(instruction.getLabel()).append(NL);
 
-        // 3. Antes da label do if temos de meter o código para correr em caso de else
-
         return code.toString();
+    }
+
+    private String intOrReferenceLoad(Operand operand) {
+        Type type = operand.getType();
+
+        if (type.toString().equals("BOOLEAN") || type.toString().equals("INT32")) {
+            return "iload";
+        }
+
+        return "aload";
+    }
+
+    private String generateLoadIndexInstruction(String instructionStart, Operand operand) {
+        var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
+        return instructionStart + (reg < 4 ? "_" : " ") + reg + NL;
     }
 
     private String generateField(Field field) {
@@ -237,10 +248,15 @@ public class JasminGenerator {
                 }
             }
 
-            var instCode = StringLines.getLines(generators.apply(inst)).stream()
-                    .collect(Collectors.joining(NL + TAB, TAB, NL));
+            for(String instruction: StringLines.getLines(generators.apply(inst))) {
+                if(!instruction.matches("cmp_\\d+_((true)|(end))_label:")) {
+                    instructions.append(TAB);
+                }
 
-            instructions.append(instCode);
+                instructions.append(instruction).append(NL);
+            }
+
+            //instructions.append(instCode);
         }
 
         int locals = this.getLimitLocals(method);
