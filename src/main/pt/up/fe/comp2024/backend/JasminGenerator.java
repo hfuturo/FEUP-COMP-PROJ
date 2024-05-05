@@ -500,12 +500,24 @@ public class JasminGenerator {
         switch (invocationType) {
             case invokestatic -> generateInvokeStatic(callInst, code);
             case invokevirtual -> generateInvokeVirtual(callInst, code);
-            case NEW -> generateNew(callInst, code);
+            case NEW -> {
+                if (callInst.getOperands().size() == 1) {
+                    generateNewClass(callInst, code);
+                } else {
+                    generateNewArray(callInst, code);
+                }
+            }
             case invokespecial -> generateSpecial(callInst, code);
+            case arraylength -> generateArrayLength(callInst, code);
             default -> throw new NotImplementedException("Invocation type " + invocationType.name() + " not implemented in CallInstruction");
         }
 
         return code.toString();
+    }
+
+    private void generateArrayLength(CallInstruction callInst, StringBuilder code) {
+        code.append(generators.apply(callInst.getCaller()));
+        code.append("arraylength").append(NL);
     }
 
     private void generateInvokeStatic(CallInstruction callInst, StringBuilder code) {
@@ -567,7 +579,7 @@ public class JasminGenerator {
         code.append(NL);
     }
 
-    private void generateNew(CallInstruction callInst, StringBuilder code) {
+    private void generateNewClass(CallInstruction callInst, StringBuilder code) {
         code.append("new ");
         this.increaseLimitStack();
         code.append(JasminMethodUtils.importFullPath(callInst.getOperands().get(0).toString().split(": ")[1].split("\\.")[0], this.classUnitImports));
@@ -575,6 +587,12 @@ public class JasminGenerator {
         code.append("dup");
         this.increaseLimitStack();
         code.append(NL);
+    }
+
+    private void generateNewArray(CallInstruction callInst, StringBuilder code) {
+        code.append(generators.apply(callInst.getOperands().getLast()));
+        code.append("newarray int").append(NL);
+        this.increaseLimitStack();
     }
 
     private void generateSpecial(CallInstruction callInst, StringBuilder code) {

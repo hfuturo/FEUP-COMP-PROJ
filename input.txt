@@ -1,19 +1,13 @@
 import ioPlus;
+class ComplexArrayAccess {
 
-class SimpleIfElseStat {
+    public int func(int a) {
+        return a;
+    }
 
 	public static void main(String[] args) {
-        SimpleIfElseStat s;
-        int[] a;
-        int b;
-
-        a = new int[2];
-        s = new SimpleIfElseStat();
-
-        b = s.foo(a);
-	}
-
-	public int foo(int... a) {
-	    return 0;
+	    int[] a;
+        a = new int[5];
+        a[0] = 1;
 	}
 }
