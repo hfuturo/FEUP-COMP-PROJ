@@ -2,7 +2,6 @@ package pt.up.fe.comp2024.backend;
 
 import org.specs.comp.ollir.*;
 import org.specs.comp.ollir.tree.TreeNode;
-import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ollir.OllirResult;
 import pt.up.fe.comp.jmm.report.Report;
 import pt.up.fe.specs.util.classmap.FunctionClassMap;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Generates Jasmin code from an OllirResult.
@@ -304,31 +302,52 @@ public class JasminGenerator {
         if(assign.getRhs().getInstType().name().equals(InstructionType.CALL.name())) {
             this.currentCallInstructionIsOnAssign = true;
         }
-        // generate code for loading what's on the right
-        code.append(generators.apply(assign.getRhs()));
 
         // store value in the stack in destination
         var lhs = assign.getDest();
-
         if (!(lhs instanceof Operand)) {
             throw new NotImplementedException(lhs.getClass());
         }
 
-        var operand = (Operand) lhs;
-
-        // get register
-        var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
-
-        code.append(
-            switch (operand.getType().toString()) {
-                case "INT32", "INT", "BOOLEAN" -> "istore";
-                default -> "astore";
-            }
-        ).append(reg < 4 ? "_" : " ").append(reg).append(NL);
+        if (lhs instanceof ArrayOperand) {
+            this.generateArrayAssign(assign, code);
+        }
+        else {
+            this.generateNormalAssign(assign, code);
+        }
 
         this.decreaseLimitStack();
 
         return code.toString();
+    }
+
+    private  void generateNormalAssign(AssignInstruction assign, StringBuilder code) {
+        var operand = (Operand) assign.getDest();
+
+        System.out.println("rhs:\t"+assign.getRhs());
+
+        // generate code for loading what's on the right
+        code.append(generators.apply(assign.getRhs()));
+
+        var reg = currentMethod.getVarTable().get(operand.getName()).getVirtualReg();
+        code.append(
+                switch (operand.getType().toString()) {
+                    case "INT32", "INT", "BOOLEAN" -> "istore";
+                    default -> "astore";
+                }
+        ).append(reg < 4 ? "_" : " ").append(reg).append(NL);
+    }
+
+    private void generateArrayAssign(AssignInstruction assign, StringBuilder code) {
+        var lhs = (ArrayOperand) assign.getDest();
+        var reg = currentMethod.getVarTable().get(lhs.getName()).getVirtualReg();
+        code.append("aload").append(reg < 4 ? "_" : " ").append(reg).append(NL);
+        code.append(generators.apply(lhs.getIndexOperands().get(0)));
+
+        // generate code for loading what's on the right
+        code.append(generators.apply(assign.getRhs()));
+
+        code.append("iastore").append(NL);
     }
 
     private String generateSingleOp(SingleOpInstruction singleOp) {
@@ -372,10 +391,16 @@ public class JasminGenerator {
 
         this.increaseLimitStack();
 
-        return switch (operand.getType().toString()) {
-            case "INT32", "INT", "BOOLEAN" -> "iload";
-            default -> "aload";
-        } + (reg < 4 ? "_" : " ") + reg + NL;
+        if (!(operand instanceof ArrayOperand)) {
+            return switch (operand.getType().toString()) {
+                case "INT32", "INT", "BOOLEAN" -> "iload";
+                default -> "aload";
+            } + (reg < 4 ? "_" : " ") + reg + NL;
+        }
+
+        return "aload" + (reg < 4 ? "_" : " ") + reg + NL +
+                generators.apply(((ArrayOperand) operand).getIndexOperands().get(0)) +
+                "iaload" + NL;
     }
 
     private String generateBinaryOp(BinaryOpInstruction binaryOp) {
