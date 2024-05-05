@@ -25,10 +25,8 @@ public class OptUtils {
     }
 
     public static String toOllirType(JmmNode typeNode) {
-        //Kind.fromString(typeNode.getKind()).checkIsTypeOrThrow(typeNode);
-
         String typeName = typeNode.get("name");
-        if (typeNode.isInstance(Kind.ARRAY_TYPE)) {
+        if (typeNode.isInstance(Kind.ARRAY_TYPE) || typeNode.isInstance(Kind.VAR_ARG_TYPE)) {
             return ".array" + toOllirType(typeName);
         }
 

@@ -1,8 +1,19 @@
 import ioPlus;
-class ArrayInit {
+
+class SimpleIfElseStat {
 
 	public static void main(String[] args) {
+        SimpleIfElseStat s;
+        int[] a;
         int b;
-        b = [1,2,3].length;
+
+        a = new int[2];
+        s = new SimpleIfElseStat();
+
+        b = s.foo(a);
+	}
+
+	public int foo(int... a) {
+	    return 0;
 	}
 }
