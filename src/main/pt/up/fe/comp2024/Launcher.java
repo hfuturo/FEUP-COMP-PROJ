@@ -55,7 +55,11 @@ public class Launcher {
         TestUtils.noErrors(jasminResult.getReports());
 //
 //        // Print Jasmin code
+        System.out.println("JASMIN CODE:\n");
         System.out.println(jasminResult.getJasminCode());
+
+        System.out.println("JASMIN RESULT:\n");
+        jasminResult.run();
     }
 
 }

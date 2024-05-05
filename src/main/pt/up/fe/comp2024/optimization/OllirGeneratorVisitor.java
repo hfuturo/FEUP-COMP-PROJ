@@ -162,10 +162,15 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
     }
 
     private String visitAssignStmt(JmmNode node, Void unused) {
-        var lhs = exprVisitor.visit(node.getJmmChild(0));
-        var rhs = exprVisitor.visit(node.getJmmChild(1));
+        JmmNode left = node.getJmmChild(0);
+        JmmNode right = node.getJmmChild(1);
+        var lhs = exprVisitor.visit(left);
+        var rhs = exprVisitor.visit(right);
 
         StringBuilder code = new StringBuilder();
+        boolean rightIsBinaryExpr = right.getKind().equals("BinaryExpr");
+        //if(rightIsBinaryExpr && right.get("name").equals(left.get("name"))) {
+        //}
 
         // code to compute the children
         code.append(lhs.getComputation());

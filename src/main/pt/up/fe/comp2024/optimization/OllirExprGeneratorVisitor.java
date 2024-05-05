@@ -11,6 +11,7 @@ import pt.up.fe.comp.jmm.ast.PreorderJmmVisitor;
 import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.TypeUtils;
+import pt.up.fe.specs.util.exceptions.NotImplementedException;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,8 +45,39 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         addVisit(THIS, this::visitThis);
         addVisit(UNARY, this::visitUnary);
         addVisit(ACCESS_ARRAY, this::visitAccessArray);
-
+        addVisit(NEW_INT, this::visitNewInt);
+        addVisit(LENGTH, this::visitLength);
+        addVisit(INIT_ARRAY, this::visitInitArray);
         setDefaultVisit(this::defaultVisit);
+    }
+
+    private OllirExprResult visitInitArray(JmmNode node, Void unused) {
+        throw new NotImplementedException("Problemas técnicos: INIT_ARRAY não está implementado e não irá ser resolvido muito cedo.");
+    }
+
+    private OllirExprResult visitLength(JmmNode node, Void unused) {
+        StringBuilder code = new StringBuilder();
+        OllirExprResult exprVisit = visit(node.getJmmChild(0));
+
+        String tempVar = OptUtils.getTemp();
+
+        code.append(tempVar);
+        code.append(".i32 :=.i32 arraylength(");
+        code.append(exprVisit.getCode());
+        code.append(").i32;\n");
+
+        return new OllirExprResult(tempVar + ".i32", code.toString());
+    }
+
+    private OllirExprResult visitNewInt(JmmNode node, Void unused) {
+        StringBuilder code = new StringBuilder();
+        OllirExprResult sizeVisit = visit(node.getJmmChild(0));
+
+        code.append("new(array, ");
+        code.append(sizeVisit.getCode());
+        code.append(").array.i32");
+
+        return new OllirExprResult(code.toString(), sizeVisit.getComputation());
     }
 
     private OllirExprResult visitAccessArray(JmmNode node, Void unused) {

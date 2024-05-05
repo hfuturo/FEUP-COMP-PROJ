@@ -1,32 +1,8 @@
-import A;
+import ioPlus;
+class ArrayInit {
 
-class X extends A {
-
-    public static void main(String[] args) {
-    }
-
-    public int foo() {
-
-        X x;
-
-        this.bar(x.reti(), x.retb());
-        return 0;
-    }
-
-    public int bar(int a, boolean b) {
-        return 0;
-    }
-
-    public int reti() {
-        return 0;
-    }
-
-    public boolean retb() {
-        return true;
-    }
-
-    public X idk() {
-        return this;
-    }
-
+	public static void main(String[] args) {
+        int b;
+        b = [1,2,3].length;
+	}
 }
