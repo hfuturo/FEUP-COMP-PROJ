@@ -56,7 +56,23 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         JmmNode indexNode = node.getJmmChild(1);
         JmmNode leftNode = node.getJmmChild(0);
 
-        if(node.get("assignLeft").equals("True")) {
+        Optional<String> assignLeftOpt = node.getOptional("assignLeft");
+        String assignLeft = assignLeftOpt.orElse("False");
+
+        if(assignLeft.equals("True")) {
+            String tmpVar = OptUtils.getTemp();
+
+            StringBuilder indexValue = new StringBuilder();
+
+            if(!indexNode.getKind().equals("IntegerLiteral")) {
+                // get code and computation of method
+                OllirExprResult result = visit(indexNode);
+                computation.append(result.getComputation());
+                indexValue.append(result.getCode());
+            } else {
+                indexValue.append(indexNode.get("value")).append(arrayAccessType);
+            }
+            
             code.append(leftNode.get("name")).append("[").append(indexNode.get("value")).append(arrayAccessType).append("]").append(arrayAccessType);
         } else {
             String tmpVar = OptUtils.getTemp();
