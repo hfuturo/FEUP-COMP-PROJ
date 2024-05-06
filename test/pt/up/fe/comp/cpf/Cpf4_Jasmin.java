@@ -146,7 +146,7 @@ public class Cpf4_Jasmin {
     /*checks if an addition is correct (more than 2 values)*/
     @Test
     public void section3_ControlFlow_If_Simple() {
-        CpUtils.runJasmin(getJasminResult("control_flow/SimpleIfElseStat.ollir"), "Result: 5\nResult: 8");
+       CpUtils.runJasmin(getJasminResult("control_flow/SimpleIfElseStat.ollir"), "Result: 5\nResult: 8");
     }
 
     /*checks if an addition is correct (more than 2 values)*/

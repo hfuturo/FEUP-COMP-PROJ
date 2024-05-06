@@ -393,6 +393,7 @@ public class JasminGenerator {
             case DIV -> "idiv";
             case LTH -> this.lthCode(binaryOp);
             case ANDB -> this.andbCode(binaryOp);
+            case GTE -> this.gteCode(binaryOp);
             default -> throw new NotImplementedException(binaryOp.getOperation().getOpType());
         };
 
@@ -402,6 +403,33 @@ public class JasminGenerator {
 
         return code.toString();
     }
+
+    private String gteCode(BinaryOpInstruction binaryOp) {
+        StringBuilder code = new StringBuilder();
+
+        code.append("isub").append(NL);
+        this.decreaseLimitStack();
+
+        int labelValue = this.currentLthLabel;
+
+        String trueLabel = this.getCmpTrueLabel(labelValue);
+        String endLabel = this.getCmpEndLabel(labelValue);
+
+        code.append("ifge ").append(trueLabel).append(NL);
+        code.append("iconst_0").append(NL);
+        code.append("goto ").append(endLabel).append(NL);
+
+        // 1. Generate cmp_0__true_label
+        code.append(trueLabel).append(":").append(NL);
+        code.append("iconst_1").append(NL);
+
+        this.increaseLimitStack(); // We just increment once besides having two iconst instructions because they are mutually exclusive
+
+        code.append(endLabel).append(":").append(NL);
+
+        this.currentLthLabel++;
+
+        return code.toString();    }
 
     private String andbCode(BinaryOpInstruction binaryOp) {
         StringBuilder code = new StringBuilder();
