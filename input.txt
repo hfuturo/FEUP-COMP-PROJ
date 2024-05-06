@@ -1,13 +1,14 @@
+import ioPlus;
 class MyClass {
 
     public static void main(String[] args) {
         MyClass c;
-        int[] a;
+        int a;
         c = new MyClass();
-        a = [1,2,3];
+        a = c.foo(1, [2, 3, 4]);
     }
 
-    public int foo(int[] f) {
+    public int foo(int a, int... b) {
         return 0;
     }
 

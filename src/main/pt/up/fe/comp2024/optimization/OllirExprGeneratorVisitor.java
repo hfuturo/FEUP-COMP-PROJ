@@ -177,8 +177,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
     }
 
     private OllirExprResult visitVarMethod(JmmNode node, Void unused) {
-        System.out.println("Node:\t" + node.toString());
-
         String methodName = node.get("name");
         JmmNode callerNode;
 

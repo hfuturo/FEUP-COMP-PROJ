@@ -4,6 +4,7 @@ import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp.jmm.ast.JmmNodeImpl;
 import pt.up.fe.comp2024.analysis.AnalysisVisitor;
 import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.TypeUtils;
@@ -34,10 +35,15 @@ public class MethodParamPass extends AnalysisVisitor {
         for(int i = 1; i < children.size(); i++) {
             Type type = params.get(i - 1).getType();
 
-            if(type.getName().equals(TypeUtils.getVarargTypeName())) {
+            if(type.getName().equals(TypeUtils.getVarargTypeName()) && !TypeUtils.getExprType(children.get(i), table).isArray()) {
+                JmmNode init_array = new JmmNodeImpl(Kind.INIT_ARRAY.toString());
+                init_array.setChildren(children.subList(children.size()-i-1, children.size()));
+
                 for(int j = i; j < children.size(); j++) {
-                    children.get(j).put("insideMethodReturnType", type.getName());
+//                    children.get(j).put("insideMethodReturnType", type.getName());
+                    node.removeChild(node.getNumChildren()-1);
                 }
+                node.add(init_array);
 
                 break;
             }
