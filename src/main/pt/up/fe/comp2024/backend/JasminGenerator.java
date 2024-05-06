@@ -329,8 +329,6 @@ public class JasminGenerator {
     private  void generateNormalAssign(AssignInstruction assign, StringBuilder code) {
         var operand = (Operand) assign.getDest();
 
-        System.out.println("rhs:\t"+assign.getRhs());
-
         // generate code for loading what's on the right
         code.append(generators.apply(assign.getRhs()));
 

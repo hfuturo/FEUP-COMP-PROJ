@@ -4,16 +4,11 @@ import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
-import pt.up.fe.comp.jmm.report.Report;
-import pt.up.fe.comp.jmm.report.Stage;
-import pt.up.fe.comp2024.analysis.AnalysisUtils;
 import pt.up.fe.comp2024.analysis.AnalysisVisitor;
 import pt.up.fe.comp2024.ast.Kind;
-import pt.up.fe.comp2024.ast.NodeUtils;
 import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 public class MethodParamPass extends AnalysisVisitor {
     @Override
@@ -25,7 +20,7 @@ public class MethodParamPass extends AnalysisVisitor {
         List<JmmNode> children = node.getChildren();
         JmmNode caller = children.get(0);
 
-        boolean callerIsNotThis = !caller.isInstance(Kind.THIS);
+        boolean callerIsNotThis = !caller.isInstance(Kind.THIS) && !TypeUtils.getExprType(caller, table).getName().equals(table.getClassName());
         if(callerIsNotThis ) {
             return null;
         }
