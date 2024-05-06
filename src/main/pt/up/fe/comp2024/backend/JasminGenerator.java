@@ -73,7 +73,13 @@ public class JasminGenerator {
     }
 
     private String generateOpCondInst(OpCondInstruction opCondInstruction) {
-        return this.generators.apply(opCondInstruction.getCondition());
+        StringBuilder code = new StringBuilder();
+
+        code.append(this.generators.apply(opCondInstruction.getCondition()));
+
+        code.append("ifne ").append(opCondInstruction.getLabel()).append(NL);
+
+        return code.toString();
     }
 
     private String generateUnaryOpInst(UnaryOpInstruction unaryOpInstruction) {
@@ -99,7 +105,6 @@ public class JasminGenerator {
         StringBuilder code = new StringBuilder();
 
         code.append("goto ").append(gotoInst.getLabel()).append(NL).toString();
-        //code.append(gotoInst.get)
 
         return code.toString();
     }
