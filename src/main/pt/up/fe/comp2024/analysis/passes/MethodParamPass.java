@@ -37,10 +37,9 @@ public class MethodParamPass extends AnalysisVisitor {
 
             if(type.getName().equals(TypeUtils.getVarargTypeName()) && !TypeUtils.getExprType(children.get(i), table).isArray()) {
                 JmmNode init_array = new JmmNodeImpl(Kind.INIT_ARRAY.toString());
-                init_array.setChildren(children.subList(children.size()-i-1, children.size()));
+                init_array.setChildren(children.subList(i, children.size()));
 
                 for(int j = i; j < children.size(); j++) {
-//                    children.get(j).put("insideMethodReturnType", type.getName());
                     node.removeChild(node.getNumChildren()-1);
                 }
                 node.add(init_array);
