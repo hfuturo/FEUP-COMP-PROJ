@@ -13,11 +13,20 @@ public class GraphNode<T> {
         this.edges = new ArrayList<>();
     }
 
+    public T getValue() {
+        return this.value;
+    }
+
     public void addEdges(List<GraphNode<T>> graphNodes) {
         for(GraphNode<T> graphNode: graphNodes) {
             graphNode.addEdge(this);
             this.addEdge(graphNode);
         }
+    }
+
+    public void addBidirectionalEdge(GraphNode<T> destNode) {
+        this.edges.add(new Edge(this, destNode));
+        destNode.addEdge(this);
     }
 
     public void addEdge(GraphNode<T> destNode) {

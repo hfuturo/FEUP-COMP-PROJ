@@ -7,6 +7,7 @@ import org.specs.comp.ollir.Operand;
 import org.specs.comp.ollir.tree.TreeNode;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CfgMetadata {
     private final HashMap<Node, Set<String>> use;
@@ -19,6 +20,7 @@ public class CfgMetadata {
         this.def = new HashMap<>();
         this.liveIn = new HashMap<>();
         this.liveOut = new HashMap<>();
+
         this.initHashMaps(cfgBeginNode);
 
         Node currentNode;
@@ -40,6 +42,27 @@ public class CfgMetadata {
         }
 
         this.computeLiveInAndOut(cfgBeginNode);
+    }
+
+    public boolean interfere(String variable1, String variable2) {
+        for(Map.Entry<Node, Set<String>> map: this.liveIn.entrySet()) {
+            Node currentNode = map.getKey();
+            Set<String> liveInVariableSet = map.getValue();
+            Set<String> liveOutDefVariableSet = this.liveOut.get(currentNode);
+            liveOutDefVariableSet.addAll(this.def.get(currentNode));
+
+            boolean bothAreOnLiveIn = liveInVariableSet.contains(variable1) && liveInVariableSet.contains(variable2);
+            boolean bothAreOnLiveOutDef = liveOutDefVariableSet.contains(variable1) && liveOutDefVariableSet.contains(variable2);
+            if(bothAreOnLiveIn || bothAreOnLiveOutDef) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean varInsideLiveInAndOutDef(Set<String> liveIn, Set<String> liveOutDef, String variable) {
+        return liveIn.contains(variable) && liveOutDef.contains(variable);
     }
 
     private void initHashMaps(Node cfgBeginNode) {
@@ -70,10 +93,21 @@ public class CfgMetadata {
     private void computeUse(Instruction instruction) {
         if(this.computationCfgNodeSentinel(instruction)) return;
 
-        // Se não for nenhum tipo de assign, é só percorrer e ver as crianças que são operandos e adicioná-las ao set do use
+        List<TreeNode> operands = instruction.getDescendants().stream().filter(n -> n instanceof Operand).collect(Collectors.toList());
 
-        List<TreeNode> l = instruction.getChildren();
-        System.out.println("debug");
+        // If is an assign, we ignore the first operand
+        for(int i = 0; i < operands.size(); i++) {
+            if(this.isAssign(instruction) && i == 0) {
+                continue;
+            }
+
+            Operand operand = (Operand) operands.get(i);
+            this.use.get(instruction).add(operand.getName());
+        }
+    }
+
+    private boolean isAssign(Instruction instruction) {
+        return instruction instanceof AssignInstruction;
     }
 
     private void computeDef(Instruction instruction) {

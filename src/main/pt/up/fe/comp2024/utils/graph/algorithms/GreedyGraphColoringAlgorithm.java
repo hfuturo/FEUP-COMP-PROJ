@@ -1,6 +1,5 @@
 package pt.up.fe.comp2024.utils.graph.algorithms;
 
-import pt.up.fe.comp2024.utils.graph.Edge;
 import pt.up.fe.comp2024.utils.graph.Graph;
 import pt.up.fe.comp2024.utils.graph.GraphColoringNode;
 
@@ -8,16 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class GreedyGraphColoringAlgorithm<T> {
-    Graph<GraphColoringNode<T>> graph;
+public class GreedyGraphColoringAlgorithm<T> implements GraphColoringAlgorithm<T> {
     int startingColor;
-    public GreedyGraphColoringAlgorithm(Graph<GraphColoringNode<T>> graph, int startingColor) {
-        this.graph = graph;
-        this.startingColor = startingColor;
+    public GreedyGraphColoringAlgorithm() {
+        this.startingColor = 0;
     }
 
-    public void execute() {
-        List<GraphColoringNode<T>> nodes = this.graph.getNodes();
+    @Override
+    public void execute(Graph<GraphColoringNode<T>> graph, int startingColor) {
+        List<GraphColoringNode<T>> nodes = graph.getNodes();
 
         for(var node: nodes) {
             Optional<Integer> lowestRegisterValue = this.getLowestRegisterAvailableFor(node);

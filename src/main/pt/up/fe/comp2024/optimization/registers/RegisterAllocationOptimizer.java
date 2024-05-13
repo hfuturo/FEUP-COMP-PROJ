@@ -8,66 +8,59 @@ import pt.up.fe.comp.jmm.ollir.OllirResult;
 import pt.up.fe.comp2024.utils.graph.Graph;
 import pt.up.fe.comp2024.utils.graph.GraphColoringNode;
 import pt.up.fe.comp2024.utils.graph.GraphNode;
+import pt.up.fe.comp2024.utils.graph.algorithms.GraphColoringAlgorithm;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public abstract class RegisterAllocationOptimizer {
-    HashMap<Method, Graph<GraphColoringNode<String>>> graphMaps;
+public class RegisterAllocationOptimizer {
     OllirResult ollirResult;
+    GraphColoringAlgorithm<String> graphColoringAlgorithm;
 
-    public RegisterAllocationOptimizer(OllirResult ollirResult) {
+    public RegisterAllocationOptimizer(OllirResult ollirResult, GraphColoringAlgorithm<String> graphColoringAlgorithm) {
         this.ollirResult = ollirResult;
-        this.graphMaps = new HashMap<>();
+        this.graphColoringAlgorithm = graphColoringAlgorithm;
 
-        this.buildInterferenceGraph();
     }
 
-    private void buildInterferenceGraph() {
-        HashMap<Method, Graph<GraphColoringNode<String>>> result = new HashMap<>();
-
+    public void optimize() {
         for(Method method: this.ollirResult.getOllirClass().getMethods()) {
             method.buildCFG();
             CfgMetadata cfgMetadata = new CfgMetadata(method.getBeginNode());
-            Graph currentMethodGraph = new Graph<String>();
+            Graph<GraphColoringNode<String>> currentMethodGraph = new Graph<GraphColoringNode<String>>();
+            HashMap<String, GraphNode<String>> variableNodeMap = new HashMap<>();
+            List<String> variables = new ArrayList<>();
 
-
-            // Add nodes
+            // 1. Create nodes for each variable and store it inside an hash map mapping variable names to nodes
             for(Map.Entry<String, Descriptor> entry: method.getVarTable().entrySet()) {
-                List<GraphNode<String>> interferenceVars = this.findInterferenceVars(method.getInstructions(), entry.getKey());
-
-                GraphNode<String> graphNode = new GraphNode(entry.getKey());
-                graphNode.addEdges(interferenceVars);
-
+                String varName = entry.getKey();
+                GraphColoringNode<String> graphNode = new GraphColoringNode<>(varName);
+                variableNodeMap.put(varName, graphNode);
                 currentMethodGraph.addNode(graphNode);
+                variables.add(varName);
             }
 
-            this.graphMaps.put(method, currentMethodGraph);
+            // 2. For each variable, see which other ones interfere with it and add it as an edge on the graph
+            for(var variable1: variables) {
+                for(var variable2: variables) {
+                    if(variable2.equals(variable1)) continue;
+
+                    if(cfgMetadata.interfere(variable1, variable2)) {
+                        var variable1Node = variableNodeMap.get(variable1);
+                        var variable2Node = variableNodeMap.get(variable2);
+
+                        variable1Node.addEdge(variable2Node);
+                    }
+                }
+            }
+
+            this.graphColoringAlgorithm.execute(currentMethodGraph, method.getParams().size() + 1);
+            for(var node: currentMethodGraph.getNodes()) {
+                Optional<Integer> possibleColor = node.getColor();
+
+                if(possibleColor.isPresent()) {
+                    method.getVarTable().get(node.getValue()).setVirtualReg(possibleColor.get());
+                }
+            }
         }
-
-        this.graphMaps = result;
     }
-
-    private List<GraphNode<String>> findInterferenceVars(ArrayList<Instruction> methodInstructions, String var) {
-        return new ArrayList<>();
-    }
-
-    private void buildNodes(Graph graph) {
-        this.buildFieldNodes(graph);
-        this.buildMethodNodes(graph);
-    }
-
-    private void buildFieldNodes(Graph graph) {
-
-    }
-
-    private void buildMethodNodes(Graph graph) {
-        for(Method method: this.ollirResult.getOllirClass().getMethods()) {
-
-        }
-    }
-
-    public abstract void optimize();
 }

@@ -3,9 +3,9 @@ package pt.up.fe.comp2024.optimization;
 import pt.up.fe.comp.jmm.analysis.JmmSemanticsResult;
 import pt.up.fe.comp.jmm.ollir.JmmOptimization;
 import pt.up.fe.comp.jmm.ollir.OllirResult;
-import pt.up.fe.comp2024.optimization.registers.DefinedLimitRegisterAllocationOptimization;
-import pt.up.fe.comp2024.optimization.registers.FewAsPossibleRegisterAllocationOptimization;
 import pt.up.fe.comp2024.optimization.registers.RegisterAllocationOptimizer;
+import pt.up.fe.comp2024.utils.graph.algorithms.GreedyGraphColoringAlgorithm;
+import pt.up.fe.comp2024.utils.graph.algorithms.KColorsAlgorithm;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +53,7 @@ public class JmmOptimizationImpl implements JmmOptimization {
     private Optional<RegisterAllocationOptimizer> definedLimitRegisterAllocation(OllirResult ollirResult) {
         int maximumNumberOfRegisters = Integer.valueOf(ollirResult.getConfig().get("registerAllocation"));
         if(maximumNumberOfRegisters >= 1) {
-            return Optional.of(new DefinedLimitRegisterAllocationOptimization(ollirResult, maximumNumberOfRegisters));
+            return Optional.of(new RegisterAllocationOptimizer(ollirResult, new KColorsAlgorithm<>(maximumNumberOfRegisters)));
         }
 
         return Optional.empty();
@@ -61,7 +61,7 @@ public class JmmOptimizationImpl implements JmmOptimization {
 
     private Optional<RegisterAllocationOptimizer> fewAsPossibleRegisterAllocation(OllirResult ollirResult) {
         if(ollirResult.getConfig().get("registerAllocation").equals("0")) {
-            return Optional.of(new FewAsPossibleRegisterAllocationOptimization(ollirResult));
+            return Optional.of(new RegisterAllocationOptimizer(ollirResult, new GreedyGraphColoringAlgorithm<String>()));
         }
 
         return Optional.empty();
