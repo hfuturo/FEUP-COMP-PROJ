@@ -4,6 +4,7 @@ import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PreorderJmmVisitor;
 import pt.up.fe.comp2024.ast.Kind;
+import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +13,10 @@ import java.util.Map;
 public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Boolean> {
 
     Map<String, Integer> constants = new HashMap<>();
+
+    public ConstantPropagationOpt() {
+        setDefaultValue(() -> null);
+    }
 
     @Override
     protected void buildVisitor() {
@@ -27,7 +32,7 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
             String kind = child.getKind();
 
 
-            switch (Kind.valueOf(kind)) {
+            switch (Kind.fromString(kind)) {
                 case ASSIGN_STMT -> {
                     returnValue = visitAssignStmt(child, symbolTable);
                 }
@@ -49,6 +54,7 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
     private Boolean visitAssignStmt(JmmNode assign, SymbolTable symbolTable) {
         // verify if is const
         // if is const add to constants
+        // if is not const try to remove from constants
 
         // verify if right side has const values
         // if any is a constant, substitute by it
@@ -57,8 +63,12 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
         JmmNode variable = children.get(0);
         JmmNode rightHandSide = children.get(1);
 
-        if(rightHandSide.getKind().equals(Kind.INTEGER_TYPE.toString())) {
-            constants.put(variable.get("name"), 1);
+        if(Kind.fromString(rightHandSide.getKind()).equals(Kind.INTEGER_LITERAL)) {
+            String numberString = rightHandSide.get("value");
+            int number = Integer.getInteger(numberString, 0);
+            constants.put(variable.get("name"), number);
+        } else {
+            // try to remove from constants
         }
 
         return returnValue;
