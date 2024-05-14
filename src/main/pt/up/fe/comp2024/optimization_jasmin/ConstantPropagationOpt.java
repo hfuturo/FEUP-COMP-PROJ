@@ -21,6 +21,7 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
     private Boolean visitMethodDecl(JmmNode methodDecl, SymbolTable symbolTable) {
 
         List<JmmNode> children = methodDecl.getChildren();
+        Boolean returnValue = Boolean.FALSE;
 
         for(var child : children) {
             String kind = child.getKind();
@@ -28,11 +29,7 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
 
             switch (Kind.valueOf(kind)) {
                 case ASSIGN_STMT -> {
-                    // verify if is const
-                    // if is const add to constants
-
-                    // verify if right side has const values
-                    // if any is a constant, substitute by it
+                    returnValue = visitAssignStmt(child, symbolTable);
                 }
                 case VAR_METHOD -> {
                     // verify if any of parameters is const
@@ -46,12 +43,24 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
             }
         }
 
-        return Boolean.FALSE;
+        return returnValue;
     }
 
     private Boolean visitAssignStmt(JmmNode assign, SymbolTable symbolTable) {
-        List<JmmNode> children = assign.getChildren();
+        // verify if is const
+        // if is const add to constants
 
-        return Boolean.FALSE;
+        // verify if right side has const values
+        // if any is a constant, substitute by it
+        Boolean returnValue = Boolean.FALSE;
+        List<JmmNode> children = assign.getChildren();
+        JmmNode variable = children.get(0);
+        JmmNode rightHandSide = children.get(1);
+
+        if(rightHandSide.getKind().equals(Kind.INTEGER_TYPE.toString())) {
+            constants.put(variable.get("name"), 1);
+        }
+
+        return returnValue;
     }
 }

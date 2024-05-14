@@ -18,7 +18,6 @@ public class AstToJasminImpl implements AstToJasmin {
 
     @Override
     public JmmSemanticsResult optimize(JmmSemanticsResult semanticsResult) {
-
         // TODO: To implement for CP3
         return AstToJasmin.super.optimize(semanticsResult);
     }
