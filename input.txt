@@ -1,0 +1,16 @@
+import io;
+
+class VarargsAndArrayInit {
+
+    public static void main(String[] args) {
+        VarargsAndArrayInit a;
+        a = new VarargsAndArrayInit();
+
+        io.print(a.bar(1, 2));
+    }
+
+    public int bar(int... d) {
+        return [1,2,3][d.length];
+    }
+
+}

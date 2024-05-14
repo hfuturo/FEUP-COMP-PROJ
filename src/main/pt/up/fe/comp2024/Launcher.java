@@ -40,6 +40,8 @@ public class Launcher {
         JmmSemanticsResult semanticsResult = sema.semanticAnalysis(parserResult);
         TestUtils.noErrors(semanticsResult.getReports());
 
+        // Print AST para verificar se alterações na árvore forem bem sucedidas
+        System.out.println(parserResult.getRootNode().toTree());
 
         // Optimization stage
         JmmOptimizationImpl ollirGen = new JmmOptimizationImpl();

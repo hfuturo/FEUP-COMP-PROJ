@@ -52,7 +52,34 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
     }
 
     private OllirExprResult visitInitArray(JmmNode node, Void unused) {
-        throw new NotImplementedException("Problemas técnicos: INIT_ARRAY não está implementado e não irá ser resolvido muito cedo.");
+        StringBuilder code = new StringBuilder();
+        String lhsName;
+        int size = node.getNumChildren();
+        boolean isAssignment = node.getParent().isInstance(ASSIGN_STMT);
+
+        if (isAssignment) {
+            lhsName = node.getParent().getChild(0).get("name");
+        }
+        else {
+            lhsName = OptUtils.getTemp();
+            code.append(lhsName).append(".array.i32 :=.array.i32 ");
+        }
+
+        code.append("new(array, ").append(size).append(".i32).array.i32;\n");
+
+        for (int i = 0; i < size; i++) {
+            OllirExprResult exprVisit = visit(node.getJmmChild(i));
+            code.append(exprVisit.getComputation());
+            code.append(lhsName).append("[").append(i).append(".i32].i32 :=.i32 ").append(exprVisit.getCode());
+
+            if (i != size-1 || !isAssignment) {
+                code.append(";\n");
+            }
+        }
+
+        return isAssignment ?
+                new OllirExprResult(code.toString()) :
+                new OllirExprResult(lhsName + ".array.i32", code.toString());
     }
 
     private OllirExprResult visitLength(JmmNode node, Void unused) {
@@ -150,7 +177,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
     }
 
     private OllirExprResult visitVarMethod(JmmNode node, Void unused) {
-
         String methodName = node.get("name");
         JmmNode callerNode;
 
