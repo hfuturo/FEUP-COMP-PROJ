@@ -6,6 +6,7 @@ import pt.up.fe.comp.jmm.ollir.OllirResult;
 import pt.up.fe.comp2024.optimization.registers.RegisterAllocationOptimizer;
 import pt.up.fe.comp2024.utils.graph.algorithms.GreedyGraphColoringAlgorithm;
 import pt.up.fe.comp2024.utils.graph.algorithms.KColorsAlgorithm;
+import pt.up.fe.comp2024.optimization_jasmin.ConstantPropagationOpt;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +17,12 @@ public class JmmOptimizationImpl implements JmmOptimization {
 
     @Override
     public OllirResult toOllir(JmmSemanticsResult semanticsResult) {
+
+        if(semanticsResult.getConfig().containsKey("optimize") && semanticsResult.getConfig().get("optimize").equals("true")) {
+            var optVisitor = new ConstantPropagationOpt();
+            Boolean hasChanged = Boolean.FALSE;
+            hasChanged = optVisitor.visit(semanticsResult.getRootNode(), semanticsResult.getSymbolTable());
+        }
 
         var visitor = new OllirGeneratorVisitor(semanticsResult.getSymbolTable());
         var ollirCode = visitor.visit(semanticsResult.getRootNode());

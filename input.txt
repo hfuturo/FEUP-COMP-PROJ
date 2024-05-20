@@ -1,16 +1,10 @@
-import io;
-
-class VarargsAndArrayInit {
-
+class PropSimple {
+    public int foo(){
+	  int a;
+	  a = 10;
+	  return a;
+	}
     public static void main(String[] args) {
-        VarargsAndArrayInit a;
-        a = new VarargsAndArrayInit();
 
-        io.print(a.bar(1, 2));
     }
-
-    public int bar(int... d) {
-        return [1,2,3][d.length];
-    }
-
 }
