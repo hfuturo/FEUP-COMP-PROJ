@@ -26,7 +26,6 @@ public class JmmOptimizationImpl implements JmmOptimization {
             do {
                 constantFolding.setChanged(false);
                 constantPropagationOpt.setChanged(false);
-
                 constantPropagationOpt.visit(semanticsResult.getRootNode(), semanticsResult.getSymbolTable());
                 constantFolding.analyze(semanticsResult.getRootNode(), semanticsResult.getSymbolTable());
             } while (constantFolding.hasChanged() || constantPropagationOpt.hasChanged());

@@ -133,8 +133,8 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             } else {
                 indexValue.append(indexNode.get("value")).append(arrayAccessType);
             }
-            
-            code.append(leftNode.get("name")).append("[").append(indexNode.get("value")).append(arrayAccessType).append("]").append(arrayAccessType);
+
+            code.append(leftNode.get("name")).append("[").append(indexValue).append("]").append(arrayAccessType);
         } else {
             String tmpVar = OptUtils.getTemp();
 
