@@ -14,10 +14,13 @@ import java.util.*;
 public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Boolean> {
 
     Map<String, String> constants = new HashMap<>();
+
+    boolean changed;
     JmmParserImpl parser = new JmmParserImpl();
 
     public ConstantPropagationOpt() {
         setDefaultValue(() -> null);
+        this.changed = false;
     }
 
     @Override
@@ -36,19 +39,41 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
         Boolean returnValue = Boolean.FALSE;
         List<JmmNode> children = assign.getChildren();
         JmmNode variable = children.get(0);
-        String variableName = variable.get("name");
+        String variableName = variable.hasAttribute("name") ? variable.get("name") : "_INVALID";
+
+        if(Kind.fromString(variable.getKind()).equals(Kind.ACCESS_ARRAY)) {
+            returnValue |= visitArrayAcces(variable, constants);
+        }
+
         JmmNode rightHandSide = children.get(1);
 
-        if(Kind.fromString(rightHandSide.getKind()).equals(Kind.INTEGER_LITERAL)) {
+        if(getKind(rightHandSide).equals(Kind.INTEGER_LITERAL) && getKind(variable).equals(Kind.VAR_REF_EXPR)) {
             String number = rightHandSide.get("value");
             constants.put(variableName, number);
+        } else if(Kind.fromString(rightHandSide.getKind()).equals(Kind.VAR_REF_EXPR)) {
+            returnValue |= visitReplaceVarRef(rightHandSide, constants);
         } else {
             for(var child : rightHandSide.getDescendants(Kind.VAR_REF_EXPR)) {
                 returnValue |= visitReplaceVarRef(child, constants);
             }
-            constants.remove(variableName);
+            if(getKind(variable).equals(Kind.VAR_REF_EXPR)) {
+                constants.remove(variableName);
+            }
         }
 
+        return returnValue;
+    }
+
+    private Boolean visitArrayAcces(JmmNode arrayAccess, Map<String, String> constants) {
+        Boolean returnValue = Boolean.FALSE;
+        JmmNode arrayAccessVar = arrayAccess.getChild(1);
+        if(Kind.fromString(arrayAccessVar.getKind()).equals(Kind.VAR_REF_EXPR)) {
+            return visitReplaceVarRef(arrayAccessVar, constants);
+        } else {
+            for(var child : arrayAccessVar.getDescendants(Kind.VAR_REF_EXPR)) {
+                returnValue |= visitReplaceVarRef(child, constants);
+            }
+        }
         return returnValue;
     }
 
@@ -166,6 +191,7 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
             JmmParserResult result = parser.parse(constants.get(varRef.get("name")),"expr", CompilerConfig.getDefault());
             JmmNode newNode = result.getRootNode();
             varRef.replace(newNode);
+            this.changed = true;
             return Boolean.TRUE;
         }
 
@@ -182,5 +208,15 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
         }
 
         return result;
+    }
+
+    private Kind getKind(JmmNode node) {
+        return Kind.fromString(node.getKind());
+    }
+
+    public boolean hasChanged() {
+        boolean hasChanged = this.changed;
+        this.changed = false;
+        return hasChanged;
     }
 }
