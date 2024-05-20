@@ -48,6 +48,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         addVisit(NEW_INT, this::visitNewInt);
         addVisit(LENGTH, this::visitLength);
         addVisit(INIT_ARRAY, this::visitInitArray);
+        addVisit(UNARY, this::visitUnary);
         setDefaultVisit(this::defaultVisit);
     }
 
@@ -343,8 +344,35 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         return new OllirExprResult(code);
     }
 
+    private OllirExprResult visitAndShortCircuit(JmmNode node, Void unused) {
+        JmmNode firstCondition = node.getJmmChild(0);
+        JmmNode secondCondition = node.getJmmChild(1);
+
+        OllirExprResult firstConditionResult = this.visit(firstCondition);
+        OllirExprResult secondConditionResult = this.visit(secondCondition);
+
+        String tmpVar = OptUtils.getTemp();
+
+        int labelNumber = Integer.valueOf(node.get("ifLabel"));
+
+        StringBuilder computation = new StringBuilder();
+        computation.append("if(").append(firstConditionResult.getCode()).append(") goto if_label_").append(labelNumber).append(";").append("\n");
+        computation.append(String.format("%s.bool :=.bool 0.bool;", tmpVar)).append("\n");
+        computation.append("goto endif_").append(labelNumber).append(";\n");
+
+        computation.append("if_label_").append(labelNumber).append(":").append("\n");
+        computation.append(secondConditionResult.getComputation());
+
+        computation.append(tmpVar).append(".bool :=.bool ").append(secondConditionResult.getCode()).append(";\n");
+        computation.append("endif_").append(labelNumber).append(":").append("\n");
+
+        return new OllirExprResult(tmpVar + ".bool", computation.toString());
+    }
 
     private OllirExprResult visitBinExpr(JmmNode node, Void unused) {
+        if(node.get("op").equals("&&")) {
+            return this.visitAndShortCircuit(node, unused);
+        }
 
         var lhs = visit(node.getJmmChild(0));
         var rhs = visit(node.getJmmChild(1));

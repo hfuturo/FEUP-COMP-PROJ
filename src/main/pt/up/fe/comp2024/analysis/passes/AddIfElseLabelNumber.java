@@ -13,6 +13,20 @@ public class AddIfElseLabelNumber extends AnalysisVisitor  {
     @Override
     protected void buildVisitor() {
         addVisit(Kind.IF_ELSE_STMT, this::visitIfElseStmt);
+        addVisit(Kind.BINARY_EXPR, this::visitBinaryExpr);
+    }
+
+    private boolean isOllirIfInducingBinaryExpr(JmmNode binaryExpr) {
+        return binaryExpr.get("op").equals("&&");
+    }
+
+    private Void visitBinaryExpr(JmmNode node, SymbolTable table) {
+        if(!this.isOllirIfInducingBinaryExpr(node)) return null;
+
+        node.put(this.labelName, String.valueOf(this.labelNumber));
+
+        this.labelNumber++;
+        return null;
     }
 
     private Void visitIfElseStmt(JmmNode node, SymbolTable table) {
@@ -24,7 +38,7 @@ public class AddIfElseLabelNumber extends AnalysisVisitor  {
         this.assignScopeStmtLabelToItsFirstInstruction(ifScopeStmt);
         this.assignScopeStmtLabelToItsFirstInstruction(elseScopeStmt);
 
-        this.labelNumber += 1;
+        this.labelNumber++;
         return null;
     }
 
