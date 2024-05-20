@@ -22,26 +22,62 @@ public class ConstantFolding extends AnalysisVisitor {
     private Void visitBinaryExpr(JmmNode binaryExpr, SymbolTable unused) {
         JmmNode left = binaryExpr.getChild(0);
         JmmNode right = binaryExpr.getChild(1);
+        JmmNode newNode = null;
 
         if (left.isInstance(Kind.INTEGER_LITERAL) && right.isInstance(Kind.INTEGER_LITERAL)) {
-            var val1 = Integer.parseInt(left.get("value"));
-            var val2 = Integer.parseInt(right.get("value"));
-
-            int result = switch (binaryExpr.get("op")) {
-                case "+" -> val1 + val2;
-                case "-" -> val1 - val2;
-                case "*" -> val1 * val2;
-                case "/" -> val1 / val2;
-                default -> throw new RuntimeException("operator '" + binaryExpr.get("op") + "' not implemented");
-            };
-
-            JmmNode newNode = new JmmNodeImpl(Kind.INTEGER_LITERAL.toString());
-            newNode.put("value", String.valueOf(result));
-            binaryExpr.replace(newNode);
-            this.changed = true;
+            newNode = this.handleInteger(left, right, binaryExpr.get("op"));
+        }
+        else if (left.isInstance(Kind.BOOL) && right.isInstance(Kind.BOOL)) {
+            newNode = this.handleBool(left, right, binaryExpr.get("op"));
         }
 
+        if (newNode == null) return null;
+
+        binaryExpr.replace(newNode);
+        this.changed = true;
+
         return null;
+    }
+
+    private JmmNode handleInteger(JmmNode left, JmmNode right, String operator) {
+        var val1 = Integer.parseInt(left.get("value"));
+        var val2 = Integer.parseInt(right.get("value"));
+
+        JmmNode newNode;
+
+        if (operator.equals("<")) {
+            newNode = new JmmNodeImpl(Kind.BOOL.toString());
+            newNode.put("value", String.valueOf(val1 < val2));
+            return newNode;
+        }
+
+        var result = switch (operator) {
+            case "+" -> val1 + val2;
+            case "-" -> val1 - val2;
+            case "*" -> val1 * val2;
+            case "/" -> val1 / val2;
+            default -> throw new RuntimeException("operator '" + operator + "' not implemented");
+        };
+
+        newNode = new JmmNodeImpl(Kind.INTEGER_LITERAL.toString());
+        newNode.put("value", String.valueOf(result));
+
+        return newNode;
+    }
+
+    private JmmNode handleBool(JmmNode left, JmmNode right, String operator) {
+        var val1 = Boolean.valueOf(left.get("value"));
+        var val2 = Boolean.valueOf(right.get("value"));
+
+        boolean result = switch (operator) {
+            case "&&" -> val1 && val2;
+            default -> throw new RuntimeException("operator '" + operator + "' not implemented");
+        };
+
+        JmmNode newNode = new JmmNodeImpl(Kind.BOOL.toString());
+        newNode.put("value", String.valueOf(result));
+
+        return newNode;
     }
 
     public boolean hasChanged() {
