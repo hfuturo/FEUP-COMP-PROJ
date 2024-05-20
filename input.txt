@@ -6,10 +6,19 @@ class PropSimple {
     int f;
 
     public int foo(){
+      PropSimple p;
       int a;
-      field = [1,2,3];
-      a = field[0];
+      int[] b;
+      b = new int[4];
+     /* p = new PropSimple();
+      field = p.getArr();
+      field[p.getArr()[0]] = 0; */
+      a = b[0];
       return 0;
+    }
+
+    public int[] getArr() {
+        return [0];
     }
 
     public static void main(String[] args) {

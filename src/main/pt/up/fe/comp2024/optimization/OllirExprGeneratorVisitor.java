@@ -156,7 +156,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             computation.append(leftNodeOllir.getComputation());
 
             computation.append(tmpVar).append(arrayAccessType).append(" :=").append(arrayAccessType).append(SPACE);
-            computation.append(leftNodeOllir.getCode()).append(".array").append(arrayAccessType);
+            computation.append(leftNodeOllir.getCode());
             computation.append("[").append(indexValue).append("]").append(arrayAccessType).append(";\n");
             code.append(tmpVar).append(arrayAccessType);
         }
