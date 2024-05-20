@@ -56,7 +56,10 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         StringBuilder code = new StringBuilder();
         String lhsName;
         int size = node.getNumChildren();
-        boolean isAssignment = node.getParent().isInstance(ASSIGN_STMT);
+
+        // verifica se é assignment e se for verifica se é um field
+        // (fields usam metodos getField e putField, logo nao vao ser tratados como um assign)
+        boolean isAssignment = node.getParent().isInstance(ASSIGN_STMT) && !(node.getParent().getChild(0).get("isField").equals("True"));
 
         if (isAssignment) {
             lhsName = node.getParent().getChild(0).get("name");

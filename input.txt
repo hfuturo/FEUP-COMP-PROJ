@@ -1,28 +1,15 @@
+import A;
+
 class PropSimple {
+
+    int[] field;
+    int f;
+
     public int foo(){
       int a;
-      int c;
-      int[] doNot;
-      boolean b;
-      PropSimple p;
-      p = new PropSimple();
-
-      doNot = new int[5];
-      doNot[0] = 0;
-      doNot[p.bar()] = 0;
-      doNot[[1,2,3].length] = 5;
-
-      /*a = 10 + 4 + 5 + 6;
-      b = true && true && true;
-      b = 1 < 2;
-      b = !false;
-      c = a; */
-
+      field = [1,2,3];
+      a = field[0];
       return 0;
-    }
-
-    public int bar() {
-        return 0;
     }
 
     public static void main(String[] args) {

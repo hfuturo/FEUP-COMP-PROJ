@@ -184,6 +184,8 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         if(node.getJmmChild(0).get("isField").equals("True")) {
             var leftChild = node.getJmmChild(0);
+            System.out.println("code:\t"+rhs.getCode());
+            System.out.println("comp:\t"+rhs.getComputation());
             code.append("putfield(this, ").append(leftChild.get("name")).append(typeString).append(", ").append(rhs.getCode()).append(").V;\n");
         } else {
             code.append(lhs.getCode());
