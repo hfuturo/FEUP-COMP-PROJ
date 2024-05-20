@@ -20,14 +20,16 @@ public class JmmOptimizationImpl implements JmmOptimization {
     public OllirResult toOllir(JmmSemanticsResult semanticsResult) {
 
         if(semanticsResult.getConfig().containsKey("optimize") && semanticsResult.getConfig().get("optimize").equals("true")) {
-            var optVisitor = new ConstantPropagationOpt();
+            var constantPropagationOpt = new ConstantPropagationOpt();
             var constantFolding = new ConstantFolding();
 
             do {
                 constantFolding.setChanged(false);
-                optVisitor.visit(semanticsResult.getRootNode(), semanticsResult.getSymbolTable());
+                constantPropagationOpt.setChanged(false);
+
+                constantPropagationOpt.visit(semanticsResult.getRootNode(), semanticsResult.getSymbolTable());
                 constantFolding.analyze(semanticsResult.getRootNode(), semanticsResult.getSymbolTable());
-            } while (constantFolding.hasChanged());
+            } while (constantFolding.hasChanged() || constantPropagationOpt.hasChanged());
         }
 
         var visitor = new OllirGeneratorVisitor(semanticsResult.getSymbolTable());

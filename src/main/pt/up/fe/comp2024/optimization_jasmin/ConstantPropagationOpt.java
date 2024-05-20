@@ -215,8 +215,10 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
     }
 
     public boolean hasChanged() {
-        boolean hasChanged = this.changed;
-        this.changed = false;
-        return hasChanged;
+        return this.changed;
+    }
+
+    public void setChanged(boolean changed) {
+        this.changed = changed;
     }
 }
