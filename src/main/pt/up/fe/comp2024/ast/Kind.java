@@ -98,7 +98,7 @@ public enum Kind {
 
   public void checkIsTypeOrThrow(JmmNode node) {
     if(!this.checkIsType(node)) {
-      throw new RuntimeException("Node '" + node + "' is not a type");
+      throw new RuntimeException("GraphNode '" + node + "' is not a type");
     }
   }
 
@@ -110,7 +110,7 @@ public enum Kind {
   public void checkOrThrow(JmmNode node) {
 
     if (!check(node)) {
-      throw new RuntimeException("Node '" + node + "' is not a '" +
+      throw new RuntimeException("GraphNode '" + node + "' is not a '" +
                                  getNodeName() + "'");
     }
   }
@@ -147,7 +147,7 @@ public enum Kind {
   public static void checkOrThrow(JmmNode node, Kind... kindsToTest) {
     if (!check(node, kindsToTest)) {
       // throw if none matches
-      throw new RuntimeException("Node '" + node + "' is not any of " +
+      throw new RuntimeException("GraphNode '" + node + "' is not any of " +
                                  Arrays.asList(kindsToTest));
     }
   }

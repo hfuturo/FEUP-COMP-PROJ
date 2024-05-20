@@ -8,9 +8,7 @@ import pt.up.fe.specs.util.classmap.FunctionClassMap;
 import pt.up.fe.specs.util.exceptions.NotImplementedException;
 import pt.up.fe.specs.util.utilities.StringLines;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -298,7 +296,15 @@ public class JasminGenerator {
     }
 
     private int getLimitLocals(Method method) {
-        return method.getParams().size() + method.getVarTable().size() + 1;
+        int reservedRegistersForThis = 1;
+        Set<Integer> repeatedValues = new HashSet<>();
+        for(Map.Entry<String, Descriptor> entry: method.getVarTable().entrySet()) {
+            if(entry.getKey().equals("this")) continue;
+
+            repeatedValues.add(entry.getValue().getVirtualReg());
+        }
+
+        return reservedRegistersForThis + repeatedValues.size();
     }
 
     private String generateAssign(AssignInstruction assign) {

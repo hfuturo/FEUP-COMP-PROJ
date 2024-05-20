@@ -46,7 +46,7 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
             || leftExprNodeKind.equals(Kind.INIT_ARRAY.toString());
 
     if(!exprNodeHasValidKind) {
-      throw new RuntimeException(String.format("Node where .length was called is of invalid kind: %s", leftExprNodeKind));
+      throw new RuntimeException(String.format("GraphNode where .length was called is of invalid kind: %s", leftExprNodeKind));
     }
 
     Type leftExprType = TypeUtils.getExprType(leftExprNode, table);
