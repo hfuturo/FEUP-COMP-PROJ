@@ -41,6 +41,8 @@ public class ConstantFolding extends AnalysisVisitor {
     }
 
     private Void visitUnary(JmmNode unary, SymbolTable unused) {
+        if (!unary.getChild(0).isInstance(Kind.BOOL)) return null;
+
         String val = unary.getChild(0).get("value");
         JmmNode newNode = new JmmNodeImpl(Kind.BOOL.toString());
         newNode.put("value", String.valueOf(!(Boolean.parseBoolean(val))));
