@@ -356,6 +356,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         int labelNumber = Integer.valueOf(node.get("ifLabel"));
 
         StringBuilder computation = new StringBuilder();
+        computation.append(firstConditionResult.getComputation());
         computation.append("if(").append(firstConditionResult.getCode()).append(") goto if_label_").append(labelNumber).append(";").append("\n");
         computation.append(String.format("%s.bool :=.bool 0.bool;", tmpVar)).append("\n");
         computation.append("goto endif_").append(labelNumber).append(";\n");
