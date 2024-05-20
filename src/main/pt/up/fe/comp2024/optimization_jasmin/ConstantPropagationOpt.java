@@ -1,18 +1,20 @@
 package pt.up.fe.comp2024.optimization_jasmin;
 
+import org.antlr.v4.runtime.misc.Pair;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.ast.JmmNode;
 import pt.up.fe.comp.jmm.ast.PreorderJmmVisitor;
+import pt.up.fe.comp.jmm.parser.JmmParserResult;
+import pt.up.fe.comp2024.CompilerConfig;
 import pt.up.fe.comp2024.ast.Kind;
-import pt.up.fe.comp2024.ast.TypeUtils;
+import pt.up.fe.comp2024.parser.JmmParserImpl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Boolean> {
 
-    Map<String, Integer> constants = new HashMap<>();
+    Map<String, String> constants = new HashMap<>();
+    JmmParserImpl parser = new JmmParserImpl();
 
     public ConstantPropagationOpt() {
         setDefaultValue(() -> null);
@@ -24,53 +26,161 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
     }
 
     private Boolean visitMethodDecl(JmmNode methodDecl, SymbolTable symbolTable) {
-
+        constants.clear();
         List<JmmNode> children = methodDecl.getChildren();
+
+        return visitNodeChildren(children, this.constants);
+    }
+
+    private Boolean visitAssignStmt(JmmNode assign, Map<String, String> constants) {
         Boolean returnValue = Boolean.FALSE;
+        List<JmmNode> children = assign.getChildren();
+        JmmNode variable = children.get(0);
+        String variableName = variable.get("name");
+        JmmNode rightHandSide = children.get(1);
 
-        for(var child : children) {
-            String kind = child.getKind();
+        if(Kind.fromString(rightHandSide.getKind()).equals(Kind.INTEGER_LITERAL)) {
+            String number = rightHandSide.get("value");
+            constants.put(variableName, number);
+        } else {
+            for(var child : rightHandSide.getDescendants(Kind.VAR_REF_EXPR)) {
+                returnValue |= visitReplaceVarRef(child, constants);
+            }
+            constants.remove(variableName);
+        }
 
+        return returnValue;
+    }
 
-            switch (Kind.fromString(kind)) {
-                case ASSIGN_STMT -> {
-                    returnValue = visitAssignStmt(child, symbolTable);
-                }
-                case VAR_METHOD -> {
-                    // verify if any of parameters is const
-                }
-                case IF_ELSE_STMT -> {
-                    // do different visit
-                }
-                case WHILE_STMT -> {
-                    // do different visit (same one?)
-                }
+    private Boolean visitVarMethod(JmmNode varMethod, Map<String, String> constants) {
+        Boolean returnValue = Boolean.FALSE;
+        for(var child : varMethod.getDescendants(Kind.VAR_REF_EXPR)) {
+            returnValue |= visitReplaceVarRef(child, constants);
+        }
+
+        return returnValue;
+    }
+
+    private Boolean visitIfElseStmt(JmmNode ifElse, Map<String, String> constants) {
+        Boolean returnValue = Boolean.FALSE;
+        List<JmmNode> children = ifElse.getChildren();
+        JmmNode ifCondition = children.get(0);
+        List<JmmNode> ifBody = children.get(1).getChildren();
+        List<JmmNode> elseBody = children.get(2).getChildren();
+
+        Kind ifConditionKind = Kind.fromString(ifCondition.getKind());
+        if(ifConditionKind.equals(Kind.VAR_REF_EXPR)) {
+            returnValue = visitReplaceVarRef(ifCondition, constants);
+        } else {
+            for(JmmNode varRef : ifCondition.getDescendants(Kind.VAR_REF_EXPR)) {
+                returnValue |= visitReplaceVarRef(varRef, constants);
+            }
+        }
+
+        Map<String, String> ifConstants = new HashMap<>(constants);
+        Map<String, String> elseConstants = new HashMap<>(constants);
+        returnValue |= visitNodeChildren(ifBody, ifConstants);
+        returnValue |= visitNodeChildren(elseBody, elseConstants);
+        Set<String> constantKeys = constants.keySet();
+
+        for(String key : constantKeys) {
+            if(ifConstants.containsKey(key) && !constants.get(key).equals(ifConstants.get(key))) {
+                constants.remove(key); // if has same constant but different value -> cant determine value -> remove it
+                continue;
+            } else if(!ifConstants.containsKey(key)) {
+                constants.remove(key); // if has no constant -> was changed to non-constant -> remove it
+                continue;
+            }
+
+            if(elseConstants.containsKey(key) && !constants.get(key).equals(elseConstants.get(key))) {
+                constants.remove(key); // else has same constant but different value -> cant determine value -> remove it
+            } else if(!elseConstants.containsKey(key)) {
+                constants.remove(key); // else has no constant -> was changed to non-constant -> remove it
             }
         }
 
         return returnValue;
     }
 
-    private Boolean visitAssignStmt(JmmNode assign, SymbolTable symbolTable) {
-        // verify if is const
-        // if is const add to constants
-        // if is not const try to remove from constants
-
-        // verify if right side has const values
-        // if any is a constant, substitute by it
+    private Boolean visitNodeChildren(List<JmmNode> children, Map<String, String> constants) {
         Boolean returnValue = Boolean.FALSE;
-        List<JmmNode> children = assign.getChildren();
-        JmmNode variable = children.get(0);
-        JmmNode rightHandSide = children.get(1);
+        for(var child : children) {
+            String kind = child.getKind();
 
-        if(Kind.fromString(rightHandSide.getKind()).equals(Kind.INTEGER_LITERAL)) {
-            String numberString = rightHandSide.get("value");
-            int number = Integer.getInteger(numberString, 0);
-            constants.put(variable.get("name"), number);
-        } else {
-            // try to remove from constants
+            switch (Kind.fromString(kind)) {
+                case ASSIGN_STMT -> returnValue = visitAssignStmt(child, constants);
+                case VAR_METHOD -> returnValue |= visitVarMethod(child, constants);
+                case IF_ELSE_STMT -> returnValue |= visitIfElseStmt(child, constants);
+                case WHILE_STMT -> returnValue |= visitWhileStmt(child, constants);
+                case RETURN_STMT -> returnValue |= visitReturnStmt(child, constants);
+            }
         }
 
         return returnValue;
+    }
+
+    private Boolean visitWhileStmt(JmmNode whileStmt, Map<String, String> constants) {
+        Boolean returnValue = Boolean.FALSE;
+        List<JmmNode> children = whileStmt.getChildren();
+        JmmNode whileCondition = children.get(0);
+        List<JmmNode> whileBody = children.get(1).getChildren();
+
+        // getting vars assigned in while body and removing from constants
+        Set<String> assignedInWhile = getAssignedInNode(children.get(1));
+        for(String var : assignedInWhile) {
+            constants.remove(var);
+        }
+
+        Map<String, String> whileConstants = new HashMap<>(constants);
+        Kind whileConditionKind = Kind.fromString(whileCondition.getKind());
+        if(whileConditionKind.equals(Kind.VAR_REF_EXPR)) {
+            returnValue = visitReplaceVarRef(whileCondition, whileConstants);
+        } else {
+            for(JmmNode varRef : whileCondition.getDescendants(Kind.VAR_REF_EXPR)) {
+                returnValue |= visitReplaceVarRef(varRef, whileConstants);
+            }
+        }
+
+        returnValue |= visitNodeChildren(whileBody, whileConstants);
+
+        return returnValue;
+    }
+
+    private Boolean visitReturnStmt(JmmNode returnStmt, Map<String, String> constants) {
+        Boolean returnValue = Boolean.FALSE;
+
+        Kind returnStmtKind = Kind.fromString(returnStmt.getKind());
+        if(returnStmtKind.equals(Kind.VAR_REF_EXPR)) {
+            returnValue = visitReplaceVarRef(returnStmt, constants);
+        } else {
+            for(JmmNode varRef : returnStmt.getDescendants(Kind.VAR_REF_EXPR)) {
+                returnValue |= visitReplaceVarRef(varRef, constants);
+            }
+        }
+
+        return returnValue;
+    }
+
+    private Boolean visitReplaceVarRef(JmmNode varRef, Map<String, String> constants) {
+        if(constants.containsKey(varRef.get("name"))) {
+            JmmParserResult result = parser.parse(constants.get(varRef.get("name")),"expr", CompilerConfig.getDefault());
+            JmmNode newNode = result.getRootNode();
+            varRef.replace(newNode);
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
+    }
+
+    private Set<String> getAssignedInNode(JmmNode node) {
+        Set<String> result = new HashSet<>();
+        List<JmmNode> assignStmts = node.getDescendants(Kind.ASSIGN_STMT);
+
+        for(JmmNode assignStmt : assignStmts) {
+            JmmNode var = assignStmt.getChild(0);
+            result.add(var.get("name"));
+        }
+
+        return result;
     }
 }
