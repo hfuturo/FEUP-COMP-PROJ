@@ -125,6 +125,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
             if(!indexNode.getKind().equals("IntegerLiteral")) {
                 // get code and computation of method
+
                 OllirExprResult result = visit(indexNode);
                 computation.append(result.getComputation());
                 indexValue.append(result.getCode());
@@ -147,8 +148,11 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
                 indexValue.append(indexNode.get("value")).append(arrayAccessType);
             }
 
+            OllirExprResult leftNodeOllir = visit(leftNode);
+            computation.append(leftNodeOllir.getComputation());
+
             computation.append(tmpVar).append(arrayAccessType).append(" :=").append(arrayAccessType).append(SPACE);
-            computation.append(leftNode.get("name")).append(".array").append(arrayAccessType);
+            computation.append(leftNodeOllir.getCode()).append(".array").append(arrayAccessType);
             computation.append("[").append(indexValue).append("]").append(arrayAccessType).append(";\n");
             code.append(tmpVar).append(arrayAccessType);
         }
