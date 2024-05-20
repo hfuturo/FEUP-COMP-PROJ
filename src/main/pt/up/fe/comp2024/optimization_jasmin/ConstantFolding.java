@@ -17,6 +17,7 @@ public class ConstantFolding extends AnalysisVisitor {
     @Override
     public void buildVisitor() {
         addVisit(Kind.BINARY_EXPR, this::visitBinaryExpr);
+        addVisit(Kind.UNARY, this::visitUnary);
     }
 
     private Void visitBinaryExpr(JmmNode binaryExpr, SymbolTable unused) {
@@ -36,6 +37,14 @@ public class ConstantFolding extends AnalysisVisitor {
         binaryExpr.replace(newNode);
         this.changed = true;
 
+        return null;
+    }
+
+    private Void visitUnary(JmmNode unary, SymbolTable unused) {
+        String val = unary.getChild(0).get("value");
+        JmmNode newNode = new JmmNodeImpl(Kind.BOOL.toString());
+        newNode.put("value", String.valueOf(!(Boolean.parseBoolean(val))));
+        unary.replace(newNode);
         return null;
     }
 
