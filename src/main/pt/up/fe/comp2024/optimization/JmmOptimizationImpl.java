@@ -31,6 +31,7 @@ public class JmmOptimizationImpl implements JmmOptimization {
     }
 
     private void registerAllocation(OllirResult ollirResult) {
+        if(this.registerAllocationFlagNotSet(ollirResult)) return;
         if(this.isNoneRegisterAllocation(ollirResult)) return;
 
         List<Function<OllirResult, Optional<RegisterAllocationOptimizer>>> optimizationFinders = List.of(
@@ -44,6 +45,10 @@ public class JmmOptimizationImpl implements JmmOptimization {
                 break;
             }
         }
+    }
+
+    private boolean registerAllocationFlagNotSet(OllirResult ollirResult) {
+        return ollirResult.getConfig().get("registerAllocation") == null;
     }
 
     private boolean isNoneRegisterAllocation(OllirResult ollirResult) {
