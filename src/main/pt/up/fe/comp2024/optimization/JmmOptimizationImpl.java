@@ -41,8 +41,8 @@ public class JmmOptimizationImpl implements JmmOptimization {
             Optional<RegisterAllocationOptimizer> possibleOptimizer = finder.apply(ollirResult);
             if(possibleOptimizer.isPresent()) {
                 possibleOptimizer.get().optimize();
+                break;
             }
-            break;
         }
     }
 

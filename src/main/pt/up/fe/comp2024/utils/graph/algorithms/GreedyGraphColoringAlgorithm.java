@@ -23,7 +23,7 @@ public class GreedyGraphColoringAlgorithm<T> implements GraphColoringAlgorithm<T
             if(lowestRegisterValue.isPresent()) {
                 node.setColor(lowestRegisterValue.get());
             } else {
-                node.setColor(0);
+                node.setColor(startingColor);
             }
         }
     }

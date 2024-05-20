@@ -33,6 +33,7 @@ public class RegisterAllocationOptimizer {
             // 1. Create nodes for each variable and store it inside an hash map mapping variable names to nodes
             for(Map.Entry<String, Descriptor> entry: method.getVarTable().entrySet()) {
                 String varName = entry.getKey();
+                if(varName.equals("this")) continue;
                 GraphColoringNode<String> graphNode = new GraphColoringNode<>(varName);
                 variableNodeMap.put(varName, graphNode);
                 currentMethodGraph.addNode(graphNode);
@@ -42,6 +43,7 @@ public class RegisterAllocationOptimizer {
             // 2. For each variable, see which other ones interfere with it and add it as an edge on the graph
             for(var variable1: variables) {
                 for(var variable2: variables) {
+                    if(variable1.equals("this") || variable2.equals("this")) continue;
                     if(variable2.equals(variable1)) continue;
 
                     if(cfgMetadata.interfere(variable1, variable2)) {
