@@ -10,17 +10,18 @@ class AccessValidArray {
         c = new AccessValidArray();
 
         a = c.bar(arr);
+        arr = this.test();
 
         return 0;
     }
 
     public int bar(int... ar) {
-        arr = ar;
-        return a;
+        a = ar[0];
+        return arr[0];
     }
 
     public int[] test() {
-        return [1, 2, 3];
+        return arr;
     }
 
 }
