@@ -26,9 +26,17 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
     @Override
     protected void buildVisitor() {
         addVisit(Kind.METHOD_DECL, this::visitMethodDecl);
+        addVisit(Kind.INNER_MAIN_METHOD, this::visitMainMethod);
     }
 
     private Boolean visitMethodDecl(JmmNode methodDecl, SymbolTable symbolTable) {
+        constants.clear();
+        List<JmmNode> children = methodDecl.getChildren();
+
+        return visitNodeChildren(children, this.constants);
+    }
+
+    private Boolean visitMainMethod(JmmNode methodDecl, SymbolTable symbolTable) {
         constants.clear();
         List<JmmNode> children = methodDecl.getChildren();
 
