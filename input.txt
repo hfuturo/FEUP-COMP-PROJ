@@ -1,27 +1,48 @@
 import A;
 
-class PropSimple {
+class AccessValidArray {
 
-    int[] field;
-    int f;
+    public int foo() {
+       int[] arr;
+     /*   int[] arr2;
+        int b;
+        A a;
+        AccessValidArray c;
 
-    public int foo(){
-      PropSimple p;
-      int a;
-      int[] b;
-      b = new int[4];
-     /* p = new PropSimple();
-      field = p.getArr();
-      field[p.getArr()[0]] = 0; */
-      a = b[0];
-      return 0;
+        b = 1;
+
+        a = new A();
+        c = new AccessValidArray(); */
+
+        arr = [1, 2, 3];
+        //arr2 = [1, 2, 3];
+
+        arr[A.doe()] = 0;
+    /*  arr[0] = 0;
+        arr[b] = 0;
+        arr[1+1] = 0;
+        arr[this.bar()] = 0;
+        arr[c.bar()] = 0;
+        arr[arr.length] = 0;
+        arr[[1,2,3].length] = 0;
+        arr[arr2[0]] = 0;
+        arr[[1,2,3][0]] = 0;
+        arr[this.test()[0]] = 0;
+        arr[(1+1)] = 0;
+        arr[(1)] = 0;
+        arr[(this.bar() + 1)] = 0;
+        arr[(this.test().length)] = 0;
+        arr[(this.test()[(1+2)] + 1)] = 0; */
+
+        return 0;
     }
 
-    public int[] getArr() {
-        return [0];
+    public int bar() {
+        return 0;
     }
 
-    public static void main(String[] args) {
-
+    public int[] test() {
+        return [1, 2, 3];
     }
+
 }
