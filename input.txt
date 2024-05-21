@@ -2,47 +2,26 @@ import A;
 
 class AccessValidArray {
 
+    int[] arr;
+    int a;
+
     public int foo() {
-       int[] arr;
-     /*   int[] arr2;
-        int b;
-        A a;
         AccessValidArray c;
+        c = new AccessValidArray();
 
-        b = 1;
-
-        a = new A();
-        c = new AccessValidArray(); */
-
-        arr = [1, 2, 3];
-        //arr2 = [1, 2, 3];
-
-        arr[A.doe()] = 0;
-    /*  arr[0] = 0;
-        arr[b] = 0;
-        arr[1+1] = 0;
-        arr[this.bar()] = 0;
-        arr[c.bar()] = 0;
-        arr[arr.length] = 0;
-        arr[[1,2,3].length] = 0;
-        arr[arr2[0]] = 0;
-        arr[[1,2,3][0]] = 0;
-        arr[this.test()[0]] = 0;
-        arr[(1+1)] = 0;
-        arr[(1)] = 0;
-        arr[(this.bar() + 1)] = 0;
-        arr[(this.test().length)] = 0;
-        arr[(this.test()[(1+2)] + 1)] = 0; */
+        a = c.bar(arr);
+        arr = this.test();
 
         return 0;
     }
 
-    public int bar() {
-        return 0;
+    public int bar(int... ar) {
+        a = ar[0];
+        return arr[0];
     }
 
     public int[] test() {
-        return [1, 2, 3];
+        return arr;
     }
 
 }

@@ -103,12 +103,24 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
     private OllirExprResult visitNewInt(JmmNode node, Void unused) {
         StringBuilder code = new StringBuilder();
         OllirExprResult sizeVisit = visit(node.getJmmChild(0));
+        JmmNode parent = node.getParent();
 
-        code.append("new(array, ");
-        code.append(sizeVisit.getCode());
-        code.append(").array.i32");
+        System.out.println("computation:\t" + sizeVisit.getComputation());
 
-        return new OllirExprResult(code.toString(), sizeVisit.getComputation());
+        if (parent.isInstance(ASSIGN_STMT) && parent.getChild(0).get("isField").equals("True")) {
+            String temp = OptUtils.getTemp();
+            String computation = sizeVisit.getComputation() +
+                    temp + ".array.i32 " + ASSIGN + ".array.i32 " + "new(array, " + sizeVisit.getCode() + ").array.i32;\n";
+
+            return new OllirExprResult(temp + ".array.i32", computation);
+        }
+        else {
+            code.append("new(array, ");
+            code.append(sizeVisit.getCode());
+            code.append(").array.i32");
+
+            return new OllirExprResult(code.toString(), sizeVisit.getComputation());
+        }
     }
 
     private OllirExprResult visitAccessArray(JmmNode node, Void unused) {

@@ -54,6 +54,7 @@ public class CompatibleAssignTypes extends AnalysisVisitor {
         }
 
         if (!TypeUtils.areTypesAssignable(leftType, rightType, table)) {
+            System.out.println("entra");
             String message = SemanticErrorUtils.incompatibleType(leftType.toString(), rightType.toString(), "=");
             addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(assignStmt),
                     NodeUtils.getColumn(assignStmt), message, null));

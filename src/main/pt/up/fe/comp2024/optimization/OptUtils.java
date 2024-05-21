@@ -50,7 +50,7 @@ public class OptUtils {
 
     private static String toOllirType(String typeName, boolean isArray) {
         String type = "." + switch (typeName) {
-            case "int", "<" -> "i32";
+            case "int", "<", "vararg" -> "i32";
             case "boolean", "&&", "!" -> "bool";
             default -> typeName; // main class ou import
         };

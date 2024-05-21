@@ -182,7 +182,25 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         String typeString = OptUtils.toOllirType(thisType);
 
 
-        if(node.getJmmChild(0).get("isField").equals("True")) {
+
+        if(node.getJmmChild(0).isInstance(ACCESS_ARRAY) && node.getJmmChild(0).getJmmChild(0).get("isField").equals("True")) {
+            var accessArray = node.getJmmChild(0);
+            var varRef = accessArray.getJmmChild(0);
+            var varRefVisit = exprVisitor.visit(varRef);
+            var access = lhs.getCode();
+
+            code.append(varRefVisit.getCode());
+            code.append(SPACE);
+            code.append(ASSIGN).append(typeString);
+            code.append(SPACE);
+            code.append("getfield(this, ").append(varRef.get("name")).append(".array").append(typeString).append(")").append(".array").append(typeString).append(END_STMT);
+
+            code.append(varRefVisit.getCode(), 0, varRefVisit.getCode().indexOf('.'));
+            code.append('[').append(access, access.indexOf('[') + 1, access.indexOf(']')).append(']').append(typeString);
+            code.append(SPACE).append(ASSIGN).append(typeString).append(SPACE).append(rhs.getCode()).append(END_STMT);
+
+        } else if(node.getJmmChild(0).get("isField").equals("True")) {
+            var jmmNode = node.getJmmChild(0);
             var leftChild = node.getJmmChild(0);
             System.out.println("code:\t"+rhs.getCode());
             System.out.println("comp:\t"+rhs.getComputation());
