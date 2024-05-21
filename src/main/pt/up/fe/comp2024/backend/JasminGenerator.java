@@ -314,11 +314,6 @@ public class JasminGenerator {
             this.currentCallInstructionIsOnAssign = true;
         }
 
-        // 1. Se o rhs tiver apenas uma referência ao meu registo e o resto for tudo operandos literais, colocar o iinc
-        if(assign.getRhs().getInstType().name().equals(InstructionType.BINARYOPER.name()) && this.canUseIinc(assign)) {
-            this.generateIincAssign(assign, code);
-        }
-
         // store value in the stack in destination
         var lhs = assign.getDest();
         if (!(lhs instanceof Operand)) {
@@ -335,63 +330,6 @@ public class JasminGenerator {
         this.decreaseLimitStack();
 
         return code.toString();
-    }
-
-    private boolean canUseIinc(AssignInstruction assign) {
-        if(assign.getRhs().getChildren().size() != 2) return false;
-
-        OperationType opType  = ((BinaryOpInstruction) assign.getRhs()).getOperation().getOpType();
-        if(!opType.name().equals("SUB") && !opType.name().equals("ADD")) return false;
-
-        Instruction rightHandSide = assign.getRhs();
-
-        Operand dest = (Operand) assign.getDest();
-        TreeNode leftOperand = rightHandSide.getChildren().get(0);
-        TreeNode rightOperand = rightHandSide.getChildren().get(1);
-
-        var varTable = this.currentMethod.getVarTable();
-        if((leftOperand.getClass() == LiteralElement.class) && (rightOperand.getClass() == Operand.class)) {
-            return this.varHasReg((Operand) rightOperand, varTable, varTable.get(dest.getName()).getVirtualReg());
-        }
-
-        if((rightOperand.getClass() == LiteralElement.class) && (leftOperand.getClass() == Operand.class)) {
-            return this.varHasReg((Operand) leftOperand, varTable, varTable.get(dest.getName()).getVirtualReg());
-        }
-
-        return false;
-    }
-
-    private boolean varHasReg(Operand operand, HashMap<String, Descriptor> varTable, int reg) {
-        Descriptor varDescriptor = varTable.get(operand.getName());
-        if(varDescriptor == null) {
-            return false;
-        }
-
-        return varDescriptor.getVirtualReg() == reg;
-    }
-
-    private int getIincIntegerValue(AssignInstruction assign) {
-        int result = 0;
-
-        TreeNode leftOperand = assign.getRhs().getChildren().get(0);
-        TreeNode rightOperand = assign.getRhs().getChildren().get(1);
-
-        OperationType opType = ((BinaryOpInstruction) assign.getRhs()).getOperation().getOpType();
-        if(leftOperand.getClass() == LiteralElement.class) {
-            result = Integer.parseInt(((LiteralElement) leftOperand).getLiteral());
-        } else if(rightOperand.getClass() == LiteralElement.class) {
-            result = Integer.parseInt(((LiteralElement) rightOperand).getLiteral());
-        }
-
-        if(opType.name().equals("SUB") && rightOperand.getClass() == LiteralElement.class) {
-            result *= -1;
-        }
-
-        return result;
-    }
-
-    private void generateIincAssign(AssignInstruction assign, StringBuilder code) {
-        code.append("iinc ").append(this.currentMethod.getVarTable().get(((Operand) assign.getDest()).getName()).getVirtualReg()).append(" ").append(this.getIincIntegerValue(assign)).append(NL);
     }
 
     private  void generateNormalAssign(AssignInstruction assign, StringBuilder code) {
