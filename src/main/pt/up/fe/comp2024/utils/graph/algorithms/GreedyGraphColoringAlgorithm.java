@@ -14,7 +14,7 @@ public class GreedyGraphColoringAlgorithm<T> implements GraphColoringAlgorithm<T
     }
 
     @Override
-    public void execute(Graph<GraphColoringNode<T>> graph, int startingColor) {
+    public boolean execute(Graph<GraphColoringNode<T>> graph, int startingColor) {
         List<GraphColoringNode<T>> nodes = graph.getNodes();
 
         for(var node: nodes) {
@@ -26,6 +26,8 @@ public class GreedyGraphColoringAlgorithm<T> implements GraphColoringAlgorithm<T
                 node.setColor(startingColor);
             }
         }
+
+        return true;
     }
 
     private Optional<Integer> getLowestRegisterAvailableFor(GraphColoringNode<T> node) {
