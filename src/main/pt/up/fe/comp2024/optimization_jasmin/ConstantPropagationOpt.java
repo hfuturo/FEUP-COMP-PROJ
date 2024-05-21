@@ -204,7 +204,8 @@ public class ConstantPropagationOpt extends PreorderJmmVisitor<SymbolTable, Bool
 
         for(JmmNode assignStmt : assignStmts) {
             JmmNode var = assignStmt.getChild(0);
-            result.add(var.get("name"));
+            if(var.isInstance(Kind.VAR_REF_EXPR))
+                result.add(var.get("name"));
         }
 
         return result;
