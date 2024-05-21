@@ -132,7 +132,9 @@ public class TypeUtils {
         String sourceName = sourceType.getName();
         String destName = destinationType.getName();
         List<String> imports = table.getImports();
-        boolean checkArrayConsistency = (sourceType.isArray() && destinationType.isArray()) || (!sourceType.isArray() && !destinationType.isArray());
+        boolean sourceIsArray = sourceType.isArray() || sourceType.getName().equals(TypeUtils.getVarargTypeName());
+        boolean destIsArray = destinationType.isArray() || destinationType.getName().equals(TypeUtils.getVarargTypeName());
+        boolean checkArrayConsistency = (sourceIsArray && destIsArray) || (!sourceIsArray && !destIsArray);
 
         if (sourceName.equals(destName)) {
             return checkArrayConsistency;
@@ -160,6 +162,10 @@ public class TypeUtils {
         }
 
         if (foundLeft && foundRight) {
+            return true;
+        }
+
+        if (sourceIsArray && destinationType.getName().equals(TypeUtils.getVarargTypeName())) {
             return true;
         }
 

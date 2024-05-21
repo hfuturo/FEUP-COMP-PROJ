@@ -2,20 +2,25 @@ import A;
 
 class AccessValidArray {
 
-    int intField;
-    int[] arrField;
-    boolean boolField;
-
-    public static void main(String[] args) {
-    }
+    int[] arr;
+    int a;
 
     public int foo() {
-        int[] arr;
-        int a;
-        a = 3;
-        intField = 0;
-        arrField = new int[10+5+a+arrField.length];
-        arr = new int[1+a+arrField.length];
+        AccessValidArray c;
+        c = new AccessValidArray();
+
+        a = c.bar(arr);
+
         return 0;
     }
+
+    public int bar(int... ar) {
+        arr = ar;
+        return a;
+    }
+
+    public int[] test() {
+        return [1, 2, 3];
+    }
+
 }
