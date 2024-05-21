@@ -4,6 +4,7 @@ import pt.up.fe.comp.jmm.analysis.JmmSemanticsResult;
 import pt.up.fe.comp.jmm.ollir.JmmOptimization;
 import pt.up.fe.comp.jmm.ollir.OllirResult;
 import pt.up.fe.comp2024.optimization.registers.RegisterAllocationOptimizer;
+import pt.up.fe.comp2024.optimization_jasmin.ConstantFolding;
 import pt.up.fe.comp2024.utils.graph.algorithms.GreedyGraphColoringAlgorithm;
 import pt.up.fe.comp2024.utils.graph.algorithms.KColorsAlgorithm;
 import pt.up.fe.comp2024.optimization_jasmin.ConstantPropagationOpt;
@@ -19,9 +20,15 @@ public class JmmOptimizationImpl implements JmmOptimization {
     public OllirResult toOllir(JmmSemanticsResult semanticsResult) {
 
         if(semanticsResult.getConfig().containsKey("optimize") && semanticsResult.getConfig().get("optimize").equals("true")) {
-            var optVisitor = new ConstantPropagationOpt();
-            Boolean hasChanged = Boolean.FALSE;
-            hasChanged = optVisitor.visit(semanticsResult.getRootNode(), semanticsResult.getSymbolTable());
+            var constantPropagationOpt = new ConstantPropagationOpt();
+            var constantFolding = new ConstantFolding();
+
+            do {
+                constantFolding.setChanged(false);
+                constantPropagationOpt.setChanged(false);
+                constantPropagationOpt.visit(semanticsResult.getRootNode(), semanticsResult.getSymbolTable());
+                constantFolding.analyze(semanticsResult.getRootNode(), semanticsResult.getSymbolTable());
+            } while (constantFolding.hasChanged() || constantPropagationOpt.hasChanged());
         }
 
         var visitor = new OllirGeneratorVisitor(semanticsResult.getSymbolTable());

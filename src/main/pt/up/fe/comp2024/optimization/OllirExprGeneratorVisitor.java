@@ -56,7 +56,10 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         StringBuilder code = new StringBuilder();
         String lhsName;
         int size = node.getNumChildren();
-        boolean isAssignment = node.getParent().isInstance(ASSIGN_STMT);
+
+        // verifica se é assignment e se for verifica se é um field
+        // (fields usam metodos getField e putField, logo nao vao ser tratados como um assign)
+        boolean isAssignment = node.getParent().isInstance(ASSIGN_STMT) && !(node.getParent().getChild(0).get("isField").equals("True"));
 
         if (isAssignment) {
             lhsName = node.getParent().getChild(0).get("name");
@@ -133,8 +136,8 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             } else {
                 indexValue.append(indexNode.get("value")).append(arrayAccessType);
             }
-            
-            code.append(leftNode.get("name")).append("[").append(indexNode.get("value")).append(arrayAccessType).append("]").append(arrayAccessType);
+
+            code.append(leftNode.get("name")).append("[").append(indexValue).append("]").append(arrayAccessType);
         } else {
             String tmpVar = OptUtils.getTemp();
 
@@ -153,7 +156,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             computation.append(leftNodeOllir.getComputation());
 
             computation.append(tmpVar).append(arrayAccessType).append(" :=").append(arrayAccessType).append(SPACE);
-            computation.append(leftNodeOllir.getCode()).append(".array").append(arrayAccessType);
+            computation.append(leftNodeOllir.getCode());
             computation.append("[").append(indexValue).append("]").append(arrayAccessType).append(";\n");
             code.append(tmpVar).append(arrayAccessType);
         }

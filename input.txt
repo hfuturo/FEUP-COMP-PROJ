@@ -1,9 +1,26 @@
+import A;
+
 class PropSimple {
+
+    int[] field;
+    int f;
+
     public int foo(){
-	  int a;
-	  a = 10;
-	  return a;
-	}
+      PropSimple p;
+      int a;
+      int[] b;
+      b = new int[4];
+     /* p = new PropSimple();
+      field = p.getArr();
+      field[p.getArr()[0]] = 0; */
+      a = b[0];
+      return 0;
+    }
+
+    public int[] getArr() {
+        return [0];
+    }
+
     public static void main(String[] args) {
 
     }
