@@ -352,11 +352,17 @@ public class JasminGenerator {
 
         var varTable = this.currentMethod.getVarTable();
         if((leftOperand.getClass() == LiteralElement.class) && (rightOperand.getClass() == Operand.class)) {
-            return this.varHasReg((Operand) rightOperand, varTable, varTable.get(dest.getName()).getVirtualReg());
+            int literal = Integer.parseInt(((LiteralElement) leftOperand).getLiteral());
+            boolean negativeMax = (opType.name().equals("SUB") && (literal <= 128));
+            boolean positiveMax = (opType.name().equals("ADD") && (literal <= 127));
+            return (negativeMax || positiveMax) && this.varHasReg((Operand) rightOperand, varTable, varTable.get(dest.getName()).getVirtualReg());
         }
 
         if((rightOperand.getClass() == LiteralElement.class) && (leftOperand.getClass() == Operand.class)) {
-            return this.varHasReg((Operand) leftOperand, varTable, varTable.get(dest.getName()).getVirtualReg());
+            int literal = Integer.parseInt(((LiteralElement) rightOperand).getLiteral());
+            boolean negativeMax = (opType.name().equals("SUB") && (literal <= 128));
+            boolean positiveMax = (opType.name().equals("ADD") && (literal <= 127));
+            return (negativeMax || positiveMax) && this.varHasReg((Operand) leftOperand, varTable, varTable.get(dest.getName()).getVirtualReg());
         }
 
         return false;
