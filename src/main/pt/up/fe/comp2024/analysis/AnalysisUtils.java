@@ -4,6 +4,7 @@ import pt.up.fe.comp.jmm.analysis.table.Symbol;
 import pt.up.fe.comp.jmm.analysis.table.SymbolTable;
 import pt.up.fe.comp.jmm.analysis.table.Type;
 import pt.up.fe.comp.jmm.ast.JmmNode;
+import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.TypeUtils;
 
 import java.util.List;
@@ -85,6 +86,11 @@ public class AnalysisUtils {
     }
 
     public static boolean allElementsOfArrayAreOfType(Type type, JmmNode arrayNode, SymbolTable table) {
+
+        if(arrayNode.isInstance(Kind.VAR_METHOD)) {
+            return true; // As the array is returned by a function call, the verification of all elements is done elsewhere
+        }
+
         for(JmmNode arrayElement: arrayNode.getChildren()) {
             if(!TypeUtils.getExprType(arrayElement, table).getName().equals(type.getName())) {
                 return false;
