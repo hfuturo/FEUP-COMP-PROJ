@@ -2,47 +2,20 @@ import A;
 
 class AccessValidArray {
 
+    int intField;
+    int[] arrField;
+    boolean boolField;
+
+    public static void main(String[] args) {
+    }
+
     public int foo() {
-       int[] arr;
-     /*   int[] arr2;
-        int b;
-        A a;
-        AccessValidArray c;
-
-        b = 1;
-
-        a = new A();
-        c = new AccessValidArray(); */
-
-        arr = [1, 2, 3];
-        //arr2 = [1, 2, 3];
-
-        arr[A.doe()] = 0;
-    /*  arr[0] = 0;
-        arr[b] = 0;
-        arr[1+1] = 0;
-        arr[this.bar()] = 0;
-        arr[c.bar()] = 0;
-        arr[arr.length] = 0;
-        arr[[1,2,3].length] = 0;
-        arr[arr2[0]] = 0;
-        arr[[1,2,3][0]] = 0;
-        arr[this.test()[0]] = 0;
-        arr[(1+1)] = 0;
-        arr[(1)] = 0;
-        arr[(this.bar() + 1)] = 0;
-        arr[(this.test().length)] = 0;
-        arr[(this.test()[(1+2)] + 1)] = 0; */
-
+        int[] arr;
+        int a;
+        a = 3;
+        intField = 0;
+        arrField = new int[10+5+a+arrField.length];
+        arr = new int[1+a+arrField.length];
         return 0;
     }
-
-    public int bar() {
-        return 0;
-    }
-
-    public int[] test() {
-        return [1, 2, 3];
-    }
-
 }
