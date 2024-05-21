@@ -5,6 +5,8 @@ import org.specs.comp.ollir.Instruction;
 import org.specs.comp.ollir.Method;
 import org.specs.comp.ollir.Node;
 import pt.up.fe.comp.jmm.ollir.OllirResult;
+import pt.up.fe.comp.jmm.report.Report;
+import pt.up.fe.comp.jmm.report.Stage;
 import pt.up.fe.comp2024.utils.graph.Graph;
 import pt.up.fe.comp2024.utils.graph.GraphColoringNode;
 import pt.up.fe.comp2024.utils.graph.GraphNode;
@@ -18,6 +20,7 @@ public class RegisterAllocationOptimizer {
 
     public RegisterAllocationOptimizer(OllirResult ollirResult, GraphColoringAlgorithm<String> graphColoringAlgorithm) {
         this.ollirResult = ollirResult;
+        Report.newError(Stage.OPTIMIZATION, 0, 0, "teste", null);
         this.graphColoringAlgorithm = graphColoringAlgorithm;
 
     }
@@ -55,13 +58,24 @@ public class RegisterAllocationOptimizer {
                 }
             }
 
-            this.graphColoringAlgorithm.execute(currentMethodGraph, method.getParams().size() + 1);
-            for(var node: currentMethodGraph.getNodes()) {
-                Optional<Integer> possibleColor = node.getColor();
+            boolean optimizationWasPossible = this.graphColoringAlgorithm.execute(currentMethodGraph, method.getParams().size() + 1);
+            if(optimizationWasPossible) {
+                for (var node : currentMethodGraph.getNodes()) {
+                    Optional<Integer> possibleColor = node.getColor();
 
-                if(possibleColor.isPresent()) {
-                    method.getVarTable().get(node.getValue()).setVirtualReg(possibleColor.get());
+                    if (possibleColor.isPresent()) {
+                        method.getVarTable().get(node.getValue()).setVirtualReg(possibleColor.get());
+                    }
                 }
+            } else {
+                Report report = Report.newError(
+                        Stage.OPTIMIZATION,
+                        0,
+                        0,
+                        "Register allocation was not possible with specified number of registers",
+                        null
+                );
+                this.ollirResult.getReports().add(report);
             }
         }
     }
