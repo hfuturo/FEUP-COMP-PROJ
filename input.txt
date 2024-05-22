@@ -11,7 +11,7 @@ class T {
 
         a = new A();
         inteiro = a.goo()[0];
-        //inteiro = arr[a.goo()];
+        inteiro = arr[a.goo()];
         //inteiro = arr[this.bar()];
 
         return 0;
