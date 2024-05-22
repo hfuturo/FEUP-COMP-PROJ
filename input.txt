@@ -1,33 +1,7 @@
-import io;
+class UndeclaredVariable {
 
-class Arithmetic_and {
-
-    boolean a;
-    int[] arr;
-
-
-    public static void main(String[] args) {
-    }
-
-    public int foo() {
-        int a;
-
-        a = this.p([1,2,3]).length;
-        //a = this.p(1+2);
-
-
-        return a;
-    }
-
-    public int[] p(int[] arr) {
-      /*  a = true;
-        a = false;
-        a = 1 < 2;
-        a = !(1 < 2) && true;
-        a = true && false;
-        a = false && false; */
-
-        return [1];
+    public int foo(int a) {
+        return a + b;
     }
 
 
