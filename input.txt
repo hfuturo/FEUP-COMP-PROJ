@@ -1,27 +1,25 @@
 import A;
 
-class AccessValidArray {
+class T {
 
     int[] arr;
-    int a;
+    int inteiro;
 
     public int foo() {
-        AccessValidArray c;
-        c = new AccessValidArray();
+        A a;
+        int i;
 
-        a = c.bar(arr);
-        arr = this.test();
+        a = new A();
+        inteiro = a.goo()[0];
+        //inteiro = arr[a.goo()];
+        //inteiro = arr[this.bar()];
 
         return 0;
     }
 
-    public int bar(int... ar) {
-        a = ar[0];
-        return arr[0];
+    public int bar() {
+        return 0;
     }
 
-    public int[] test() {
-        return arr;
-    }
-
+    public static void main(String[] args) {}
 }

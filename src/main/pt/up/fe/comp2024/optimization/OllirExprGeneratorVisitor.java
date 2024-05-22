@@ -295,7 +295,14 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
                 }
             }
             else if (parent.isInstance(ACCESS_ARRAY)) {
-                methodReturnType = ".i32";
+                // retorna array
+
+                if (parent.getChild(0).isInstance(VAR_METHOD)) {
+                    methodReturnType = ".array.i32";
+                }
+                else {
+                    methodReturnType = ".i32";
+                }
             }
 
             computation.append(String.format("%s%s :=%s ", tempVar, methodReturnType, methodReturnType));
