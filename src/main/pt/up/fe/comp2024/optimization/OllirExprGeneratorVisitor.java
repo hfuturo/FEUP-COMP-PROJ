@@ -92,6 +92,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
         String tempVar = OptUtils.getTemp();
 
+        code.append(exprVisit.getComputation());
         code.append(tempVar);
         code.append(".i32 :=.i32 arraylength(");
         code.append(exprVisit.getCode());
@@ -104,8 +105,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         StringBuilder code = new StringBuilder();
         OllirExprResult sizeVisit = visit(node.getJmmChild(0));
         JmmNode parent = node.getParent();
-
-        System.out.println("computation:\t" + sizeVisit.getComputation());
 
         if (parent.isInstance(ASSIGN_STMT) && parent.getChild(0).get("isField").equals("True")) {
             String temp = OptUtils.getTemp();
@@ -254,6 +253,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         StringBuilder params = new StringBuilder();
         // tem parametros
         if (node.getNumChildren() > 1) {
+            System.out.println("entra");
             for (int i = 1; i < node.getNumChildren(); i++) {
                 JmmNode child = node.getJmmChild(i);
                 params.append(", ");
@@ -261,10 +261,13 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
                 // adiciona código extra caso param seja uma BINARY_EXPR ou VAR_METHOD
                 computation.append(result.getComputation());
-
+                System.out.println("computation:\t" + computation);
+//                params.append(result.getComputation());
                 params.append(result.getCode());
             }
         }
+
+        System.out.println("param:\t" + params);
 
         // é um assign / operacao
         if (!parent.isInstance(EXPR_STMT)) {
@@ -315,7 +318,9 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         computation.append(methodName);
         computation.append("\"");
 
+
         if (params.length() > 0) {
+            System.out.println("entra if");
             computation.append(params);
         }
 
@@ -323,8 +328,12 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         computation.append(methodReturnType);
         computation.append(";");
         computation.append("\n");
+        System.out.println("computation:\t" + computation.toString());
 
         if (!parent.isInstance(EXPR_STMT)) {
+            System.out.println("entra final");
+            System.out.println("code:\t" + String.format("%s%s", tempVar, methodReturnType));
+            System.out.println("comp:\t" + computation.toString());
             return new OllirExprResult(String.format("%s%s", tempVar, methodReturnType), computation.toString());
         }
 

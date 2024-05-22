@@ -1,25 +1,34 @@
-import A;
+import io;
 
-class T {
+class Arithmetic_and {
 
+    boolean a;
     int[] arr;
-    int inteiro;
+
+
+    public static void main(String[] args) {
+    }
 
     public int foo() {
-        A a;
-        int i;
+        int a;
 
-        a = new A();
-        inteiro = a.goo()[0];
-        inteiro = arr[a.goo()];
-        //inteiro = arr[this.bar()];
+        a = this.p([1,2,3]).length;
+        //a = this.p(1+2);
 
-        return 0;
+
+        return a;
     }
 
-    public int bar() {
-        return 0;
+    public int[] p(int[] arr) {
+      /*  a = true;
+        a = false;
+        a = 1 < 2;
+        a = !(1 < 2) && true;
+        a = true && false;
+        a = false && false; */
+
+        return [1];
     }
 
-    public static void main(String[] args) {}
+
 }
