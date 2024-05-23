@@ -2,20 +2,7 @@ import A;
 
 class T {
 
-    int[] arr;
-    int inteiro;
-
-    public int foo() {
-        int a;
-        a = 0;
-        //a = this.bar(inteiro, arr);
-        a = this.bar(inteiro);
-
-        return 0;
-    }
-
-    public int bar(int a) {
-
+    public int bar(int a, int[] ar) {
         return 0;
     }
 

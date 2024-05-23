@@ -298,13 +298,18 @@ public class JasminGenerator {
     private int getLimitLocals(Method method) {
         int reservedRegistersForThis = method.isStaticMethod() ? 0 : 1;
         Set<Integer> repeatedValues = new HashSet<>();
+        int params = 0;
+
         for(Map.Entry<String, Descriptor> entry: method.getVarTable().entrySet()) {
             if(entry.getKey().equals("this")) continue;
+            if (entry.getValue().getScope().toString().equals("PARAMETER")) {
+                params++;
+                continue;
+            }
 
             repeatedValues.add(entry.getValue().getVirtualReg());
         }
-
-        return reservedRegistersForThis + repeatedValues.size();
+        return reservedRegistersForThis + repeatedValues.size() + params;
     }
 
     private String generateAssign(AssignInstruction assign) {
