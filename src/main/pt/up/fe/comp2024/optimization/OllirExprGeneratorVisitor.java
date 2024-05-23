@@ -62,13 +62,21 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         // (fields usam metodos getField e putField, logo nao vao ser tratados como um assign)
         boolean isAssignment = node.getParent().isInstance(ASSIGN_STMT) && !(node.getParent().getChild(0).get("isField").equals("True"));
 
-        if (isAssignment) {
+        if (node.getParent().getChild(0).hasAttribute("name")) {
             lhsName = node.getParent().getChild(0).get("name");
         }
         else {
             lhsName = OptUtils.getTemp();
             code.append(lhsName).append(".array.i32 :=.array.i32 ");
         }
+
+//        if (isAssignment) {
+//            lhsName = node.getParent().getChild(0).get("name");
+//        }
+//        else {
+//            lhsName = OptUtils.getTemp();
+//            code.append(lhsName).append(".array.i32 :=.array.i32 ");
+//        }
 
         code.append("new(array, ").append(size).append(".i32).array.i32");
 

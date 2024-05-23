@@ -1,18 +1,17 @@
 class T {
 
     public int foo(int... a) {
-        int len;
+        a = [this.bar() + 2];
+        return 0;
+    }
 
-        len = a.length;
+    public int bar() {
 
-        if (1 < 2 && true) {
-            a = [1];
+        this.foo(1, this.doe(), 0);
+        return 0;
+    }
 
-        }
-        else {
-            a = [0];
-        }
-
+    public int doe() {
         return 0;
     }
 
