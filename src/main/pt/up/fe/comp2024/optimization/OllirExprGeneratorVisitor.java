@@ -72,11 +72,12 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
         code.append("new(array, ").append(size).append(".i32).array.i32");
 
+        boolean hasParams = false;
         for (int i = 0; i < size; i++) {
+            hasParams = true;
             if (i == 0) {
                 code.append(";\n");
             }
-            System.out.println("entra for");
             OllirExprResult exprVisit = visit(node.getJmmChild(i));
             code.append(exprVisit.getComputation());
             code.append(lhsName).append("[").append(i).append(".i32].i32 :=.i32 ").append(exprVisit.getCode());
@@ -84,6 +85,10 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             if (i != size-1 || !isAssignment) {
                 code.append(";\n");
             }
+        }
+
+        if (!isAssignment && !code.toString().endsWith(";") && !hasParams) {
+            code.append(";\n");
         }
 
         return isAssignment ?

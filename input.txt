@@ -1,34 +1,14 @@
-/*
 class UndeclaredVariable {
 
     public int foo(int a) {
         int[] arr;
         arr = [];
-        //this.bar([]);
+        this.bar([]);
         return 0;
     }
 
     public int bar(int... a) {
         return 0;
-    }
-
-}
-*/
-
-class AccessValidArray {
-
-    int[] arr;
-
-    public int foo(int... arr1) {
-        return 0;
-    }
-
-    public int bar() {
-        return 0;
-    }
-
-    public int[] test() {
-        return [1, 2, 3];
     }
 
 }
