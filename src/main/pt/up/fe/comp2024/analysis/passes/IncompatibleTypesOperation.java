@@ -64,6 +64,10 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
             || leftExprNodeKind.equals(Kind.VAR_REF_EXPR.toString()) || leftExprNodeKind.equals(Kind.THIS.toString())
             || leftExprNodeKind.equals(Kind.INIT_ARRAY.toString());
 
+    if (leftExprNode.isInstance(PARENTHESIS)) {
+      visit(leftExprNode.getJmmChild(0));
+    }
+
     if(!exprNodeHasValidKind) {
       throw new RuntimeException(String.format("GraphNode where .length was called is of invalid kind: %s", leftExprNodeKind));
     }

@@ -1,57 +1,17 @@
-/*class T {
-
-    boolean f;
-
-    public int foo(int[] arr, int... var) {
-        boolean b;
-        int a;
-        int c;
-
-        while (!(a<c)) {}
-        while (a < c) {}
-        while (b) {}
-        while (f) {}
-        while (!b) {}
-        while (b && f) {}
-        while (true) {}
-        while (true && false && true) {}
-        while (false) {}
-        while (!true) {}
-        while ([1,2,3].length < [1,2,3][0]) {}
-        while (arr.length < var.length) {}
-        while (arr[0] < var[0]) {}
-        //while (!1) {}
-        while (!true && false) {}
-
-
-        if (!(a<c)) {} else {}
-        if (a < c) {} else {}
-        if (b) {} else {}
-        if (f) {} else {}
-        if (!b) {} else {}
-        if (b && f) {} else {}
-        if (true) {} else {}
-        if (true && false && true) {} else {}
-        if (false) {} else {}
-        if (!true) {} else {}
-        if ([1,2,3].length < [1,2,3][0]) {} else {}
-        if (arr.length < var.length) {} else {}
-        if (arr[0] < var[0]) {} else {}
-
-        return 0;
-    }
-
-} */
-
 class T {
 
+    int[] a;
+
     public int foo(int... a) {
+        int arr;
+
+        arr = [1,4,5][[1,2].length];
+
         return 0;
     }
 
     public int bar() {
-        this.foo();
+        this.foo(1, this.bar(), [].length, 1+2, a[0], [0,1][0]);
         return 0;
     }
-
 }
