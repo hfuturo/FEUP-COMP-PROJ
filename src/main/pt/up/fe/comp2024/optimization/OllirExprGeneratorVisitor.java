@@ -13,6 +13,7 @@ import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.TypeUtils;
 import pt.up.fe.specs.util.exceptions.NotImplementedException;
 
+import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,9 +70,13 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             code.append(lhsName).append(".array.i32 :=.array.i32 ");
         }
 
-        code.append("new(array, ").append(size).append(".i32).array.i32;\n");
+        code.append("new(array, ").append(size).append(".i32).array.i32");
 
         for (int i = 0; i < size; i++) {
+            if (i == 0) {
+                code.append(";\n");
+            }
+            System.out.println("entra for");
             OllirExprResult exprVisit = visit(node.getJmmChild(i));
             code.append(exprVisit.getComputation());
             code.append(lhsName).append("[").append(i).append(".i32].i32 :=.i32 ").append(exprVisit.getCode());
@@ -253,7 +258,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         StringBuilder params = new StringBuilder();
         // tem parametros
         if (node.getNumChildren() > 1) {
-            System.out.println("entra");
             for (int i = 1; i < node.getNumChildren(); i++) {
                 JmmNode child = node.getJmmChild(i);
                 params.append(", ");
@@ -261,13 +265,9 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
                 // adiciona código extra caso param seja uma BINARY_EXPR ou VAR_METHOD
                 computation.append(result.getComputation());
-                System.out.println("computation:\t" + computation);
-//                params.append(result.getComputation());
                 params.append(result.getCode());
             }
         }
-
-        System.out.println("param:\t" + params);
 
         // é um assign / operacao
         if (!parent.isInstance(EXPR_STMT)) {
@@ -320,7 +320,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
 
         if (params.length() > 0) {
-            System.out.println("entra if");
             computation.append(params);
         }
 
@@ -328,12 +327,8 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         computation.append(methodReturnType);
         computation.append(";");
         computation.append("\n");
-        System.out.println("computation:\t" + computation.toString());
 
         if (!parent.isInstance(EXPR_STMT)) {
-            System.out.println("entra final");
-            System.out.println("code:\t" + String.format("%s%s", tempVar, methodReturnType));
-            System.out.println("comp:\t" + computation.toString());
             return new OllirExprResult(String.format("%s%s", tempVar, methodReturnType), computation.toString());
         }
 

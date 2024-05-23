@@ -1,8 +1,14 @@
 class UndeclaredVariable {
 
     public int foo(int a) {
-        return a + b;
+        int[] arr;
+        arr = [];
+        //this.bar([]);
+        return 0;
     }
 
+    public int bar(int... a) {
+        return 0;
+    }
 
 }
