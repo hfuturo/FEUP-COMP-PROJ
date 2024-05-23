@@ -41,20 +41,17 @@ public class CompatibleAssignTypes extends AnalysisVisitor {
             return null;
         }
 
-        if (rightType.isArray()) {
-            if (!rightExpr.isInstance(Kind.VAR_METHOD)) {
-                if (!TypeUtils.checkValuesInArrayInit(leftType, rightExpr.getChildren(), table)) {
-                    String message = SemanticErrorUtils.incompatibleType(leftType.toString(), rightType.toString(), "ArrayInit");
+        if (rightExpr.isInstance(Kind.INIT_ARRAY)) {
+            if (!TypeUtils.checkValuesInArrayInit(rightExpr.getChildren(), table)) {
+                String message = SemanticErrorUtils.incompatibleType(leftType.toString(), rightType.toString(), "ArrayInit");
                     addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(rightExpr),
                             NodeUtils.getColumn(rightExpr), message, null));
 
                     return null;
-                }
             }
         }
 
         if (!TypeUtils.areTypesAssignable(leftType, rightType, table)) {
-            System.out.println("entra");
             String message = SemanticErrorUtils.incompatibleType(leftType.toString(), rightType.toString(), "=");
             addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(assignStmt),
                     NodeUtils.getColumn(assignStmt), message, null));

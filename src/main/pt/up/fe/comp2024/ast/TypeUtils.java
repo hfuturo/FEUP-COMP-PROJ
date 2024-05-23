@@ -173,11 +173,11 @@ public class TypeUtils {
         return destName.equals(TypeUtils.getImportTypeName());
     }
 
-    public static boolean checkValuesInArrayInit(Type leftType, List<JmmNode> valuesNodes, SymbolTable table) {
+    public static boolean checkValuesInArrayInit(List<JmmNode> valuesNodes, SymbolTable table) {
         for (JmmNode node : valuesNodes) {
             Type nodeType = getExprType(node, table);
 
-            if (nodeType.isArray() || !nodeType.getName().equals(leftType.getName()))
+            if (nodeType.isArray() || !nodeType.getName().equals(TypeUtils.getIntTypeName()))
                 return false;
         }
         return true;

@@ -1,8 +1,18 @@
-import A;
-
 class T {
 
-    public int bar(int a, int[] ar) {
+    public int foo(int... a) {
+        int len;
+
+        len = a.length;
+
+        if (1 < 2 && true) {
+            a = [1];
+
+        }
+        else {
+            a = [0];
+        }
+
         return 0;
     }
 

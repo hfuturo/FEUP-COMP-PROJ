@@ -62,7 +62,7 @@ public class Launcher {
         System.out.println(jasminResult.getJasminCode());
 
         System.out.println("JASMIN RESULT:\n");
-        jasminResult.run();
+//        jasminResult.run();
     }
 
 }
