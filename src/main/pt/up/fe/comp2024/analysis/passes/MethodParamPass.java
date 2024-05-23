@@ -45,7 +45,7 @@ public class MethodParamPass extends AnalysisVisitor {
 
                 // update parent node of children taken from deleted node
                 init_array.getChildren().forEach(child -> child.setParent(init_array));
-
+                init_array.setParent(node);
                 node.add(init_array);
 
                 break;

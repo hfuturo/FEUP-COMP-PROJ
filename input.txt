@@ -7,7 +7,7 @@ class T {
 
     public int bar() {
 
-        this.foo(1, this.doe(), 0);
+        this.foo(1, this.doe(), 1+2);
         return 0;
     }
 
