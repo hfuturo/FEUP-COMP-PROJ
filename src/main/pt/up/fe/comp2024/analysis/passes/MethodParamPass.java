@@ -32,29 +32,45 @@ public class MethodParamPass extends AnalysisVisitor {
             return null;
         }
 
-        for(int i = 1; i < children.size(); i++) {
-            Type type = params.get(i - 1).getType();
-
-            if(type.getName().equals(TypeUtils.getVarargTypeName()) && !TypeUtils.getExprType(children.get(i), table).isArray()) {
+        if (children.size() == 1) {
+            if (params.get(0).getType().getName().equals(TypeUtils.getVarargTypeName())) {
                 JmmNode init_array = new JmmNodeImpl(Kind.INIT_ARRAY.toString());
-                init_array.setChildren(children.subList(i, children.size()));
+                init_array.setParent(node);
+                node.add(init_array);
+            }
+        }
+        else if (children.size() == params.size()) {
+            if (params.get(params.size()-1).getType().getName().equals(TypeUtils.getVarargTypeName())) {
+                JmmNode init_array = new JmmNodeImpl(Kind.INIT_ARRAY.toString());
+                init_array.setParent(node);
+                node.add(init_array);
+            }
+        }
+        else {
+            for (int i = 1; i < children.size(); i++) {
+                Type type = params.get(i - 1).getType();
 
-                for(int j = i; j < children.size(); j++) {
-                    node.removeChild(node.getNumChildren()-1);
+                if (type.getName().equals(TypeUtils.getVarargTypeName()) && !TypeUtils.getExprType(children.get(i), table).isArray()) {
+                    JmmNode init_array = new JmmNodeImpl(Kind.INIT_ARRAY.toString());
+                    init_array.setChildren(children.subList(i, children.size()));
+
+                    for (int j = i; j < children.size(); j++) {
+                        node.removeChild(node.getNumChildren() - 1);
+                    }
+
+                    // update parent node of children taken from deleted node
+                    init_array.getChildren().forEach(child -> child.setParent(init_array));
+                    init_array.setParent(node);
+                    init_array.put("op", "]");
+                    init_array.put("insideMethodReturnType", type.getName());
+                    node.add(init_array);
+
+                    break;
                 }
 
-                // update parent node of children taken from deleted node
-                init_array.getChildren().forEach(child -> child.setParent(init_array));
-                init_array.setParent(node);
-                init_array.put("op", "]");
-                init_array.put("insideMethodReturnType", type.getName());
-                node.add(init_array);
-
-                break;
+                JmmNode paramNode = children.get(i);
+                paramNode.put("insideMethodReturnType", type.getName());
             }
-
-            JmmNode paramNode = children.get(i);
-            paramNode.put("insideMethodReturnType", type.getName());
         }
 
         return null;

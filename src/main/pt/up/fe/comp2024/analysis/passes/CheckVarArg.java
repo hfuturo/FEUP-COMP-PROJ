@@ -23,7 +23,6 @@ public class CheckVarArg extends AnalysisVisitor {
     private Void visitMethodDecl(JmmNode method, SymbolTable table) {
         List<Symbol> symbols = table.getParameters(method.get("name"));
 
-        int varargCount = 0;
         for (Symbol symbol : symbols) {
             if (symbol.getType().getName().equals(TypeUtils.getVarargTypeName())) {
                 symbols.getLast();
@@ -40,24 +39,6 @@ public class CheckVarArg extends AnalysisVisitor {
                 }
 
                 method.put("hasVarargs", "True");
-//                if ((!lastSymbol.getType().getName().equals(TypeUtils.getIntTypeName()) &&
-//                        !lastSymbol.getType().equals(symbol.getType())) ||
-//                        varargCount > 0) {
-//                    String message = varargCount > 0 ?
-//                            "Only one parameter can be vararg." :
-//                            SemanticErrorUtils.incompatibleType(
-//                                    symbol.getType().toString(),
-//                                    lastSymbol.getType().toString(),
-//                                    "Vararg");
-//
-//                    addReport(Report.newError(Stage.SEMANTIC,
-//                            NodeUtils.getLine(method),
-//                            NodeUtils.getColumn(method),
-//                            message, null));
-//                    break;
-//                }
-//
-//                varargCount++;
             }
         }
 
