@@ -296,7 +296,7 @@ public class JasminGenerator {
     }
 
     private int getLimitLocals(Method method) {
-        int reservedRegistersForThis = 1;
+        int reservedRegistersForThis = method.isStaticMethod() ? 0 : 1;
         Set<Integer> repeatedValues = new HashSet<>();
         for(Map.Entry<String, Descriptor> entry: method.getVarTable().entrySet()) {
             if(entry.getKey().equals("this")) continue;
