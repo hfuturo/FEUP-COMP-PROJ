@@ -1,14 +1,23 @@
-class UndeclaredVariable {
+import A;
 
-    public int foo(int a) {
-        int[] arr;
-        arr = [];
-        this.bar([]);
+class T {
+
+    int[] arr;
+    int inteiro;
+
+    public int foo() {
+        int a;
+        a = 0;
+        //a = this.bar(inteiro, arr);
+        a = this.bar(inteiro);
+
         return 0;
     }
 
-    public int bar(int... a) {
+    public int bar(int a) {
+
         return 0;
     }
 
+    public static void main(String[] args) {}
 }

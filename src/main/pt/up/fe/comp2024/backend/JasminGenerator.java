@@ -721,7 +721,7 @@ public class JasminGenerator {
     }
 
     private void generateNewArray(CallInstruction callInst, StringBuilder code) {
-        code.append(generators.apply(callInst.getOperands().getLast()));
+        code.append(generators.apply(callInst.getOperands().get(callInst.getOperands().size()-1)));
         code.append("newarray int").append(NL);
         this.increaseLimitStack();
     }
@@ -771,6 +771,8 @@ public class JasminGenerator {
         code.append(JasminMethodUtils.getTypeInJasminFormat(putFieldInstruction.getValue().getType(), this.classUnitImports));
         code.append(NL);
 
+        this.decreaseLimitStack();
+
         return code.toString();
     }
 
@@ -788,6 +790,7 @@ public class JasminGenerator {
         StringBuilder code = new StringBuilder();
 
         code.append("aload_0").append(NL);
+        this.increaseLimitStack();
 
         code.append("getfield");
         code.append(" ");
@@ -797,6 +800,8 @@ public class JasminGenerator {
         code.append(" ");
         code.append(JasminMethodUtils.getTypeInJasminFormat(getFieldInstruction.getField().getType(), this.classUnitImports));
         code.append(NL);
+
+        this.increaseLimitStack();
 
         return code.toString();
     }
