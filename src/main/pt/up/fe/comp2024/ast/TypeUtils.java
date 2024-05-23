@@ -165,7 +165,7 @@ public class TypeUtils {
             return true;
         }
 
-        if (sourceIsArray && destinationType.getName().equals(TypeUtils.getVarargTypeName())) {
+        if (sourceIsArray && destIsArray) {
             return true;
         }
 

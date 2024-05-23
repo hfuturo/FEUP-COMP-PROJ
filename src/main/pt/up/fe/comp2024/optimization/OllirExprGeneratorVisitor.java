@@ -13,6 +13,7 @@ import pt.up.fe.comp2024.ast.Kind;
 import pt.up.fe.comp2024.ast.TypeUtils;
 import pt.up.fe.specs.util.exceptions.NotImplementedException;
 
+import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,9 +70,14 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             code.append(lhsName).append(".array.i32 :=.array.i32 ");
         }
 
-        code.append("new(array, ").append(size).append(".i32).array.i32;\n");
+        code.append("new(array, ").append(size).append(".i32).array.i32");
 
+        boolean hasParams = false;
         for (int i = 0; i < size; i++) {
+            hasParams = true;
+            if (i == 0) {
+                code.append(";\n");
+            }
             OllirExprResult exprVisit = visit(node.getJmmChild(i));
             code.append(exprVisit.getComputation());
             code.append(lhsName).append("[").append(i).append(".i32].i32 :=.i32 ").append(exprVisit.getCode());
@@ -79,6 +85,10 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             if (i != size-1 || !isAssignment) {
                 code.append(";\n");
             }
+        }
+
+        if (!isAssignment && !code.toString().endsWith(";") && !hasParams) {
+            code.append(";\n");
         }
 
         return isAssignment ?
@@ -92,6 +102,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
         String tempVar = OptUtils.getTemp();
 
+        code.append(exprVisit.getComputation());
         code.append(tempVar);
         code.append(".i32 :=.i32 arraylength(");
         code.append(exprVisit.getCode());
@@ -104,8 +115,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         StringBuilder code = new StringBuilder();
         OllirExprResult sizeVisit = visit(node.getJmmChild(0));
         JmmNode parent = node.getParent();
-
-        System.out.println("computation:\t" + sizeVisit.getComputation());
 
         if (parent.isInstance(ASSIGN_STMT) && parent.getChild(0).get("isField").equals("True")) {
             String temp = OptUtils.getTemp();
@@ -261,7 +270,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
 
                 // adiciona código extra caso param seja uma BINARY_EXPR ou VAR_METHOD
                 computation.append(result.getComputation());
-
                 params.append(result.getCode());
             }
         }
@@ -295,7 +303,14 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
                 }
             }
             else if (parent.isInstance(ACCESS_ARRAY)) {
-                methodReturnType = ".i32";
+                // retorna array
+
+                if (parent.getChild(0).isInstance(VAR_METHOD)) {
+                    methodReturnType = ".array.i32";
+                }
+                else {
+                    methodReturnType = ".i32";
+                }
             }
 
             computation.append(String.format("%s%s :=%s ", tempVar, methodReturnType, methodReturnType));
@@ -307,6 +322,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         computation.append(", \"");
         computation.append(methodName);
         computation.append("\"");
+
 
         if (params.length() > 0) {
             computation.append(params);

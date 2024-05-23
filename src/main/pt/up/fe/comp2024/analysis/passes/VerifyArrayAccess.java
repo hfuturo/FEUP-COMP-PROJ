@@ -170,6 +170,9 @@ public class VerifyArrayAccess extends AnalysisVisitor {
                 // se fosse um 'this'
                 if (AnalysisUtils.validateIsImported(callerName, table))
                     return;
+
+                if (AnalysisUtils.validateIsImported(TypeUtils.getExprType(caller, table).getName(), table))
+                    return;
             }
 
             // this. ...

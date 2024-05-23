@@ -38,6 +38,8 @@ public class CheckVarArg extends AnalysisVisitor {
                             message, null));
                     break;
                 }
+
+                method.put("hasVarargs", "True");
 //                if ((!lastSymbol.getType().getName().equals(TypeUtils.getIntTypeName()) &&
 //                        !lastSymbol.getType().equals(symbol.getType())) ||
 //                        varargCount > 0) {

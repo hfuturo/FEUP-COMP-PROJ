@@ -1,27 +1,14 @@
-import A;
+class UndeclaredVariable {
 
-class AccessValidArray {
-
-    int[] arr;
-    int a;
-
-    public int foo() {
-        AccessValidArray c;
-        c = new AccessValidArray();
-
-        a = c.bar(arr);
-        arr = this.test();
-
+    public int foo(int a) {
+        int[] arr;
+        arr = [];
+        this.bar([]);
         return 0;
     }
 
-    public int bar(int... ar) {
-        a = ar[0];
-        return arr[0];
-    }
-
-    public int[] test() {
-        return arr;
+    public int bar(int... a) {
+        return 0;
     }
 
 }

@@ -121,7 +121,7 @@ expr
     | var=expr op=LSQUARE index=expr op=RSQUARE #AccessArray                              // aceder a um array, i.e., a[2]
     | op=NEW INT LSQUARE size=expr RSQUARE   #NewInt                                 // new int
     | op=NEW name=(ID | 'String') LPAREN RPAREN  #NewClass                                   // new class
-    | op=LSQUARE (expr (op=COMMA expr)* )? op=RSQUARE #InitArray                // inicializar array, i.e., [1,2,3]
+    | (op=LSQUARE (expr (op=COMMA expr)* )? op=RSQUARE | '[]') #InitArray                // inicializar array, i.e., [1,2,3]
     | left=expr (op=MUL | op=DIV) right=expr #BinaryExpr                                   // * ; /
     | left=expr (op=ADD | op=SUB) right=expr #BinaryExpr                                   // + ; -
     | left=expr op=LESS right=expr #BinaryExpr                                             // <

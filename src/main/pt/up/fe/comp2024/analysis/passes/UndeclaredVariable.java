@@ -54,17 +54,20 @@ public class UndeclaredVariable extends AnalysisVisitor {
     if(symbol.isEmpty() && !isImport) {
       addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(varRefExpr),
               NodeUtils.getColumn(varRefExpr), SemanticErrorUtils.undeclaredVarMsg(varRefName), null));
+      return null;
     }
 
     if (symbol.isEmpty()) {
       if (isImport && (varRefExpr.getParent().isInstance(Kind.ASSIGN_STMT) || varRefExpr.getParent().isInstance(Kind.RETURN_STMT))) {
         addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(varRefExpr),
                 NodeUtils.getColumn(varRefExpr), SemanticErrorUtils.undeclaredVarMsg(varRefName), null));
+        return null;
       }
 
       if(!isImport) {
         addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(varRefExpr),
                 NodeUtils.getColumn(varRefExpr), SemanticErrorUtils.undeclaredVarMsg(varRefName), null));
+        return null;
       }
     }
 

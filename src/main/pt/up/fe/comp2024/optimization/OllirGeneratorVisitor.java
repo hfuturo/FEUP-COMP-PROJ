@@ -202,8 +202,6 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
         } else if(node.getJmmChild(0).get("isField").equals("True")) {
             var jmmNode = node.getJmmChild(0);
             var leftChild = node.getJmmChild(0);
-            System.out.println("code:\t"+rhs.getCode());
-            System.out.println("comp:\t"+rhs.getComputation());
             code.append("putfield(this, ").append(leftChild.get("name")).append(typeString).append(", ").append(rhs.getCode()).append(").V;\n");
         } else {
             code.append(lhs.getCode());
@@ -217,6 +215,8 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
             code.append(END_STMT);
         }
+
+        System.out.println(code.toString());
 
         return code.toString();
     }
@@ -269,6 +269,10 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
 
         if (isPublic) {
             code.append("public ");
+        }
+
+        if (node.hasAttribute("hasVarargs") && node.get("hasVarargs").equals("True")) {
+            code.append("varargs ");
         }
 
         // name
