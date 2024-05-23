@@ -11,7 +11,17 @@ class T {
     }
 
     public int bar() {
-        this.foo(1, this.bar(), [].length, 1+2, a[0], [0,1][0]);
+        this.foo(((this.getThis()).doe()).length);
         return 0;
+    }
+
+    public int[] doe() {
+        int[] a;
+        a = new int[[1,4,5][[1,2].length]];
+        return a;
+    }
+
+    public T getThis() {
+        return this;
     }
 }

@@ -65,7 +65,8 @@ public class IncompatibleTypesOperation extends AnalysisVisitor {
             || leftExprNodeKind.equals(Kind.INIT_ARRAY.toString());
 
     if (leftExprNode.isInstance(PARENTHESIS)) {
-      visit(leftExprNode.getJmmChild(0));
+      visit(leftExprNode.getJmmChild(0), table);
+      return null;
     }
 
     if(!exprNodeHasValidKind) {

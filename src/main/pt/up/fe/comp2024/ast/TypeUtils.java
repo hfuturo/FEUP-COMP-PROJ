@@ -47,8 +47,15 @@ public class TypeUtils {
             case INTEGER_LITERAL, LENGTH, ACCESS_ARRAY -> new Type(INT_TYPE_NAME, false);
             case PARENTHESIS -> getExprType(expr.getChildren().get(0), table);
             case VAR_METHOD -> {
-                if (expr.get("isDeclared").equals("False"))
+                if (expr.hasAttribute("isDeclared")) {
+                    if (expr.get("isDeclared").equals("False"))
+                        yield new Type(IMPORT_TYPE_NAME, false);
+                }
+                else if (!table.getMethods().contains(expr.get("name"))) {
                     yield new Type(IMPORT_TYPE_NAME, false);
+                }
+//                if (expr.get("isDeclared").equals("False"))
+//                    yield new Type(IMPORT_TYPE_NAME, false);
 
                 yield table.getReturnType(expr.get("name"));
             }
