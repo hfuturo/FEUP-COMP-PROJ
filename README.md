@@ -16,6 +16,10 @@
 
 ## Implemented optimizations
 
+Without any flags the following optimizations will always occur:
+
+- Jasmin low cost instructions
+
 Using the `-r <n>` flag, the following optimizations will occur:
 
 - Register allocation
