@@ -164,24 +164,27 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
     private String visitAssignStmt(JmmNode node, Void unused) {
         JmmNode left = node.getJmmChild(0);
         JmmNode right = node.getJmmChild(1);
+
         var lhs = exprVisitor.visit(left);
         var rhs = exprVisitor.visit(right);
 
+        String computation = rhs.getComputation();
+        String[] computationLines = computation.split("\n");
+        boolean iincAssign = (computationLines.length == 1 && !computationLines[0].isEmpty());
+
         StringBuilder code = new StringBuilder();
         boolean rightIsBinaryExpr = right.getKind().equals("BinaryExpr");
-        //if(rightIsBinaryExpr && right.get("name").equals(left.get("name"))) {
-        //}
 
         // code to compute the children
-        code.append(lhs.getComputation());
-        code.append(rhs.getComputation());
+        if(!iincAssign) {
+            code.append(lhs.getComputation());
+            code.append(rhs.getComputation());
+        }
 
         // code to compute self
         // statement has type of lhs
         Type thisType = TypeUtils.getExprType(node.getJmmChild(0), table);
         String typeString = OptUtils.toOllirType(thisType);
-
-
 
         if(node.getJmmChild(0).isInstance(ACCESS_ARRAY) && node.getJmmChild(0).getJmmChild(0).get("isField").equals("True")) {
             var accessArray = node.getJmmChild(0);
@@ -211,12 +214,15 @@ public class OllirGeneratorVisitor extends AJmmVisitor<Void, String> {
             code.append(typeString);
             code.append(SPACE);
 
-            code.append(rhs.getCode());
+            if(iincAssign) {
+                String[] computationComponents = rhs.getComputation().split(String.format(":=%s", typeString));
+                code.append(computationComponents[1]);
+            } else {
+                code.append(rhs.getCode());
+                code.append(END_STMT);
+            }
 
-            code.append(END_STMT);
         }
-
-        System.out.println(code.toString());
 
         return code.toString();
     }
