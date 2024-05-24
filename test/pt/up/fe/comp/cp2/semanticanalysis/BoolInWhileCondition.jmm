@@ -11,31 +11,24 @@ class BoolInWhileCondition {
         t1 = true;
 
         while (t) {
-            t = true;
         }
 
         while (t && t1) {
-            t = true;
         }
 
         while (true) {
-            t = true;
         }
 
         while (1 < 2) {
-            t = true;
         }
 
         while (true && true) {
-            t = true;
         }
 
         while (!false) {
-            t = true;
         }
 
         while (!t) {
-            t = true;
         }
 
         return t;
