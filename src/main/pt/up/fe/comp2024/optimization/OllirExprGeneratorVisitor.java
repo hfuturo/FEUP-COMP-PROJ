@@ -231,18 +231,14 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         JmmNode parent = node.getParent();
         String invokeType;
         String tempVar = "";
-        System.out.println("node:" + node.toString() + "\ncaller:\t" + callerNode.toString());
+
         // this.foo() ou className classname; classname.foo()
         if (callerNode.isInstance(THIS) ||
                 (callerNode.isInstance(VAR_REF_EXPR) && callerType.equals("." + table.getClassName())) ||
                 (callerNode.isInstance(VAR_METHOD) && table.getMethods().contains(callerNode.get("name")))) {
-            System.out.println("ENTRA\nnode:" + node.toString() + "\ncaller:\t" + callerNode.toString());
-            System.out.println("node:" + node.toString() + "\ntype:\t" + callerType);
-            System.out.println("node:" + node.toString() + "\nret type:\t"+table.getReturnType(methodName));
             invokeType = "invokevirtual";
             callerName = callerNode.isInstance(THIS) ? "this" : (callerNode.get("name") + callerType);
             methodReturnType = OptUtils.toOllirType(table.getReturnType(methodName));
-            System.out.println("node:" + node.toString() + "\n" +methodReturnType);
         }
         else if (callerNode.isInstance(NEW_CLASS)) {
             // constroi NEW em OLLIR
@@ -272,7 +268,7 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
             callerName = callerNode.get("name") + callerType;
             methodReturnType = ".V";
         }
-        System.out.println("node:" + node.toString() + "\nmid:\t" + methodReturnType);
+
         StringBuilder params = new StringBuilder();
         // tem parametros
         if (node.getNumChildren() > 1) {
@@ -344,8 +340,6 @@ public class OllirExprGeneratorVisitor extends AJmmVisitor<Void, OllirExprResult
         computation.append(methodReturnType);
         computation.append(";");
         computation.append("\n");
-
-        System.out.println("node:" + node.toString() + "\nFINAL:\t" + computation.toString());
 
         if (!parent.isInstance(EXPR_STMT)) {
             return new OllirExprResult(String.format("%s%s", tempVar, methodReturnType), computation.toString());

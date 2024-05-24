@@ -1,27 +1,25 @@
-class T {
+import io;
 
-    int[] a;
+class Arithmetic_less {
+	public static void main(String[] args) {
+		boolean a;
 
-    public int foo(int... a) {
-        int arr;
+		a = 10 < 20;
 
-        arr = [1,4,5][[1,2].length];
+		if(a) {
+			io.print(1);
+		} else {
+			io.print(0);
+		}
+	}
 
-        return 0;
-    }
+	public int bar() {
+	    if (true) {
 
-    public int bar() {
-        this.foo(((this.getThis()).doe()).length);
-        return 0;
-    }
+	    } else {
 
-    public int[] doe() {
-        int[] a;
-        a = new int[[1,4,5][[1,2].length]];
-        return a;
-    }
+	    }
 
-    public T getThis() {
-        return this;
-    }
+	    return 0;
+	}
 }

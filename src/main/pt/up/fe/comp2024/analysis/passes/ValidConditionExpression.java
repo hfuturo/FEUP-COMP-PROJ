@@ -17,6 +17,16 @@ public class ValidConditionExpression extends AnalysisVisitor {
     public void buildVisitor() {
         addVisit(Kind.IF_ELSE_STMT, this::visitIfElseStmt);
         addVisit(Kind.WHILE_STMT, this::visitWhileStmt);
+        addVisit(Kind.SCOPE_STMT, this::visitScopeStmt);
+    }
+
+    private Void visitScopeStmt(JmmNode node, SymbolTable table) {
+        if (node.getNumChildren() == 0) {
+            addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(node),
+                    NodeUtils.getColumn(node), "Empty Scope", null));
+        }
+
+        return null;
     }
 
     private Void visitIfElseStmt(JmmNode ifStmt, SymbolTable table) {
@@ -28,6 +38,9 @@ public class ValidConditionExpression extends AnalysisVisitor {
     }
 
     private Void checkExpr(JmmNode node, SymbolTable table, boolean isIfStmt) {
+
+        System.out.println(node.toString());
+
         JmmNode expr = node.getChild(0);
         Type exprType = TypeUtils.getExprType(expr, table);
 

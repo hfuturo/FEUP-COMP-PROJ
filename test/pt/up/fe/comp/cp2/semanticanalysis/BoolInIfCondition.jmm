@@ -12,31 +12,45 @@ class IntInIfCondition {
         b = true;
 
         if (a) {
+            a = true;
         } else {
+            a = true;
         }
 
         if (a && b) {
+        a = true;
         } else {
+        a = true;
         }
 
         if (false) {
+        a = true;
         } else {
+        a = true;
         }
 
         if (1 < 2){
+        a = true;
         } else {
+        a = true;
         }
 
         if (true && true) {
+        a = true;
         } else {
+        a = true;
         }
 
         if (!true) {
+        a = true;
         } else {
+        a = true;
         }
 
        if (!a) {
+       a = true;
         } else {
+        a = true;
         }
 
         return 0;
