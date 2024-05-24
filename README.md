@@ -12,7 +12,7 @@
 
 ## Self-Assessment
 
-- We think our project deserves a ... out of 20.
+- Despite we only fail one private test (cp1: 100%, cp2: 100%, cpf: 99.39%), we think we deserve 20 because we had a very strong overall performance.
 
 ## Implemented optimizations
 
@@ -31,5 +31,4 @@ Using the `-o` flag, the following optimizations will occur:
 
 ## Extra Elements
 
-(Optional)
-- Our project supports...
+- Method calls from imported classes can be used anywhere;
