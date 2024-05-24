@@ -1,10 +1,27 @@
-import A;
-
 class T {
 
-    public int bar(int a, int[] ar) {
+    int[] a;
+
+    public int foo(int... a) {
+        int arr;
+
+        arr = [1,4,5][[1,2].length];
+
         return 0;
     }
 
-    public static void main(String[] args) {}
+    public int bar() {
+        this.foo(((this.getThis()).doe()).length);
+        return 0;
+    }
+
+    public int[] doe() {
+        int[] a;
+        a = new int[[1,4,5][[1,2].length]];
+        return a;
+    }
+
+    public T getThis() {
+        return this;
+    }
 }

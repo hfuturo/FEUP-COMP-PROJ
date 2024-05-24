@@ -79,6 +79,9 @@ public class IncompatibleArgumentTypes extends AnalysisVisitor {
         }
 
         if(callParamsNodes.size() < methodParamsTypes.size()) {
+            if (callParamsNodes.size() == methodParamsTypes.size() - 1 && methodParamsTypes.get(methodParamsTypes.size()-1).getName().equals(TypeUtils.getVarargTypeName())) {
+                return  null;
+            }
             var message = String.format("Missing parameters on call of %s. Expected %d, found %d", methodCall.get("name"), methodParamsTypes.size(), callParamsNodes.size());
             addReport(Report.newError(Stage.SEMANTIC, NodeUtils.getLine(methodCall),
                     NodeUtils.getColumn(methodCall), message, null));
