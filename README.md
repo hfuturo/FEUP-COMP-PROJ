@@ -32,3 +32,5 @@ Using the `-o` flag, the following optimizations will occur:
 ## Extra Elements
 
 - Method calls from imported classes can be used anywhere;
+
+## Grade: 20
